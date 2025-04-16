@@ -1,0 +1,83 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { UserService } from '../users/user.service';
+import { User } from '../users/user.interface';
+import { TokenPayload, AuthTokens, LoginDto } from './dto/auth.dto';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
+
+  async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
+    const user = await this.userService.findByEmail(email);
+    
+    if (user && await this.userService.comparePasswords(password, user.password)) {
+      const { password, ...result } = user as any;
+      return result;
+    }
+    
+    return null;
+  }
+
+  async login(loginDto: LoginDto | Omit<User, 'password'>): Promise<AuthTokens> {
+    // If it's a LoginDto, first validate the user
+    if ('password' in loginDto) {
+      const user = await this.validateUser(loginDto.email, loginDto.password);
+      if (!user) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+      return this.generateTokens(user);
+    }
+    
+    // If it's already a validated user, directly generate tokens
+    return this.generateTokens(loginDto);
+  }
+
+  async refreshToken(refreshToken: string): Promise<AuthTokens> {
+    try {
+      // Verify the refresh token
+      const payload = this.jwtService.verify<TokenPayload>(
+        refreshToken,
+        {
+          secret: this.configService.get<string>('auth.refreshTokenSecret') || 'default_refresh_secret',
+        }
+      );
+      
+      // Get the corresponding user
+      const user = await this.userService.findById(payload.sub);
+      
+      if (!user) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+      
+      // Generate new tokens
+      return this.generateTokens(user);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+  }
+
+  private generateTokens(user: Omit<User, 'password'>): AuthTokens {
+    const payload: TokenPayload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
+    
+    return {
+      accessToken: this.jwtService.sign(payload, {
+        secret: this.configService.get<string>('auth.jwtSecret') || 'default_jwt_secret',
+        expiresIn: this.configService.get<string>('auth.jwtExpiresIn') || '15m',
+      }),
+      refreshToken: this.jwtService.sign(payload, {
+        secret: this.configService.get<string>('auth.refreshTokenSecret') || 'default_refresh_secret',
+        expiresIn: this.configService.get<string>('auth.refreshTokenExpiresIn') || '7d',
+      }),
+    };
+  }
+} 
