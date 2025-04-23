@@ -43,6 +43,9 @@ export class TestApp {
   moduleRef: TestingModule;
   jwtService: JwtService;
   configService: ConfigService;
+  
+  // Mémoriser la connexion
+  private static databaseUri: string = '';
 
   constructor(app: INestApplication, moduleRef: TestingModule) {
     this.app = app;
@@ -54,11 +57,20 @@ export class TestApp {
   /**
    * Creates an application instance for testing
    */
-  static async create(): Promise<TestApp> {
+  static async create(useTestDatabase: boolean = true): Promise<TestApp> {
     // Increase Jest timeout for integration tests
     jest.setTimeout(30000);
     
-    await setupMongoDB();
+    // Configurer la connexion à la base de données
+    TestApp.databaseUri = await setupMongoDB({
+      connectionType: useTestDatabase ? 'test' : 'memory'
+    });
+
+    // Override l'URL de la base de données dans l'environnement si nécessaire
+    if (useTestDatabase) {
+      // Forcer l'utilisation de la base de données de test
+      process.env.MONGODB_URI = TestApp.databaseUri;
+    }
 
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
@@ -98,6 +110,11 @@ export class TestApp {
   async close(): Promise<void> {
     await this.app.close();
     await closeMongoDB();
+    
+    // Restaurer l'URL de la base de données d'origine
+    if (process.env.MONGODB_URI === TestApp.databaseUri) {
+      delete process.env.MONGODB_URI;
+    }
   }
 
   /**

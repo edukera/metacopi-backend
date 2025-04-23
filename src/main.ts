@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
+  const logger = new Logger('Main');
+
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get<number>('port');
@@ -49,7 +51,7 @@ async function bootstrap() {
   app.enableCors();
   
   await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
-  console.log(`API documentation available at: http://localhost:${port}/api-docs`);
+  logger.log(`Application is running on: http://localhost:${port}`);
+  logger.log(`API documentation available at: http://localhost:${port}/api-docs`);
 }
 bootstrap(); 

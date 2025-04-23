@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -6,6 +6,8 @@ import { User, UserDocument, UserRole } from '../../modules/users/user.schema';
 
 @Injectable()
 export class AdminSeedService {
+  private readonly logger = new Logger(AdminSeedService.name);
+
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
@@ -15,7 +17,7 @@ export class AdminSeedService {
     const adminCount = await this.userModel.countDocuments({ role: UserRole.ADMIN });
     
     if (adminCount > 0) {
-      console.log('An administrator already exists in the database');
+      this.logger.log('An administrator already exists in the database');
       return;
     }
 
@@ -39,9 +41,9 @@ export class AdminSeedService {
       });
 
       await adminUser.save();
-      console.log(`Administrator user successfully created: ${adminEmail}`);
+      this.logger.log(`Administrator user successfully created: ${adminEmail}`);
     } catch (error) {
-      console.error('Error creating admin user:', error);
+      this.logger.error('Error creating admin user:', error);
       throw error;
     }
   }

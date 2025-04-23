@@ -1,4 +1,4 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AuditLogService } from '../../modules/audit-logs/audit-log.service';
@@ -25,6 +25,8 @@ export function AuditLog(data: AuditLogData) {
 
 @Injectable()
 export class AuditLogInterceptor implements NestInterceptor {
+  private readonly logger = new Logger(AuditLogInterceptor.name);
+
   constructor(private auditLogService: AuditLogService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -83,7 +85,7 @@ export class AuditLogInterceptor implements NestInterceptor {
               metadata,
             });
           } catch (error) {
-            console.error('Error creating audit log:', error);
+            this.logger.error('Error creating audit log:', error);
           }
         }
       }),
