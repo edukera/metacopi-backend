@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -7,17 +7,26 @@ import { User, UserRepository, CreateUserDto, UpdateUserDto } from './user.inter
 
 @Injectable()
 export class MongoUserRepository implements UserRepository {
+  private readonly logger = new Logger(MongoUserRepository.name);
+  
   constructor(
     @InjectModel(UserSchema.name) private userModel: Model<UserDocument>,
   ) {}
 
   async findById(id: string): Promise<User | null> {
+    this.logger.debug(`Finding user by ID: ${id}`);
     const user = await this.userModel.findById(id).exec();
+    this.logger.debug(`User with ID ${id} found: ${!!user}`);
     return user ? this.mapToUser(user) : null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
+    this.logger.debug(`Finding user by email: ${email}`);
     const user = await this.userModel.findOne({ email }).exec();
+    this.logger.debug(`User with email ${email} found: ${!!user}`);
+    if (user) {
+      this.logger.debug(`User password hash: ${user.password}`);
+    }
     return user ? this.mapToUser(user) : null;
   }
 

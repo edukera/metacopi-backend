@@ -1,16 +1,19 @@
-import { Controller, Post, UseGuards, Body, Get, UsePipes, ValidationPipe, HttpCode, HttpStatus, BadRequestException } from '@nestjs/common';
+import { Controller, Post, UseGuards, Body, Get, UsePipes, ValidationPipe, HttpCode, HttpStatus, BadRequestException, Logger } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, RefreshTokenDto, AuthTokens } from './dto/auth.dto';
 import { User } from '../users/user.interface';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { JwtAuthGuard, Public } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+  
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('login')
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe())
@@ -43,22 +46,36 @@ export class AuthController {
     refresh_token: string;
     user: Partial<User>;
   }> {
-    // Get the user to include in the response
-    const user = await this.authService.validateUser(loginDto.email, loginDto.password);
+    this.logger.debug(`Login attempt for email: ${loginDto.email}`);
     
-    if (!user) {
-      throw new BadRequestException('Invalid credentials');
+    try {
+      // Get the user to include in the response
+      const user = await this.authService.validateUser(loginDto.email, loginDto.password);
+      
+      if (!user) {
+        throw new BadRequestException({
+          message: 'Invalid credentials',
+          debug: `User validation failed for email: ${loginDto.email}`
+        });
+      }
+      
+      const tokens = await this.authService.login(loginDto);
+      
+      return {
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken,
+        user: user,
+      };
+    } catch (error) {
+      this.logger.error(`Login error for ${loginDto.email}: ${error.message}`);
+      throw new BadRequestException({
+        message: 'Invalid credentials',
+        debug: `Error during login: ${error.message}`
+      });
     }
-    
-    const tokens = await this.authService.login(loginDto);
-    
-    return {
-      access_token: tokens.accessToken,
-      refresh_token: tokens.refreshToken,
-      user: user,
-    };
   }
 
+  @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Refresh tokens', description: 'Generates new tokens from a refresh token' })

@@ -1,10 +1,12 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import { MongoUserRepository } from './user.repository';
 import { User, CreateUserDto, UpdateUserDto } from './user.interface';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
+  
   constructor(private readonly userRepository: MongoUserRepository) {}
 
   async findAll(): Promise<User[]> {
@@ -50,6 +52,14 @@ export class UserService {
   }
 
   async comparePasswords(plainTextPassword: string, hashedPassword: string): Promise<boolean> {
-    return bcrypt.compare(plainTextPassword, hashedPassword);
+    this.logger.debug(`Comparing password: plainTextPassword length=${plainTextPassword.length}, hashedPassword=${hashedPassword}`);
+    try {
+      const result = await bcrypt.compare(plainTextPassword, hashedPassword);
+      this.logger.debug(`Password comparison result: ${result}`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Error comparing passwords: ${error.message}`);
+      return false;
+    }
   }
 } 

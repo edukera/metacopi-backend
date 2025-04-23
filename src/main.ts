@@ -7,7 +7,9 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const logger = new Logger('Main');
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log', 'debug'],
+  });
   const configService = app.get(ConfigService);
   const port = configService.get<number>('port');
   

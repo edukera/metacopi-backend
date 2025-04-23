@@ -4,7 +4,6 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-  Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuditLogService } from '../audit-logs/audit-log.service';
@@ -13,7 +12,6 @@ import { TargetType } from '../audit-logs/audit-log.schema';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(HttpExceptionFilter.name);
   private readonly isDevelopment: boolean;
 
   constructor(
@@ -74,7 +72,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     };
 
     if (status >= 500) {
-      this.logger.error(`Unhandled exception: ${message}`, logData);
+      console.error(`Unhandled exception: ${message}`, logData);
       
       // Log 5xx errors to the audit service for tracking
       try {
@@ -93,10 +91,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
           },
         });
       } catch (auditError) {
-        this.logger.error(`Unable to log error to AuditLog: ${auditError.message}`);
+        console.error(`Unable to log error to AuditLog: ${auditError.message}`);
       }
     } else {
-      this.logger.warn(`Handled exception: ${message}`, logData);
+      console.warn(`Handled exception: ${message}`, logData);
     }
 
     // Send formatted response

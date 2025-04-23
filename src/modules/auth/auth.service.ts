@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../users/user.service';
@@ -7,6 +7,8 @@ import { TokenPayload, AuthTokens, LoginDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
@@ -14,9 +16,19 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
+    this.logger.debug(`Attempting to validate user with email: ${email}`);
     const user = await this.userService.findByEmail(email);
     
-    if (user && await this.userService.comparePasswords(password, user.password)) {
+    if (!user) {
+      this.logger.debug(`User with email ${email} not found`);
+      return null;
+    }
+    
+    this.logger.debug(`User found, comparing passwords`);
+    const isPasswordValid = await this.userService.comparePasswords(password, user.password);
+    this.logger.debug(`Password comparison result: ${isPasswordValid}`);
+    
+    if (isPasswordValid) {
       const { password, ...result } = user as any;
       return result;
     }

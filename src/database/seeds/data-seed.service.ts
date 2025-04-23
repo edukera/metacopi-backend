@@ -4,6 +4,8 @@ import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import * as fs from 'fs';
 import * as path from 'path';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
 
 import { User, UserDocument, UserRole } from '../../modules/users/user.schema';
 import { Class } from '../../modules/classes/class.schema';
@@ -70,6 +72,7 @@ export class DataSeedService {
     @InjectModel(Class.name) private classModel: Model<Class>,
     @InjectModel(Task.name) private taskModel: Model<Task>,
     @InjectModel(Membership.name) private membershipModel: Model<Membership>,
+    @InjectConnection() private readonly connection: Connection,
   ) {}
 
   async seed(): Promise<void> {
@@ -85,6 +88,11 @@ export class DataSeedService {
         return;
       }
 
+      // Drop existing database
+      this.logger.log('Dropping existing database...');
+      await this.dropDatabase();
+      this.logger.log('Database dropped successfully. Starting fresh seed process...');
+
       // Read JSON file
       const seedData: SeedData = JSON.parse(fs.readFileSync(seedFilePath, 'utf8'));
 
@@ -97,6 +105,27 @@ export class DataSeedService {
       this.logger.log('Seeding process completed successfully!');
     } catch (error) {
       this.logger.error('Error during the seeding process:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Drops all collections in the database
+   */
+  private async dropDatabase(): Promise<void> {
+    try {
+      // Get all collections
+      const collections = await this.connection.db.collections();
+      
+      // Drop each collection
+      for (const collection of collections) {
+        await collection.deleteMany({});
+        this.logger.log(`Cleared collection: ${collection.collectionName}`);
+      }
+      
+      this.logger.log('All collections cleared successfully');
+    } catch (error) {
+      this.logger.error('Error dropping database:', error);
       throw error;
     }
   }
