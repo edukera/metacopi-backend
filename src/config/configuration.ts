@@ -1,5 +1,5 @@
 export default () => ({
-  port: parseInt(process.env.PORT, 10) || 3000,
+  port: parseInt(process.env.PORT, 10) || 3002,
   database: {
     uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/metacopi',
     user: process.env.MONGODB_USER || '',
@@ -12,4 +12,4 @@ export default () => ({
     refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d',
   },
   environment: process.env.NODE_ENV || 'development',
-}); 
+});

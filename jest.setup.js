@@ -3,6 +3,16 @@
 // Increase global timeout for all tests
 jest.setTimeout(30000);
 
+// Supprimer les logs de console pendant les tests pour éviter les sorties d'erreur indésirables
+const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
+const originalConsoleLog = console.log;
+
+// Remplacer par des fonctions mock
+console.error = jest.fn();
+console.warn = jest.fn();
+console.log = jest.fn();
+
 // Clean up mocks after each test
 afterEach(() => {
   jest.clearAllMocks();
@@ -26,6 +36,11 @@ afterAll(async () => {
     await mongoose.connection.close();
   }
   
+  // Restaurer les fonctions console d'origine
+  console.error = originalConsoleError;
+  console.warn = originalConsoleWarn;
+  console.log = originalConsoleLog;
+  
   // Ensure all file descriptors are closed
-  console.log('Cleaning up resources after tests...');
+  // console.log('Cleaning up resources after tests...');
 }, 5000); 
