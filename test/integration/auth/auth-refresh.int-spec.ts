@@ -15,6 +15,8 @@ describe('Auth Refresh Token (Integration)', () => {
   let jwtSecret: string;
   let refreshTokenSecret: string;
   let userEmail: string;
+  // Array to track created user IDs for cleanup
+  const createdUserIds: Types.ObjectId[] = [];
 
   beforeAll(async () => {
     testApp = await TestApp.create();
@@ -24,11 +26,37 @@ describe('Auth Refresh Token (Integration)', () => {
   });
 
   afterAll(async () => {
+    // Ensure all created users are deleted before closing
+    if (userModel && createdUserIds.length > 0) {
+      console.log(`Cleaning up ${createdUserIds.length} tracked users...`);
+      for (const userId of createdUserIds) {
+        await userModel.deleteOne({ _id: userId }).exec();
+      }
+      
+      // Double-check and force cleanup if needed
+      await userModel.deleteMany({});
+      const remainingCount = await userModel.countDocuments({});
+      if (remainingCount > 0) {
+        console.warn(`Warning: ${remainingCount} users still in database after cleanup`);
+        // Force drop collection as last resort
+        if (testApp.app) {
+          const db = testApp.app.get('DATABASE_CONNECTION');
+          if (db) {
+            await db.collection('users').drop().catch(err => {
+              if (err.message !== 'ns not found') console.error('Error dropping users collection:', err);
+            });
+          }
+        }
+      }
+    }
+    
     await testApp.close();
   });
 
   beforeEach(async () => {
     await testApp.clearDb();
+    // Clear tracking array
+    createdUserIds.length = 0;
     
     // Generate a unique email for each test
     userEmail = `user.refresh.${Date.now()}@example.com`;
@@ -46,6 +74,8 @@ describe('Auth Refresh Token (Integration)', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+    // Track user for cleanup
+    createdUserIds.push(userId);
 
     // Get a valid refresh token via the login API
     const loginResponse = await request(testApp.app.getHttpServer())
@@ -56,6 +86,16 @@ describe('Auth Refresh Token (Integration)', () => {
       });
 
     refreshToken = loginResponse.body.refresh_token;
+  });
+
+  afterEach(async () => {
+    // Clean up users created during the test
+    if (userModel && createdUserIds.length > 0) {
+      console.log(`Cleaning up ${createdUserIds.length} users after test...`);
+      for (const userId of createdUserIds) {
+        await userModel.deleteOne({ _id: userId }).exec();
+      }
+    }
   });
 
   describe('POST /auth/refresh', () => {
@@ -99,6 +139,11 @@ describe('Auth Refresh Token (Integration)', () => {
     it('should reject a refresh token for a deleted user', async () => {
       // Delete the user after obtaining a valid token
       await userModel.deleteOne({ _id: userId });
+      // Remove from tracking array since we already deleted it
+      const index = createdUserIds.findIndex(id => id.equals(userId));
+      if (index !== -1) {
+        createdUserIds.splice(index, 1);
+      }
 
       // Action: Try to refresh with a token from a deleted user
       const response = await request(testApp.app.getHttpServer())
