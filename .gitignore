@@ -64,3 +64,5 @@ tasks.json
 
 # Database seed data with sensitive information
 src/database/seeds/data/seed-data.json
+/assets/
+/venv/
