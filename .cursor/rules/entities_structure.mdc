@@ -1,0 +1,38 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- **Toute nouvelle entité doit suivre le modèle du module `submissions`**
+  - La structure des fichiers et dossiers doit être identique :
+    - Un fichier `<entity>.schema.ts` pour le schéma Mongoose
+    - Un fichier `<entity>.dto.ts` regroupant tous les DTOs (création, mise à jour, réponse)
+    - Un fichier `<entity>.interface.ts` pour les interfaces TypeScript
+    - Un fichier `<entity>.service.ts` pour la logique métier
+    - Un fichier `<entity>.controller.ts` pour les endpoints REST
+    - Un fichier `<entity>.module.ts` pour l'assemblage du module
+    - Un dossier `validators/` si des validateurs spécifiques sont nécessaires
+    - Un ou plusieurs fichiers de tests unitaires : `<entity>.service.spec.ts`, `<entity>.controller.spec.ts`
+  - Le contenu des fichiers doit respecter les conventions observées dans `submissions` :
+    - Utilisation de `class-validator` et `@nestjs/swagger` dans les DTOs
+    - Utilisation de `@Schema`, `@Prop` pour les schémas
+    - Les tests doivent couvrir la validation, la logique métier et les endpoints
+    - Les noms de classes, méthodes et propriétés doivent être cohérents avec ceux de `submissions`
+  - **Les guards doivent être placés dans le répertoire partagé `src/common/guards/` et non dans les modules spécifiques**
+    - Chaque garde doit implémenter l'interface `CanActivate`
+    - Réutiliser les guards existants quand c'est possible
+    - Exporter les guards dans le fichier `index.ts` de ce répertoire
+  - Toute extension (ex : nouveaux validateurs, hooks, etc.) doit être placée dans un dossier dédié comme dans `submissions/validators/`
+  - Les imports et exports doivent suivre la même organisation
+
+- **Exemples et références**
+  - Se référer à la structure et au contenu du dossier `src/modules/submissions/` pour toute nouvelle entité
+  - Pour les tests, s'inspirer de `submission.service.spec.ts` et `submission.controller.spec.ts`
+  - Pour les validateurs, voir `submissions/validators/`
+  - Pour les guards, voir `src/common/guards/`
+
+- **Objectif**
+  - Garantir une homogénéité maximale dans le codebase
+  - Faciliter la maintenance, la relecture et l'évolution du projet
+  - Réduire les risques d'erreurs liées à des divergences de structure ou de conventions
+  - Centraliser les mécanismes d'autorisation et d'authentification

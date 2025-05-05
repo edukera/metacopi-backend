@@ -1,0 +1,26 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Validation des tâches
+
+- **Toujours obtenir une validation explicite avant de marquer comme terminé**
+  - Ne jamais marquer une tâche ou sous-tâche comme "done" sans validation explicite de l'utilisateur
+  - Présenter le travail effectué et attendre une confirmation claire (comme "OK tu peux marquer comme done")
+  - Les confirmations implicites ne sont pas suffisantes
+
+- **Procédure de validation**
+  - Résumer les changements effectués
+  - Partager les fichiers créés/modifiés
+  - Demander explicitement si le travail est satisfaisant
+  - Attendre une réponse affirmative claire
+
+- **En cas de doute ou d'ambiguïté**
+  - Demander une clarification
+  - Conserver le statut actuel jusqu'à confirmation
+
+- **Si validation refusée**
+  - Prendre en compte les commentaires
+  - Effectuer les corrections demandées
+  - Soumettre à nouveau pour validation

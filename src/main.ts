@@ -41,6 +41,8 @@ async function bootstrap() {
     .addTag('tasks', 'Task management')
     .addTag('submissions', 'Submission management')
     .addTag('corrections', 'Correction management')
+    .addTag('comments', 'Comment management')
+    .addTag('annotations', 'Annotation management')
     .addTag('task-resources', 'Task resource management')
     .addTag('audit-logs', 'Audit logs management')
     .addTag('storage', 'S3 storage management')

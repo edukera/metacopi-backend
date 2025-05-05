@@ -11,6 +11,7 @@ import { MembershipModule } from './modules/memberships/membership.module';
 import { TaskModule } from './modules/tasks/task.module';
 import { SubmissionModule } from './modules/submissions/submission.module';
 import { CorrectionModule } from './modules/corrections/correction.module';
+import { CommentModule } from './modules/comments/comment.module';
 import { AuditLogModule } from './modules/audit-logs/audit-log.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { LoggingModule, LoggingInterceptor, HttpExceptionFilter } from './modules/logging';
@@ -19,6 +20,7 @@ import { ValidatorsModule } from './common/validators/validators.module';
 import { JwtAuthGuard } from './common/guards';
 import { GuardsModule } from './common/guards.module';
 import { AuditLogInterceptor } from './common/interceptors';
+import { AnnotationModule } from './modules/annotations/annotation.module';
 
 @Module({
   imports: [
@@ -31,12 +33,14 @@ import { AuditLogInterceptor } from './common/interceptors';
     TaskModule,
     SubmissionModule,
     CorrectionModule,
+    CommentModule,
     AuditLogModule,
     LoggingModule,
     StorageModule,
     TaskResourceModule,
     GuardsModule,
     ValidatorsModule,
+    AnnotationModule,
   ],
   controllers: [AppController],
   providers: [

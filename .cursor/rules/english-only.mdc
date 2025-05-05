@@ -1,0 +1,46 @@
+---
+description: Use clear and simple US English for all code, comments, and GitHub content to ensure international readability.
+globs: ["src/**/*", "*.md", "*.ts", "*.js", "*.tsx", "*.jsx"]
+alwaysApply: true
+---
+
+# 🌐 Write Everything in Clear US English
+
+This project follows a strict language guideline to maximize readability and accessibility for an international developer audience.
+
+## ✅ Requirements
+
+- Use **standard American English (US)** in all code, comments, commit messages, PRs, and documentation.
+- Prefer **simple, unambiguous vocabulary**.
+- Avoid:
+  - Slang or idioms
+  - Cultural references
+  - Non-English words (unless part of a name or identifier)
+- Use **present simple tense** in comments and documentation (e.g., "Returns the user ID", not "Has returned the user ID").
+
+## ✅ Naming conventions
+
+- All variable, function, class, and file names must be in **clear and descriptive English**.
+- Use consistent naming patterns across the codebase.
+
+## ✅ Examples
+
+// ✅ DO: Clear and simple
+// Returns the list of users
+
+// ❌ DON'T: Confusing or idiomatic
+// Grabs the user list from upstream
+
+// ✅ DO: Descriptive identifier
+const totalAmount = calculateTotal(items);
+
+## 📌 Applies to
+
+- All source code (identifiers, variable names, etc.)
+- All inline and block comments
+- All Markdown documentation
+- All GitHub interactions: commits, PRs, issues
+
+## 🎯 Goal
+
+Ensure that developers from any background can easily read, understand, and contribute to this project.

@@ -1,0 +1,76 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Standardisation des Logs
+
+- **Toujours utiliser le Logger de NestJS au lieu de console.log dans le code d'application**
+  - Cette règle s'applique strictement au code dans `src/`
+  - Importer le Logger de NestJS dans chaque classe qui nécessite des logs
+  - Le Logger permet une meilleure catégorisation et filtrage des logs
+  - Les logs sont formatés de manière cohérente
+
+```typescript
+// ✅ DO: Utiliser le Logger de NestJS
+import { Logger } from '@nestjs/common';
+
+export class UserService {
+  private readonly logger = new Logger(UserService.name);
+  
+  async findAll() {
+    this.logger.log('Retrieving all users');
+    // ...
+  }
+  
+  async handleError(error: Error) {
+    this.logger.error(`Error occurred: ${error.message}`, error.stack);
+    // ...
+  }
+}
+
+// ❌ DON'T: Utiliser console.log/error/warn dans le code d'application
+export class UserRepository {
+  async findById(id: string) {
+    console.log(`Finding user with id ${id}`); // À éviter absolument dans src/
+    // ...
+  }
+}
+```
+
+## Niveaux de Log à Utiliser
+
+- **`logger.log()`** - Pour les informations générales et les événements normaux
+- **`logger.debug()`** - Pour les détails utiles pendant le développement et débogage
+- **`logger.warn()`** - Pour les situations non-bloquantes mais problématiques
+- **`logger.error()`** - Pour les erreurs qui affectent le fonctionnement
+- **`logger.verbose()`** - Pour les détails très spécifiques (rarement utilisé)
+
+## Bonnes Pratiques
+
+- **Nommer les loggers** avec le nom de la classe pour faciliter le filtrage
+  ```typescript
+  private readonly logger = new Logger(ServiceName.name);
+  ```
+
+- **Contexte** : Fournir un contexte suffisant dans chaque message de log
+  ```typescript
+  // ✅ DO: Fournir un contexte clair
+  this.logger.log(`User ${userId} updated profile successfully`);
+  
+  // ❌ DON'T: Messages vagues
+  this.logger.log('Updated');
+  ```
+
+- **Données sensibles** : Ne jamais logger de données sensibles (mots de passe, tokens, etc.)
+
+- **Format** : Structurer les messages de log de manière cohérente et lisible
+  ```typescript
+  // Format recommandé pour les actions
+  this.logger.log(`[${action}] ${sujet} ${résultat}`);
+  ```
+
+## Remarque sur les Tests
+
+- L'utilisation de `console.log` est tolérée dans les tests et les utilitaires de test
+- Néanmoins, pour une cohérence globale, il est recommandé d'adopter le même style de logging dans l'ensemble du projet
