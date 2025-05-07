@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 - **Toute nouvelle entité doit suivre le modèle du module `submissions`**
   - La structure des fichiers et dossiers doit être identique :

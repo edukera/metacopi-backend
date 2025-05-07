@@ -1,16 +1,20 @@
-import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Inject, Logger, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { REQUEST } from '@nestjs/core';
 import { Submission, SubmissionStatus } from './submission.schema';
 import { CreateSubmissionDto, UpdateSubmissionDto } from './submission.dto';
 import { CorrectionService } from '../corrections/correction.service';
+import { TaskService } from '../tasks/task.service';
 
 @Injectable()
 export class SubmissionService {
+  private readonly logger = new Logger(SubmissionService.name);
+
   constructor(
     @InjectModel(Submission.name) private submissionModel: Model<Submission>,
     private correctionService: CorrectionService,
+    @Inject(forwardRef(() => TaskService)) private taskService: TaskService,
     @Inject(REQUEST) private request,
   ) {}
 
@@ -147,5 +151,36 @@ export class SubmissionService {
     
     // Delete the submissions
     await this.submissionModel.deleteMany({ taskId }).exec();
+  }
+
+  /**
+   * Trouve toutes les soumissions pour une classe spécifique
+   * @param classId ID de la classe
+   * @returns Liste des soumissions pour la classe
+   */
+  async findByClass(classId: string): Promise<Submission[]> {
+    this.logger.debug(`Finding submissions for class: ${classId}`);
+    
+    try {
+      // 1. Trouver toutes les tâches de cette classe
+      const tasks = await this.taskService.findByClass(classId);
+      
+      if (!tasks || tasks.length === 0) {
+        this.logger.debug(`No tasks found for class ${classId}`);
+        return [];
+      }
+      
+      // 2. Extraire les IDs des tâches
+      const taskIds = tasks.map(task => task._id.toString());
+      this.logger.debug(`Found ${taskIds.length} tasks for class ${classId}`);
+      
+      // 3. Trouver toutes les soumissions pour ces tâches
+      return this.submissionModel.find({
+        taskId: { $in: taskIds }
+      }).exec();
+    } catch (error) {
+      this.logger.error(`Error finding submissions by class: ${error.message}`, error.stack);
+      return [];
+    }
   }
 } 

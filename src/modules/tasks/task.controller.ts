@@ -7,7 +7,7 @@ import { CheckPermission } from '../../common/guards/permission.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('tasks')
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
 @Controller('tasks')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
@@ -85,7 +85,6 @@ export class TaskController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {
     await this.taskService.remove(id);
-    return;
   }
 
   @Patch(':id/archive')

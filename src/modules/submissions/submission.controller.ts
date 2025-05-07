@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query, UseGuards } from '@nestjs/common';
 import { SubmissionService } from './submission.service';
 import { CreateSubmissionDto, UpdateSubmissionDto } from './submission.dto';
 import { Submission } from './submission.schema';
-import { AdminOnly, AuthenticatedUser, RequirePermission } from '../../common/decorators';
+import { AuthenticatedUser, SetPermission } from '../../common/decorators';
 import { Permission } from '../../common/permissions.enum';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { JwtAuthGuard, SubmissionAccessGuard } from '../../common/guards';
 
 @ApiTags('submissions')
 @ApiBearerAuth()
@@ -19,20 +20,31 @@ export class SubmissionController {
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
-  @AuthenticatedUser
-  @RequirePermission(Permission.CREATE_SUBMISSIONS, 'create')
+  @UseGuards(JwtAuthGuard, SubmissionAccessGuard)
+  @SetPermission(Permission.CREATE_SUBMISSIONS, 'create')
   async create(@Body() createSubmissionDto: CreateSubmissionDto): Promise<Submission> {
     return this.submissionService.create(createSubmissionDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all submissions' })
-  @ApiResponse({ status: 200, description: 'List of all submissions.', type: [Submission] })
+  @ApiOperation({ summary: 'Get all submissions with optional filtering' })
+  @ApiQuery({ name: 'taskId', required: false, description: 'Filter submissions by task ID' })
+  @ApiQuery({ name: 'classId', required: false, description: 'Filter submissions by class ID' })
+  @ApiResponse({ status: 200, description: 'List of submissions.', type: [Submission] })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
-  @AdminOnly
-  @RequirePermission(Permission.READ_SUBMISSIONS, 'list')
-  async findAll(): Promise<Submission[]> {
+  @UseGuards(JwtAuthGuard, SubmissionAccessGuard)
+  @SetPermission(Permission.READ_SUBMISSIONS, 'list')
+  async findAll(
+    @Query('taskId') taskId?: string,
+    @Query('classId') classId?: string
+  ): Promise<Submission[]> {
+    if (taskId) {
+      return this.submissionService.findByTask(taskId);
+    }
+    if (classId) {
+      return this.submissionService.findByClass(classId);
+    }
     return this.submissionService.findAll();
   }
 
@@ -43,8 +55,8 @@ export class SubmissionController {
   @ApiResponse({ status: 404, description: 'Submission not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
-  @AuthenticatedUser
-  @RequirePermission(Permission.READ_SUBMISSIONS, 'read')
+  @UseGuards(JwtAuthGuard, SubmissionAccessGuard)
+  @SetPermission(Permission.READ_SUBMISSIONS, 'read')
   async findOne(@Param('id') id: string): Promise<Submission> {
     return this.submissionService.findOne(id);
   }
@@ -55,8 +67,8 @@ export class SubmissionController {
   @ApiResponse({ status: 200, description: 'List of submissions for the specified task.', type: [Submission] })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
-  @AuthenticatedUser
-  @RequirePermission(Permission.READ_SUBMISSIONS, 'read')
+  @UseGuards(JwtAuthGuard, SubmissionAccessGuard)
+  @SetPermission(Permission.READ_SUBMISSIONS, 'read')
   async findByTask(@Param('taskId') taskId: string): Promise<Submission[]> {
     return this.submissionService.findByTask(taskId);
   }
@@ -67,8 +79,8 @@ export class SubmissionController {
   @ApiResponse({ status: 200, description: 'List of submissions for the specified student.', type: [Submission] })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
-  @AuthenticatedUser
-  @RequirePermission(Permission.READ_SUBMISSIONS, 'read')
+  @UseGuards(JwtAuthGuard, SubmissionAccessGuard)
+  @SetPermission(Permission.READ_SUBMISSIONS, 'read')
   async findByStudent(@Param('studentId') studentId: string): Promise<Submission[]> {
     return this.submissionService.findByStudent(studentId);
   }
@@ -81,13 +93,25 @@ export class SubmissionController {
   @ApiResponse({ status: 404, description: 'Submission not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
-  @AuthenticatedUser
-  @RequirePermission(Permission.READ_SUBMISSIONS, 'read')
+  @UseGuards(JwtAuthGuard, SubmissionAccessGuard)
+  @SetPermission(Permission.READ_SUBMISSIONS, 'read')
   async findByStudentAndTask(
     @Param('studentId') studentId: string,
     @Param('taskId') taskId: string,
   ): Promise<Submission> {
     return this.submissionService.findByStudentAndTask(studentId, taskId);
+  }
+
+  @Get('class/:classId')
+  @ApiOperation({ summary: 'Get all submissions for a specific class' })
+  @ApiParam({ name: 'classId', description: 'Class ID', example: '507f1f77bcf86cd799439010' })
+  @ApiResponse({ status: 200, description: 'List of submissions for the specified class.', type: [Submission] })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
+  @UseGuards(JwtAuthGuard, SubmissionAccessGuard)
+  @SetPermission(Permission.READ_SUBMISSIONS, 'read')
+  async findByClass(@Param('classId') classId: string): Promise<Submission[]> {
+    return this.submissionService.findByClass(classId);
   }
 
   @Patch(':id')
@@ -99,8 +123,8 @@ export class SubmissionController {
   @ApiResponse({ status: 404, description: 'Submission not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
-  @AuthenticatedUser
-  @RequirePermission(Permission.UPDATE_SUBMISSIONS, 'update')
+  @UseGuards(JwtAuthGuard, SubmissionAccessGuard)
+  @SetPermission(Permission.UPDATE_SUBMISSIONS, 'update')
   async update(
     @Param('id') id: string,
     @Body() updateSubmissionDto: UpdateSubmissionDto,
@@ -115,8 +139,8 @@ export class SubmissionController {
   @ApiResponse({ status: 404, description: 'Submission not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
-  @AdminOnly
-  @RequirePermission(Permission.DELETE_SUBMISSIONS, 'delete')
+  @UseGuards(JwtAuthGuard, SubmissionAccessGuard)
+  @SetPermission(Permission.DELETE_SUBMISSIONS, 'delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {
     await this.submissionService.remove(id);

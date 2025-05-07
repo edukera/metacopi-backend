@@ -1,22 +1,21 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException, Logger } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { MembershipService } from '../../modules/memberships/membership.service';
 import { TaskService } from '../../modules/tasks/task.service';
 import { SubmissionService } from '../../modules/submissions/submission.service';
 import { CorrectionService } from '../../modules/corrections/correction.service';
-import { CommentService } from '../../modules/comments/comment.service';
 import { UserRole } from '../../modules/users/user.schema';
 import { MembershipRole } from '../../modules/memberships/membership.schema';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
-export class CommentAccessGuard implements CanActivate {
-  private readonly logger = new Logger(CommentAccessGuard.name);
+export class CorrectionAccessGuard implements CanActivate {
+  private readonly logger = new Logger(CorrectionAccessGuard.name);
 
   constructor(
     private readonly membershipService: MembershipService,
     private readonly taskService: TaskService,
     private readonly submissionService: SubmissionService,
     private readonly correctionService: CorrectionService,
-    private readonly commentService: CommentService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -37,32 +36,30 @@ export class CommentAccessGuard implements CanActivate {
     }
     
     // Extraire les paramètres pertinents
-    const correctionId = request.params.id; // ID de la correction dans l'URL
-    const commentId = request.params.commentId; // ID du commentaire dans l'URL
+    const correctionId = request.params.id;
+    const submissionId = request.params.submissionId;
+    const teacherId = request.params.teacherId;
     
-    this.logger.debug(`Access check: userId=${userId}, method=${method}, correctionId=${correctionId}, commentId=${commentId}`);
+    this.logger.debug(`Access check: userId=${userId}, method=${method}, correctionId=${correctionId}, submissionId=${submissionId}, teacherId=${teacherId}`);
     
-    // Cas 1: Accès à un commentaire spécifique par ID
-    if (commentId) {
-      // Si nous avons besoin de récupérer le commentaire pour d'autres vérifications
-      const comment = await this.commentService.findOne(commentId);
-      
-      // Si l'utilisateur est l'auteur du commentaire
-      if (comment.createdBy === userId) {
-        return true;
-      }
-      
-      // Sinon, vérifier l'accès à la correction associée
-      return this.checkCorrectionAccess(userId, comment.correctionId, method);
+    // Si l'utilisateur est l'enseignant référencé, autoriser l'accès
+    if (teacherId && teacherId === userId) {
+      return true;
     }
     
-    // Cas 2: Accès à tous les commentaires d'une correction
+    // Cas 1: Accès à une correction spécifique par ID
     if (correctionId) {
       return this.checkCorrectionAccess(userId, correctionId, method);
     }
     
-    // Si aucun identifiant n'est fourni, refuser l'accès
-    throw new ForbiddenException('Missing correction or comment identifier');
+    // Cas 2: Accès à une correction via l'ID de soumission
+    if (submissionId) {
+      return this.checkSubmissionAccess(userId, submissionId, method);
+    }
+    
+    // Pour les autres cas, on vérifie uniquement si l'utilisateur est un enseignant
+    request.userAccessFilter = { userId };
+    return true;
   }
   
   // Vérifie l'accès à une correction spécifique
@@ -88,6 +85,26 @@ export class CommentAccessGuard implements CanActivate {
       return true;
     }
     
-    throw new ForbiddenException('You do not have permission to access comments for this correction');
+    throw new ForbiddenException('You do not have permission to access this correction');
+  }
+  
+  // Vérifie l'accès à une correction via l'ID de soumission
+  private async checkSubmissionAccess(userId: string, submissionId: string, method: string): Promise<boolean> {
+    const submission = await this.submissionService.findOne(submissionId);
+    
+    // Si l'utilisateur est l'étudiant concerné (GET uniquement)
+    if (method === 'GET' && submission.studentId === userId) {
+      return true;
+    }
+    
+    // Si l'utilisateur est enseignant de la classe associée
+    const task = await this.taskService.findOne(submission.taskId);
+    const isTeacher = await this.membershipService.checkMembershipRole(userId, task.classId, MembershipRole.TEACHER);
+    
+    if (isTeacher) {
+      return true;
+    }
+    
+    throw new ForbiddenException('You do not have permission to access corrections for this submission');
   }
 } 

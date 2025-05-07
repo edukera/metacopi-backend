@@ -1,0 +1,14 @@
+{
+  "name": "metacopi-scripts",
+  "version": "1.0.0",
+  "description": "Scripts utilitaires pour Metacopi",
+  "private": true,
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "scripts": {
+    "login-classes": "node login-and-fetch-classes.js",
+    "login-classes-tasks": "node login-classes-and-tasks.js",
+    "login-full": "node login-classes-tasks-submissions.js"
+  }
+} 

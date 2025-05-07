@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Task, TaskSchema } from './task.schema';
 import { TaskService } from './task.service';
@@ -13,7 +13,7 @@ import { TaskStatusTransitionValidator } from './validators/task-status-transiti
       { name: Task.name, schema: TaskSchema },
     ]),
     MembershipModule,
-    SubmissionModule,
+    forwardRef(() => SubmissionModule),
   ],
   controllers: [TaskController],
   providers: [TaskService, TaskStatusTransitionValidator],

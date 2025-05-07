@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Inject, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task, TaskStatus } from './task.schema';
@@ -12,7 +12,7 @@ export class TaskService {
   constructor(
     @InjectModel(Task.name) private taskModel: Model<Task>,
     private membershipService: MembershipService,
-    private submissionService: SubmissionService,
+    @Inject(forwardRef(() => SubmissionService)) private submissionService: SubmissionService,
     @Inject(REQUEST) private request,
   ) {}
 

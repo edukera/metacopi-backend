@@ -15,7 +15,7 @@ const PERMISSIONS = {
   },
   [UserRole.USER]: {
     'User': ['read'],
-    'Class': ['read', 'join'],
+    'Class': ['create', 'read', 'join', 'list', 'update', 'delete', 'archive', 'regenerateCode'],
     'Task': ['read'],
     'Membership': ['read', 'create'],
     'Submission': [], // Empty by default, will be defined based on Membership context

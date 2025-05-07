@@ -8,6 +8,8 @@ import { TokenPayload, AuthTokens, LoginDto } from './dto/auth.dto';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
+  // Simple list of logged out user IDs
+  private invalidatedUserIds: Set<string> = new Set();
 
   constructor(
     private userService: UserService,
@@ -43,7 +45,21 @@ export class AuthService {
       if (!user) {
         throw new UnauthorizedException('Invalid credentials');
       }
+      
+      // If user was in the logged out list, remove them
+      if (this.invalidatedUserIds.has(user.id)) {
+        this.invalidatedUserIds.delete(user.id);
+        this.logger.debug(`User ${user.id} reconnected, removing from invalidated list`);
+      }
+      
       return this.generateTokens(user);
+    }
+    
+    // If user was in the logged out list, remove them
+    const user = loginDto as any;
+    if (this.invalidatedUserIds.has(user.id)) {
+      this.invalidatedUserIds.delete(user.id);
+      this.logger.debug(`User ${user.id} reconnected, removing from invalidated list`);
     }
     
     // If it's already a validated user, directly generate tokens
@@ -60,6 +76,11 @@ export class AuthService {
         }
       );
       
+      // Check if user is logged out
+      if (this.invalidatedUserIds.has(payload.sub)) {
+        throw new UnauthorizedException('User has been logged out');
+      }
+      
       // Get the corresponding user
       const user = await this.userService.findById(payload.sub);
       
@@ -72,6 +93,18 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
+  }
+
+  /**
+   * Logs out a user by adding their ID to the list of logged out users.
+   * For a more robust implementation in production, use Redis or another caching solution.
+   * 
+   * @param userId ID of the user to log out
+   */
+  async invalidateUserTokens(userId: string): Promise<void> {
+    this.logger.debug(`Invalidating tokens for user: ${userId}`);
+    this.invalidatedUserIds.add(userId);
+    this.logger.debug(`User ${userId} added to invalidated list`);
   }
 
   private generateTokens(user: Omit<User, 'password'>): AuthTokens {

@@ -3,20 +3,18 @@ import { MembershipService } from '../../modules/memberships/membership.service'
 import { TaskService } from '../../modules/tasks/task.service';
 import { SubmissionService } from '../../modules/submissions/submission.service';
 import { CorrectionService } from '../../modules/corrections/correction.service';
-import { CommentService } from '../../modules/comments/comment.service';
 import { UserRole } from '../../modules/users/user.schema';
 import { MembershipRole } from '../../modules/memberships/membership.schema';
 
 @Injectable()
-export class CommentAccessGuard implements CanActivate {
-  private readonly logger = new Logger(CommentAccessGuard.name);
+export class AnnotationAccessGuard implements CanActivate {
+  private readonly logger = new Logger(AnnotationAccessGuard.name);
 
   constructor(
     private readonly membershipService: MembershipService,
     private readonly taskService: TaskService,
     private readonly submissionService: SubmissionService,
     private readonly correctionService: CorrectionService,
-    private readonly commentService: CommentService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -37,32 +35,17 @@ export class CommentAccessGuard implements CanActivate {
     }
     
     // Extraire les paramètres pertinents
-    const correctionId = request.params.id; // ID de la correction dans l'URL
-    const commentId = request.params.commentId; // ID du commentaire dans l'URL
+    const correctionId = request.params.correctionId; // ID de la correction dans l'URL
     
-    this.logger.debug(`Access check: userId=${userId}, method=${method}, correctionId=${correctionId}, commentId=${commentId}`);
+    this.logger.debug(`Access check: userId=${userId}, method=${method}, correctionId=${correctionId}`);
     
-    // Cas 1: Accès à un commentaire spécifique par ID
-    if (commentId) {
-      // Si nous avons besoin de récupérer le commentaire pour d'autres vérifications
-      const comment = await this.commentService.findOne(commentId);
-      
-      // Si l'utilisateur est l'auteur du commentaire
-      if (comment.createdBy === userId) {
-        return true;
-      }
-      
-      // Sinon, vérifier l'accès à la correction associée
-      return this.checkCorrectionAccess(userId, comment.correctionId, method);
-    }
-    
-    // Cas 2: Accès à tous les commentaires d'une correction
+    // Vérifier l'accès à la correction associée aux annotations
     if (correctionId) {
       return this.checkCorrectionAccess(userId, correctionId, method);
     }
     
     // Si aucun identifiant n'est fourni, refuser l'accès
-    throw new ForbiddenException('Missing correction or comment identifier');
+    throw new ForbiddenException('Missing correction identifier');
   }
   
   // Vérifie l'accès à une correction spécifique
@@ -88,6 +71,6 @@ export class CommentAccessGuard implements CanActivate {
       return true;
     }
     
-    throw new ForbiddenException('You do not have permission to access comments for this correction');
+    throw new ForbiddenException('You do not have permission to access annotations for this correction');
   }
 } 

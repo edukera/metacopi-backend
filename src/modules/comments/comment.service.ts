@@ -5,12 +5,19 @@ import { REQUEST } from '@nestjs/core';
 import { Comment } from './comment.schema';
 import { CreateCommentDto, UpdateCommentDto } from './comment.dto';
 import { CorrectionService } from '../corrections/correction.service';
+import { SubmissionService } from '../submissions/submission.service';
+import { TaskService } from '../tasks/task.service';
+import { MembershipService } from '../memberships/membership.service';
+import { MembershipRole } from '../memberships/membership.schema';
 
 @Injectable()
 export class CommentService {
   constructor(
     @InjectModel(Comment.name) private commentModel: Model<Comment>,
     private correctionService: CorrectionService,
+    private submissionService: SubmissionService,
+    private taskService: TaskService,
+    private membershipService: MembershipService,
     @Inject(REQUEST) private request,
   ) {}
 
@@ -25,16 +32,7 @@ export class CommentService {
       createCommentDto.createdBy = this.request.user.sub;
     }
 
-    // Check if the user has access to the correction
-    const userId = this.request.user.sub;
-    const hasAccess = await this.checkTeacherAccess(userId, createCommentDto.correctionId);
-    
-    if (!hasAccess) {
-      throw new ForbiddenException(
-        'You do not have permission to add comments to this correction',
-      );
-    }
-
+    // Les vérifications d'accès sont maintenant gérées par le guard
     const newComment = new this.commentModel(createCommentDto);
     return newComment.save();
   }
@@ -58,17 +56,7 @@ export class CommentService {
       throw new NotFoundException(`Comment with ID ${id} not found`);
     }
     
-    // Check if the user has access to the comment
-    const userId = this.request.user.sub;
-    const hasTeacherAccess = await this.checkTeacherAccess(userId, comment.correctionId);
-    const hasStudentAccess = await this.checkStudentAccess(userId, comment.correctionId);
-    
-    if (!hasTeacherAccess && !hasStudentAccess) {
-      throw new ForbiddenException(
-        'You do not have permission to view this comment',
-      );
-    }
-    
+    // Les vérifications d'accès sont maintenant gérées par le guard
     return comment;
   }
 
@@ -88,17 +76,7 @@ export class CommentService {
       throw error;
     }
     
-    // Check if the user has access to the correction
-    const userId = this.request.user.sub;
-    const hasTeacherAccess = await this.checkTeacherAccess(userId, correctionId);
-    const hasStudentAccess = await this.checkStudentAccess(userId, correctionId);
-    
-    if (!hasTeacherAccess && !hasStudentAccess) {
-      throw new ForbiddenException(
-        'You do not have permission to view comments for this correction',
-      );
-    }
-    
+    // Les vérifications d'accès sont maintenant gérées par le guard
     return this.commentModel.find({ correctionId }).exec();
   }
 
@@ -112,19 +90,10 @@ export class CommentService {
     id: string,
     updateCommentDto: UpdateCommentDto,
   ): Promise<Comment> {
+    // Vérifier que le commentaire existe
     const comment = await this.findOne(id);
     
-    // Only teachers and the creator of the comment can update it
-    const userId = this.request.user.sub;
-    const hasTeacherAccess = await this.checkTeacherAccess(userId, comment.correctionId);
-    const isCreator = comment.createdBy === userId;
-    
-    if (!hasTeacherAccess && !isCreator) {
-      throw new ForbiddenException(
-        'You do not have permission to update this comment',
-      );
-    }
-    
+    // Les vérifications d'accès sont maintenant gérées par le guard
     const updatedComment = await this.commentModel
       .findByIdAndUpdate(id, updateCommentDto, { new: true })
       .exec();
@@ -142,19 +111,10 @@ export class CommentService {
    * @returns Removed comment
    */
   async remove(id: string): Promise<Comment> {
+    // Vérifier que le commentaire existe
     const comment = await this.findOne(id);
     
-    // Only teachers and the creator of the comment can delete it
-    const userId = this.request.user.sub;
-    const hasTeacherAccess = await this.checkTeacherAccess(userId, comment.correctionId);
-    const isCreator = comment.createdBy === userId;
-    
-    if (!hasTeacherAccess && !isCreator) {
-      throw new ForbiddenException(
-        'You do not have permission to delete this comment',
-      );
-    }
-    
+    // Les vérifications d'accès sont maintenant gérées par le guard
     const deletedComment = await this.commentModel
       .findByIdAndDelete(id)
       .exec();
@@ -171,16 +131,7 @@ export class CommentService {
    * @param correctionId Correction ID
    */
   async removeByCorrection(correctionId: string): Promise<void> {
-    // Check if user has teacher access to the correction
-    const userId = this.request.user.sub;
-    const hasTeacherAccess = await this.checkTeacherAccess(userId, correctionId);
-    
-    if (!hasTeacherAccess) {
-      throw new ForbiddenException(
-        'You do not have permission to delete comments for this correction',
-      );
-    }
-    
+    // Les vérifications d'accès sont maintenant gérées par le guard
     await this.commentModel.deleteMany({ correctionId }).exec();
   }
 
@@ -195,16 +146,17 @@ export class CommentService {
       // Get the correction
       const correction = await this.correctionService.findOne(correctionId);
       
-      // If the user is the teacher who created the correction, they have access
+      // Si l'utilisateur est l'enseignant qui a créé la correction, il a accès
       if (correction.correctedById === userId) {
         return true;
       }
       
-      // Here you would check if the user is a teacher in the class associated with the correction
-      // This would require integrating with the class/membership service
-      // For now, we'll just check if the user is the corrector
+      // Vérifier si l'utilisateur est enseignant dans la classe associée
+      const submission = await this.submissionService.findOne(correction.submissionId);
+      const task = await this.taskService.findOne(submission.taskId);
+      const isTeacher = await this.membershipService.checkMembershipRole(userId, task.classId, MembershipRole.TEACHER);
       
-      return false;
+      return isTeacher;
     } catch (error) {
       if (error instanceof NotFoundException) {
         return false;
@@ -224,15 +176,10 @@ export class CommentService {
       // Get the correction
       const correction = await this.correctionService.findOne(correctionId);
       
-      // The student access should be determined by checking if the user is the owner of the submission
-      // This would require integrating with the submission service to check ownership
-      // For now, we'll just implement a placeholder logic
+      // Vérifier si l'utilisateur est l'étudiant propriétaire de la soumission
+      const submission = await this.submissionService.findOne(correction.submissionId);
       
-      // Note: In a real implementation, you would query the submission service
-      // to see if the userId matches the studentId of the submission with ID correction.submissionId
-      
-      // Placeholder: return false to indicate that the student doesn't have access
-      return false;
+      return submission.studentId === userId;
     } catch (error) {
       if (error instanceof NotFoundException) {
         return false;

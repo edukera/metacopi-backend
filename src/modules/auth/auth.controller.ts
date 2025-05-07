@@ -75,6 +75,37 @@ export class AuthController {
     }
   }
 
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'User logout', description: 'Invalidates the connected user\'s tokens' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Logout successful',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'Logout successful' }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
+  async logout(@CurrentUser() user: User) {
+    this.logger.debug(`Logout attempt for user id: ${user.id}`);
+    
+    try {
+      await this.authService.invalidateUserTokens(user.id);
+      return { message: 'Logout successful' };
+    } catch (error) {
+      this.logger.error(`Logout error for user ${user.id}: ${error.message}`);
+      throw new BadRequestException({
+        message: 'Error during logout',
+        debug: `Error during logout: ${error.message}`
+      });
+    }
+  }
+
   @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.CREATED)
@@ -135,6 +166,36 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
   getProfile(@CurrentUser() user: User) {
+    return user;
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ 
+    summary: 'Get current user information', 
+    description: 'Retrieves the user information associated with the bearer token in the Authorization header' 
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'User retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', example: '605a1cb9d4d5d73598045618' },
+        email: { type: 'string', example: 'user@example.com' },
+        firstName: { type: 'string', example: 'John' },
+        lastName: { type: 'string', example: 'Doe' },
+        role: { type: 'string', example: 'user' },
+        emailVerified: { type: 'boolean', example: true },
+        createdAt: { type: 'string', format: 'date-time', example: '2023-01-01T12:00:00Z' },
+        updatedAt: { type: 'string', format: 'date-time', example: '2023-01-01T12:00:00Z' }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
+  getCurrentUser(@CurrentUser() user: User) {
+    this.logger.debug(`Getting current user: ${user.id}`);
     return user;
   }
 } 

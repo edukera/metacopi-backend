@@ -44,3 +44,8 @@ const totalAmount = calculateTotal(items);
 ## 🎯 Goal
 
 Ensure that developers from any background can easily read, understand, and contribute to this project.
+
+## French prompting
+Les discussions lorsque les prompts initiaux sont en francais, reste en francais. Seul le code et les interaction avec les autres outils sont en anglais seulement
+
+

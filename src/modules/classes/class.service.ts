@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException, BadRequestException, UnauthorizedException, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, UnauthorizedException, Inject, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Class } from './class.schema';
 import { CreateClassDto, UpdateClassDto } from './class.dto';
 import { MembershipService } from '../memberships/membership.service';
@@ -9,6 +9,8 @@ import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class ClassService {
+  private readonly logger = new Logger(ClassService.name);
+
   constructor(
     @InjectModel(Class.name) private classModel: Model<Class>,
     private membershipService: MembershipService,
@@ -38,7 +40,8 @@ export class ClassService {
 
   async findAll(archived: boolean = false): Promise<Class[]> {
     // If the user is an admin, they can see all classes
-    const { sub: userId, role } = this.request.user;
+    const userId = this.request.user.id;
+    const role = this.request.user.role;
 
     if (role === 'admin') {
       return this.classModel.find({ archived }).exec();
@@ -46,7 +49,16 @@ export class ClassService {
       // For normal users, get the classes they are associated with
       const memberships = await this.membershipService.findByUser(userId);
       const classIds = memberships.map(m => m.classId);
-      return this.classModel.find({ _id: { $in: classIds }, archived }).exec();
+            
+      // Convert class IDs from strings to ObjectIds if they aren't already
+      const classObjectIds = classIds.map(id => 
+        typeof id === 'string' ? new Types.ObjectId(id) : id
+      );
+      
+      return this.classModel.find({ 
+        _id: { $in: classObjectIds }, 
+        archived 
+      }).exec();
     }
   }
 

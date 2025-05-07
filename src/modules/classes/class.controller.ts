@@ -1,16 +1,27 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, HttpCode, HttpStatus, Query, Inject } from '@nestjs/common';
 import { ClassService } from './class.service';
 import { CreateClassDto, UpdateClassDto, JoinClassDto, ClassResponseDto } from './class.dto';
 import { Class } from './class.schema';
 import { AdminOnly, AuthenticatedUser } from '../../common/decorators';
 import { CheckPermission } from '../../common/guards/permission.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { REQUEST } from '@nestjs/core';
+import { Model, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { MembershipService } from '../memberships/membership.service';
+import { Membership } from '../memberships/membership.schema';
 
 @ApiTags('classes')
 @Controller('classes')
 @ApiBearerAuth('JWT-auth')
 export class ClassController {
-  constructor(private readonly classService: ClassService) {}
+  constructor(
+    private readonly classService: ClassService,
+    @Inject(REQUEST) private readonly request,
+    @InjectModel(Class.name) private readonly classModel: Model<Class>,
+    @InjectModel(Membership.name) private readonly membershipModel: Model<Membership>,
+    private readonly membershipService: MembershipService,
+  ) {}
 
   @Get()
   @AuthenticatedUser

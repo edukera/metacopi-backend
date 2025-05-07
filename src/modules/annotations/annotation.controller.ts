@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, NotFoundException, BadRequestException, UseGuards } from '@nestjs/common';
 import { AnnotationService } from './annotation.service';
 import { CreateAnnotationDto, UpdateAnnotationDto } from './annotation.dto';
 import { Annotation } from './annotation.schema';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { AdminOnly, AuthenticatedUser, RequirePermission } from '../../common/decorators';
 import { Permission } from '../../common/permissions.enum';
+import { AnnotationAccessGuard } from '../../common/guards';
 
 @ApiTags('annotations')
 @Controller()
@@ -41,7 +42,7 @@ export class AnnotationController {
   @ApiResponse({ status: 200, description: 'List of annotations for the correction' })
   @ApiResponse({ status: 404, description: 'Correction not found' })
   @AuthenticatedUser
-  @RequirePermission(Permission.READ_CORRECTIONS, 'read')
+  @UseGuards(AnnotationAccessGuard)
   async findByCorrection(@Param('correctionId') correctionId: string): Promise<Annotation[]> {
     return this.annotationService.findByCorrection(correctionId);
   }
