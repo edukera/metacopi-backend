@@ -61,6 +61,3 @@ node_modules/
 # Task files
 tasks.json
 /tasks/
-
-# Database seed data with sensitive information
-src/database/seeds/data/seed-data.json

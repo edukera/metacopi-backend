@@ -1,0 +1,166 @@
+{
+  "users": [
+    {
+      "email": "admin@metacopi.com",
+      "password": "Admin123!",
+      "firstName": "Super",
+      "lastName": "Admin",
+      "avatarUrl": "./shadcn.jpg",
+      "role": "admin",
+      "emailVerified": true
+    },
+    {
+      "email": "jean.dupont@monlycee.net",
+      "password": "Teacher123!",
+      "firstName": "Jean",
+      "lastName": "Dupont",
+      "avatarUrl": "./shadcn.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "alice.gribouille@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Alice",
+      "lastName": "Gribouille",
+      "avatarUrl": "./alice_gribouille.jpg",
+      "role": "user",
+      "emailVerified": true
+    }
+  ],
+  "classes": [
+    {
+      "name": "Première 3 Spé Maths",
+      "description": "Cours de mathématiques sur les probabilités",
+      "code": "MATH103",
+      "settings": {
+        "allowLateSubmissions": true,
+        "notifyOnNewSubmissions": true
+      },
+      "startDate": "2023-09-01T00:00:00.000Z",
+      "endDate": "2026-12-31T23:59:59.000Z",
+      "archived": false,
+      "createdBy": "jean.dupont@monlycee.net"
+    }
+  ],
+  "memberships": [
+    {
+      "userEmail": "jean.dupont@monlycee.net",
+      "className": "Première 3 Spé Maths",
+      "role": "teacher",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "alice.gribouille@monlycee.net",
+      "className": "Première 3 Spé Maths",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    }
+  ],
+  "tasks": [
+    {
+      "title": "DS 8 Arbre de Probabilités",
+      "description": "Résoudre l'exercice sur les probabilités",
+      "className": "Première 3 Spé Maths",
+      "createdBy": "jean.dupont@monlycee.net",
+      "status": "published",
+      "dueDate": "2023-10-15T23:59:59.000Z",
+      "points": 20,
+      "tags": ["probability", "calculus"],
+      "metadata": {
+        "difficulty": "medium",
+        "estimatedTime": "2 hours"
+      },
+      "settings": {
+        "allowLateSubmissions": true,
+        "maxAttempts": 3
+      }
+    }
+  ],
+  "submissions": [
+    {
+      "userEmail": "alice.gribouille@monlycee.net",
+      "taskTitle": "DS 8 Arbre de Probabilités",
+      "className": "Première 3 Spé Maths",
+      "rawPages": [
+        "submissions/demo-submission-1/raw-page-1.jpg",
+        "submissions/demo-submission-1/raw-page-2.jpg",
+        "submissions/demo-submission-1/raw-page-3.jpg",
+        "submissions/demo-submission-1/raw-page-4.jpg",
+        "submissions/demo-submission-1/raw-page-5.jpg",
+        "submissions/demo-submission-1/raw-page-6.jpg"
+      ],
+      "processedPages": [
+        "submissions/demo-submission-1/processed-page-1.jpg",
+        "submissions/demo-submission-1/processed-page-2.jpg",
+        "submissions/demo-submission-1/processed-page-3.jpg",
+        "submissions/demo-submission-1/processed-page-4.jpg",
+        "submissions/demo-submission-1/processed-page-5.jpg",
+        "submissions/demo-submission-1/processed-page-6.jpg"
+      ],
+      "status": "submitted",
+      "submittedAt": "2025-05-02T10:00:00.000Z"
+    }
+  ],
+  "corrections": [
+    {
+      "submissionUserEmail": "alice.gribouille@monlycee.net",
+      "submissionTaskTitle": "DS 8 Arbre de Probabilités",
+      "submissionClassName": "Première 3 Spé Maths",
+      "correctorEmail": "jean.dupont@monlycee.net",
+      "grade": 15,
+      "appreciation": "Bon travail Alice ! Attention toutefois à la justification de la question 3.",
+      "status": "in_progress",
+      "correctedAt": "2023-10-12T14:30:00.000Z"
+    }
+  ],
+  "comments": [
+    {
+      "submissionUserEmail": "alice.gribouille@monlycee.net",
+      "submissionTaskTitle": "DS 8 Arbre de Probabilités",
+      "submissionClassName": "Première 3 Spé Maths",
+      "correctorEmail": "jean.dupont@monlycee.net",
+      "authorEmail": "jean.dupont@monlycee.net",
+      "pageNumber": 1,
+      "type": "error",
+      "color": "red",
+      "text": "Votre calcul de dérivée est incorrect. La dérivée de f(x) = x^2 est f'(x) = 2x et non 2x^2. Revoyez les règles de dérivation.",
+      "markdownSource": "Votre calcul de dérivée est incorrect. La dérivée de $f(x) = x^2$ est $f'(x) = 2x$ et non $2x^2$. Revoyez les règles de dérivation.",
+      "isMarkdown": true,
+      "pageY": 100,
+      "annotations": []
+    },
+    {
+      "submissionUserEmail": "alice.gribouille@monlycee.net",
+      "submissionTaskTitle": "DS 8 Arbre de Probabilités",
+      "submissionClassName": "Première 3 Spé Maths",
+      "correctorEmail": "jean.dupont@monlycee.net",
+      "authorEmail": "jean.dupont@monlycee.net",
+      "pageNumber": 1,
+      "type": "ok",
+      "color": "green",
+      "text": "Excellent travail sur cette démonstration !",
+      "markdownSource": "Excellent travail sur cette démonstration !",
+      "isMarkdown": true,
+      "pageY": 200,
+      "annotations": []
+    },
+    {
+      "submissionUserEmail": "alice.gribouille@monlycee.net",
+      "submissionTaskTitle": "DS 8 Arbre de Probabilités",
+      "submissionClassName": "Première 3 Spé Maths",
+      "correctorEmail": "jean.dupont@monlycee.net",
+      "authorEmail": "jean.dupont@monlycee.net",
+      "pageNumber": 1,
+      "type": "warning",
+      "color": "orange",
+      "text": "Attention à l'application de la relation de Chasles pour le calcul des produits scalaires. Rappelez-vous que pour trois vecteurs, on a - La linéarité du produit scalaire permet cette distribution - Assurez-vous de ne pas confondre avec le produit vectoriel qui ne suit pas cette règle de la même façon",
+      "markdownSource": "Attention à l'application de la relation de Chasles pour le calcul des produits scalaires.\n\n- Rappelez-vous que pour trois vecteurs, on a - La linéarité du produit scalaire permet cette distribution\n- Assurez-vous de ne pas confondre avec le produit vectoriel qui ne suit pas cette règle de la même façon",
+      "isMarkdown": true,
+      "pageY": 3000,
+      "annotations": []
+    }
+  ]
+}

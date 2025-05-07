@@ -11,6 +11,9 @@ import { User, UserDocument, UserRole } from '../../modules/users/user.schema';
 import { Class } from '../../modules/classes/class.schema';
 import { Task, TaskStatus } from '../../modules/tasks/task.schema';
 import { Membership, MembershipRole, MembershipStatus } from '../../modules/memberships/membership.schema';
+import { Submission, SubmissionStatus as SubmissionStatusEnum } from '../../modules/submissions/submission.schema';
+import { Correction, CorrectionStatus } from '../../modules/corrections/correction.schema';
+import { Comment, CommentDocument } from '../../modules/comments/comment.schema';
 
 // Interfaces to define the JSON structure
 export interface UserSeedData {
@@ -18,6 +21,7 @@ export interface UserSeedData {
   password: string;
   firstName: string;
   lastName: string;
+  avatarUrl: string;
   role: UserRole;
   emailVerified: boolean;
 }
@@ -54,11 +58,58 @@ export interface MembershipSeedData {
   isActive?: boolean;
 }
 
+export interface SubmissionSeedData {
+  userEmail: string; // Email of the student
+  taskTitle: string; // Title of the task
+  className: string; // Name of the class the task belongs to (to uniquely identify the task)
+  rawPages: string[];
+  processedPages?: string[];
+  status?: SubmissionStatusEnum;
+  submittedAt?: Date;
+  // D'autres champs de CreateSubmissionDto pourraient être ajoutés ici si nécessaire pour le seeding
+}
+
+export interface CorrectionSeedData {
+  submissionUserEmail: string; // Email of the student who made the submission
+  submissionTaskTitle: string; // Title of the task for the submission
+  submissionClassName: string; // Class name for the submission's task
+  correctorEmail: string; // Email of the user who corrects
+  grade?: number;
+  appreciation?: string;
+  status?: string; // e.g., 'draft', 'published'
+  correctedAt?: Date;
+  // Add other fields from CreateCorrectionDto as needed for seeding
+}
+
+export interface CommentSeedData {
+  // Identifier la Correction parente
+  submissionUserEmail: string; 
+  submissionTaskTitle: string;
+  submissionClassName: string;
+  correctorEmail: string;
+
+  // Auteur du commentaire
+  authorEmail: string;
+
+  // Champs du Commentaire
+  pageNumber: number;
+  type: string;
+  color: string;
+  text: string; // Contenu textuel simple/rendu
+  markdownSource?: string; // Contenu Markdown brut
+  isMarkdown: boolean;
+  pageY?: number;
+  annotations?: string[]; // Sera généralement vide pour le seed initial
+}
+
 export interface SeedData {
   users: UserSeedData[];
   classes: ClassSeedData[];
   tasks: TaskSeedData[];
   memberships: MembershipSeedData[];
+  submissions: SubmissionSeedData[];
+  corrections: CorrectionSeedData[];
+  comments: CommentSeedData[];
 }
 
 @Injectable()
@@ -66,12 +117,18 @@ export class DataSeedService {
   private readonly logger = new Logger(DataSeedService.name);
   private readonly userIdMap: Map<string, string> = new Map(); // Map email -> userId
   private readonly classIdMap: Map<string, string> = new Map(); // Map name -> classId
+  private readonly taskIdMap: Map<string, string> = new Map(); // Map title+className -> taskId
+  private readonly submissionIdMap: Map<string, string> = new Map(); // Map studentEmail+taskTitle+className -> submissionId
+  private readonly correctionIdMap: Map<string, string> = new Map(); // Map submissionId+correctorEmail -> correctionId
 
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Class.name) private classModel: Model<Class>,
     @InjectModel(Task.name) private taskModel: Model<Task>,
     @InjectModel(Membership.name) private membershipModel: Model<Membership>,
+    @InjectModel(Submission.name) private submissionModel: Model<Submission>,
+    @InjectModel(Correction.name) private correctionModel: Model<Correction>,
+    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectConnection() private readonly connection: Connection,
   ) {}
 
@@ -101,6 +158,9 @@ export class DataSeedService {
       await this.seedClasses(seedData.classes);
       await this.seedTasks(seedData.tasks);
       await this.seedMemberships(seedData.memberships);
+      await this.seedSubmissions(seedData.submissions);
+      await this.seedCorrections(seedData.corrections);
+      await this.seedComments(seedData.comments);
       
       this.logger.log('Seeding process completed successfully!');
     } catch (error) {
@@ -159,6 +219,7 @@ export class DataSeedService {
           password: hashedPassword,
           firstName: userData.firstName,
           lastName: userData.lastName,
+          avatarUrl: userData.avatarUrl,
           role: userData.role,
           emailVerified: userData.emailVerified,
         });
@@ -260,11 +321,12 @@ export class DataSeedService {
         
         if (existingTask) {
           this.logger.log(`Task ${taskData.title} already exists in class ${taskData.className}.`);
+          this.taskIdMap.set(`${taskData.title}-${taskData.className}`, existingTask._id.toString());
           continue;
         }
         
         // Create the new task
-        await this.taskModel.create({
+        const newTask = await this.taskModel.create({
           title: taskData.title,
           description: taskData.description,
           classId: new Types.ObjectId(classId),
@@ -277,6 +339,7 @@ export class DataSeedService {
           settings: taskData.settings || {},
         });
         
+        this.taskIdMap.set(`${taskData.title}-${taskData.className}`, newTask._id.toString());
         createdCount++;
         this.logger.log(`Task successfully created: ${taskData.title} in class ${taskData.className}`);
       } catch (error) {
@@ -340,5 +403,175 @@ export class DataSeedService {
     }
     
     this.logger.log(`Memberships seeding completed. ${createdCount} memberships created.`);
+  }
+
+  private async seedSubmissions(submissions: SubmissionSeedData[]): Promise<void> {
+    if (!submissions || submissions.length === 0) {
+      this.logger.log('No submissions to create.');
+      return;
+    }
+
+    let createdCount = 0;
+
+    for (const subData of submissions) {
+      try {
+        const studentId = this.userIdMap.get(subData.userEmail);
+        if (!studentId) {
+          this.logger.warn(`User (student) ${subData.userEmail} does not exist. Cannot create submission for task ${subData.taskTitle}.`);
+          continue;
+        }
+
+        const taskId = this.taskIdMap.get(`${subData.taskTitle}-${subData.className}`);
+        if (!taskId) {
+          this.logger.warn(`Task ${subData.taskTitle} in class ${subData.className} does not exist. Cannot create submission.`);
+          continue;
+        }
+
+        // Check if submission already exists for this student and task
+        const submissionKey = `${subData.userEmail}-${subData.taskTitle}-${subData.className}`;
+        const existingSubmission = await this.submissionModel.findOne({
+          studentId: new Types.ObjectId(studentId),
+          taskId: new Types.ObjectId(taskId),
+        });
+
+        if (existingSubmission) {
+          this.logger.log(`Submission for task ${subData.taskTitle} by student ${subData.userEmail} already exists.`);
+          this.submissionIdMap.set(submissionKey, existingSubmission._id.toString());
+          continue;
+        }
+
+        const newSubmission = await this.submissionModel.create({
+          studentId: new Types.ObjectId(studentId),
+          taskId: new Types.ObjectId(taskId),
+          uploadedBy: new Types.ObjectId(studentId), // Assuming student uploads their own work
+          rawPages: subData.rawPages,
+          processedPages: subData.processedPages || [],
+          status: subData.status || SubmissionStatusEnum.DRAFT,
+          submittedAt: subData.submittedAt,
+          // createdAt and updatedAt will be set automatically by Mongoose
+        });
+        
+        this.submissionIdMap.set(submissionKey, newSubmission._id.toString());
+        createdCount++;
+        this.logger.log(`Submission successfully created for task ${subData.taskTitle} by student ${subData.userEmail}`);
+      } catch (error) {
+        this.logger.error(`Error while creating submission for task ${subData.taskTitle} by ${subData.userEmail}:`, error);
+      }
+    }
+    this.logger.log(`Submissions seeding completed. ${createdCount} submissions created.`);
+  }
+
+  private async seedCorrections(corrections: CorrectionSeedData[]): Promise<void> {
+    if (!corrections || corrections.length === 0) {
+      this.logger.log('No corrections to create.');
+      return;
+    }
+
+    let createdCount = 0;
+
+    for (const corrData of corrections) {
+      try {
+        const submissionKey = `${corrData.submissionUserEmail}-${corrData.submissionTaskTitle}-${corrData.submissionClassName}`;
+        const submissionId = this.submissionIdMap.get(submissionKey);
+        if (!submissionId) {
+          this.logger.warn(`Submission for user ${corrData.submissionUserEmail}, task ${corrData.submissionTaskTitle}, class ${corrData.submissionClassName} does not exist. Cannot create correction.`);
+          continue;
+        }
+
+        const correctorId = this.userIdMap.get(corrData.correctorEmail);
+        if (!correctorId) {
+          this.logger.warn(`User (corrector) ${corrData.correctorEmail} does not exist. Cannot create correction.`);
+          continue;
+        }
+        
+        // Check if correction already exists for this submission and corrector
+        // Note: Adjust this logic if multiple corrections per submission/corrector are allowed or if there's a unique constraint.
+        const existingCorrection = await this.correctionModel.findOne({
+          submissionId: new Types.ObjectId(submissionId),
+          correctedById: new Types.ObjectId(correctorId), 
+        });
+
+        if (existingCorrection) {
+          this.logger.log(`Correction for submission ${submissionId} by corrector ${corrData.correctorEmail} already exists.`);
+          this.correctionIdMap.set(`${submissionId}-${corrData.correctorEmail}`, existingCorrection._id.toString());
+          continue;
+        }
+
+        const newCorrection = await this.correctionModel.create({
+          submissionId: new Types.ObjectId(submissionId),
+          correctedById: new Types.ObjectId(correctorId),
+          grade: corrData.grade,
+          appreciation: corrData.appreciation,
+          status: corrData.status || CorrectionStatus.COMPLETED,
+          finalizedAt: corrData.correctedAt || new Date(),
+          // Populate other fields as necessary from your Correction schema/DTO
+        });
+        
+        this.correctionIdMap.set(`${submissionId}-${corrData.correctorEmail}`, newCorrection._id.toString());
+        createdCount++;
+        this.logger.log(`Correction successfully created for submission ${submissionId} by ${corrData.correctorEmail}`);
+      } catch (error) {
+        this.logger.error(`Error while creating correction for submission by ${corrData.submissionUserEmail} (corrector ${corrData.correctorEmail}):`, error);
+      }
+    }
+    this.logger.log(`Corrections seeding completed. ${createdCount} corrections created.`);
+  }
+
+  private async seedComments(comments: CommentSeedData[]): Promise<void> {
+    if (!comments || comments.length === 0) {
+      this.logger.log('No comments to create.');
+      return;
+    }
+
+    let createdCount = 0;
+
+    for (const commentData of comments) {
+      try {
+        // Trouver l'ID de la correction parente
+        const submissionKey = `${commentData.submissionUserEmail}-${commentData.submissionTaskTitle}-${commentData.submissionClassName}`;
+        const submissionId = this.submissionIdMap.get(submissionKey);
+        if (!submissionId) {
+          this.logger.warn(`Submission for key ${submissionKey} not found. Cannot create comment.`);
+          continue;
+        }
+
+        const correctionKey = `${submissionId}-${commentData.correctorEmail}`;
+        const correctionId = this.correctionIdMap.get(correctionKey);
+        if (!correctionId) {
+          this.logger.warn(`Correction for key ${correctionKey} not found. Cannot create comment.`);
+          continue;
+        }
+
+        // Trouver l'ID de l'auteur du commentaire
+        const authorId = this.userIdMap.get(commentData.authorEmail);
+        if (!authorId) {
+          this.logger.warn(`User (author) ${commentData.authorEmail} not found. Cannot create comment.`);
+          continue;
+        }
+
+        // Créer le commentaire
+        // Note: On ne vérifie pas si le commentaire existe déjà, car les commentaires peuvent se répéter.
+        // Si une logique d'unicité est nécessaire, elle devra être ajoutée.
+        const newComment = await this.commentModel.create({
+          correctionId: new Types.ObjectId(correctionId),
+          createdBy: new Types.ObjectId(authorId),
+          pageNumber: commentData.pageNumber,
+          type: commentData.type,
+          color: commentData.color,
+          text: commentData.text,
+          markdownSource: commentData.markdownSource,
+          isMarkdown: commentData.isMarkdown,
+          pageY: commentData.pageY,
+          annotations: commentData.annotations || [],
+        });
+
+        createdCount++;
+        this.logger.log(`Comment successfully created on page ${commentData.pageNumber} for correction ${correctionId} by ${commentData.authorEmail}`);
+
+      } catch (error) {
+        this.logger.error(`Error while creating comment by ${commentData.authorEmail} on page ${commentData.pageNumber} for correction:`, error);
+      }
+    }
+    this.logger.log(`Comments seeding completed. ${createdCount} comments created.`);
   }
 } 

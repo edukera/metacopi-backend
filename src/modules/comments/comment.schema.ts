@@ -39,12 +39,19 @@ export class Comment {
   color: string;
 
   @ApiPropertyOptional({
-    description: 'Whether the comment text contains markdown formatting',
-    example: false,
+    description: 'Whether the main text content should be rendered as markdown',
+    example: true,
     default: false
   })
   @Prop({ type: Boolean, default: false })
-  markdown: boolean;
+  isMarkdown: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Raw Markdown content, if different from plain text or if specific Markdown features are used',
+    example: 'This section needs **more detailed** explanation. See [doc](...)'
+  })
+  @Prop({ type: String, required: false })
+  markdownSource?: string;
 
   @ApiProperty({
     description: 'Text content of the comment',
@@ -60,6 +67,13 @@ export class Comment {
   })
   @Prop({ type: [String], default: [] })
   annotations: string[];
+
+  @ApiPropertyOptional({
+    description: 'Vertical position of the comment on the page, if applicable',
+    example: 120.5
+  })
+  @Prop({ type: Number, required: false })
+  pageY?: number;
 
   @ApiProperty({
     description: 'ID of the user who created the comment',
