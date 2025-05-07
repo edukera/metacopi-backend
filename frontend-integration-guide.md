@@ -207,6 +207,34 @@ DELETE /storage/:key - Delete file from storage
 GET /storage/list - List files in storage
 ```
 
+### Comment System
+
+The Comments module manages feedback and discussions attached to submissions.
+
+**Endpoints:**
+```
+GET /comments - List all accessible comments
+GET /comments/:id - Get specific comment
+GET /comments/submission/:submissionId - Get comments for a submission
+POST /comments - Create new comment
+PATCH /comments/:id - Update comment
+DELETE /comments/:id - Delete comment
+```
+
+### Annotation System
+
+The Annotations module allows attaching metadata to specific parts of submissions.
+
+**Endpoints:**
+```
+GET /annotations - List all accessible annotations
+GET /annotations/:id - Get specific annotation
+GET /annotations/submission/:submissionId - Get annotations for a submission
+POST /annotations - Create new annotation with JSON metadata
+PATCH /annotations/:id - Update annotation
+DELETE /annotations/:id - Delete annotation
+```
+
 ### Audit Logging
 
 The Logs module tracks system activities for security and auditing.
@@ -289,6 +317,16 @@ id, title, description, classId, dueDate, createdBy, status, files, settings
 **Correction:**
 ```
 id, submissionId, teacherId, comments, grade, status, createdAt, updatedAt
+```
+
+**Comment:**
+```
+id, submissionId, userId, content, parentId, createdAt, updatedAt
+```
+
+**Annotation:**
+```
+id, submissionId, userId, pageNumber, position, metadata, createdAt, updatedAt
 ```
 
 ## Authentication & Authorization
@@ -599,6 +637,88 @@ async function correctSubmission(token, correctionData) {
     submission: await submissionResponse.json()
   };
 }
+
+### Comments and Annotations Workflow
+
+```javascript
+// Create a comment on a submission
+async function addComment(token, commentData) {
+  const response = await fetch('http://localhost:3000/comments', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      submissionId: commentData.submissionId,
+      content: commentData.content,
+      parentId: commentData.parentId // Optional, for reply to existing comment
+    })
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to add comment');
+  }
+  
+  return response.json();
+}
+
+// Get all comments for a submission
+async function getSubmissionComments(token, submissionId) {
+  const response = await fetch(`http://localhost:3000/comments/submission/${submissionId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to fetch comments');
+  }
+  
+  return response.json();
+}
+
+// Add an annotation to a submission
+async function addAnnotation(token, annotationData) {
+  const response = await fetch('http://localhost:3000/annotations', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      submissionId: annotationData.submissionId,
+      pageNumber: annotationData.pageNumber,
+      position: annotationData.position, // { x, y, width, height }
+      metadata: annotationData.metadata // Custom JSON data
+    })
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to add annotation');
+  }
+  
+  return response.json();
+}
+
+// Get all annotations for a submission
+async function getSubmissionAnnotations(token, submissionId) {
+  const response = await fetch(`http://localhost:3000/annotations/submission/${submissionId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to fetch annotations');
+  }
+  
+  return response.json();
+}
 ```
 
 ## Common Integration Points
@@ -626,6 +746,18 @@ async function correctSubmission(token, correctionData) {
 - Submission creation and editing
 - Submission state transitions
 - Viewing submission history
+
+### Comment System
+- Adding comments to submissions
+- Replying to existing comments
+- Editing and deleting comments
+- Viewing comment threads
+
+### Annotation System
+- Adding annotations to specific parts of submissions
+- Attaching JSON metadata to annotations
+- Positioning annotations on submission pages
+- Filtering annotations by user or page
 
 ### Correction Workflow
 - Reviewing submissions

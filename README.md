@@ -13,6 +13,8 @@ Metacopi Backend is a robust API built with NestJS and MongoDB that serves as th
 - **Task Management**: Create, publish, and archive assignments
 - **Submission System**: Allow students to submit their work with support for both raw and processed pages
 - **Correction Workflow**: Enable teachers to review and grade submissions
+- **Comment System**: Add comments to submissions for feedback and discussion
+- **Annotation System**: Attach annotations to specific parts of submissions with JSON metadata
 - **Resource Management**: Attach various resources (files, links, text) to tasks
 - **Audit Logging**: Track important actions across the system
 - **S3 Integration**: Store and retrieve files using Amazon S3
@@ -39,6 +41,8 @@ The API includes comprehensive endpoints for all entities:
 - **Tasks**: Create and manage tasks at `/tasks`
 - **Submissions**: Handle student submissions at `/submissions`
 - **Corrections**: Review and grade submissions at `/corrections`
+- **Comments**: Create and manage comments on submissions at `/comments`
+- **Annotations**: Add and manage annotations on submissions at `/annotations`
 - **Storage**: Handle file uploads and downloads at `/storage`
 - **Audit Logs**: Track system activities at `/logs`
 - **Task Resources**: Manage resources attached to tasks at `/task-resources`
@@ -99,6 +103,8 @@ src/
 │   ├── tasks/          # Task management
 │   ├── submissions/    # Submission handling
 │   ├── corrections/    # Correction workflows
+│   ├── comments/       # Comment functionality
+│   ├── annotations/    # Annotation functionality
 │   └── ...
 ├── common/             # Shared code
 ├── config/             # Configuration

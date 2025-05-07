@@ -1,21 +1,21 @@
 ## 📘 Utilisateur (`User`)
 
-Représente un compte utilisateur de la plateforme. Chaque utilisateur peut avoir différents rôles selon la classe (enseignant, élève, etc.).
+Représente un compte utilisateur de la plateforme. Chaque utilisateur peut avoir différents rôles.
 
 ### Champs
 
-| Champ           | Type               | Description                                      |
-|----------------|--------------------|--------------------------------------------------|
-| `_id`           | string (UUID)      | Identifiant unique                              |
-| `email`         | string             | Adresse email unique                            |
-| `password`      | string \| null     | Hash du mot de passe, ou `null` si social login |
-| `firstName`     | string             | Prénom                                           |
-| `lastName`      | string             | Nom de famille                                  |
-| `avatarUrl`     | string \| null     | URL d’un avatar (optionnel)                     |
-| `emailVerified` | boolean (default: `false`) | Email vérifié ou non                      |
-| `role`          | string             | Rôle global: "admin" \| "user"               |
-| `createdAt`     | Date               | Date de création                                |
-| `updatedAt`     | Date               | Date de dernière modification                   |
+| Champ           | Type                      | Description                                                                 |
+|-----------------|---------------------------|-----------------------------------------------------------------------------|
+| `_id`           | string (ObjectId)         | Identifiant unique (généré par MongoDB, exposé en tant que `id` dans l'API)  |
+| `email`         | string                    | Adresse email unique (automatiquement trim & lowercase)                       |
+| `password`      | string                    | Hash du mot de passe (requis, `writeOnly` dans l'API)                        |
+| `firstName`     | string                    | Prénom (automatiquement trim)                                                 |
+| `lastName`      | string                    | Nom de famille (automatiquement trim)                                       |
+| `avatarUrl`     | string \| undefined       | URL d'un avatar (optionnel)                                                 |
+| `emailVerified` | boolean (défaut: `false`) | Indique si l'email de l'utilisateur a été vérifié                             |
+| `role`          | `UserRole` (enum)         | Rôle global: `"admin"` \| `"user"` (défaut: `"user"`)                       |
+| `createdAt`     | Date                      | Date de création (automatiquement gérée par la base de données)               |
+| `updatedAt`     | Date                      | Date de dernière modification (automatiquement gérée par la base de données)  |
 
 ### Relations
 
@@ -25,19 +25,19 @@ Représente un compte utilisateur de la plateforme. Chaque utilisateur peut avoi
 
 ## 🏫 Classe (`Class`)
 
-Une classe correspond à un groupe d’utilisateurs. Chaque classe est créée par un enseignant et peut être rejointe via un code d'accès temporaire.
+Une classe correspond à un groupe d'utilisateurs. Chaque classe est créée par un enseignant et peut être rejointe via un code d'accès temporaire.
 
 ### Champs
 
 | Champ           | Type          | Description                                          |
 |----------------|---------------|------------------------------------------------------|
 | `_id`           | string (UUID) | Identifiant unique                                  |
-| `name`          | string        | Nom de la classe donné par l’enseignant             |
+| `name`          | string        | Nom de la classe donné par l'enseignant             |
 | `desc`          | string        | Description libre                                    |
 | `level`         | string        | Niveau libre (ex: "2nde", "Terminale", etc.)        |
 | `year`          | number        | Année scolaire (ex: 2024)                            |
 | `code`          | string        | Code d'accès temporaire pour rejoindre la classe     |
-| `codeCreatedAt` | Date          | Date de génération du code d’accès (valable 3 jours)|
+| `codeCreatedAt` | Date          | Date de génération du code d'accès (valable 3 jours)|
 | `archived`      | boolean       | Indique si la classe est archivée                   |
 | `createdAt`     | Date          | Date de création                                    |
 
@@ -49,7 +49,7 @@ Une classe correspond à un groupe d’utilisateurs. Chaque classe est créée p
 
 ## 👥 Inscription à une classe (`Membership`)
 
-Représente le lien entre un utilisateur et une classe. Ce lien contient aussi le rôle (élève, enseignant) et l’état d’activation.
+Représente le lien entre un utilisateur et une classe. Ce lien contient aussi le rôle (élève, enseignant) et l'état d'activation.
 
 ### Champs
 
@@ -60,12 +60,12 @@ Représente le lien entre un utilisateur et une classe. Ce lien contient aussi l
 | `classId`   | string        | Référence vers `Class._id`                          |
 | `role`      | string        | "Student", "Teacher" (extensible)              |
 | `status`    | string        | "pending", "active", "removed"               |
-| `joinedAt`  | Date          | Date d’entrée dans la classe                        |
+| `joinedAt`  | Date          | Date d'entrée dans la classe                        |
 | `isActive`  | boolean       | Active ou non (suppression logique, default: `true`)|
 
 ### Contraintes
 
-- Unicité du couple `(userId, classId)` : un utilisateur ne peut avoir qu’un rôle dans une classe à la fois.
+- Unicité du couple `(userId, classId)` : un utilisateur ne peut avoir qu'un rôle dans une classe à la fois.
 
 ---
 
@@ -116,14 +116,14 @@ Ressource pédagogique liée à une tâche, stockée sur un bucket S3.
 
 ## 📄 Soumission (`Submission`)
 
-Représente le rendu d’un élève pour une tâche donnée. Chaque élève ne peut soumettre qu’une seule fois par tâche.
+Représente le rendu d'un élève pour une tâche donnée. Chaque élève ne peut soumettre qu'une seule fois par tâche.
 
 ### Champs
 
 | Champ            | Type              | Description                                                |
 |------------------|-------------------|------------------------------------------------------------|
 | `_id`            | string (UUID)     | Identifiant unique                                         |
-| `studentId`      | string            | Référence vers l’élève ayant soumis                        |
+| `studentId`      | string            | Référence vers l'élève ayant soumis                        |
 | `taskId`         | string            | Référence vers la tâche associée                           |
 | `uploadedBy`     | string            | Référence vers l'utilisateur ayant uploadé (prof ou élève)     |
 | `status`         | string            | "draft" \| "submitted" \| "corrected" \| "archived" |
@@ -149,7 +149,7 @@ Représente la correction d'une copie (`Submission`) faite par un enseignant. Co
 |----------------|-------------------|------------------------------------------------------------|
 | `_id`          | string (UUID)     | Identifiant unique                                         |
 | `submissionId` | string            | Référence vers la copie soumise                            |
-| `correctedById`| string            | Référence vers l’enseignant ayant corrigé                  |
+| `correctedById`| string            | Référence vers l'enseignant ayant corrigé                  |
 | `status`       | string            | "in_progress" \| "completed"                           |
 | `annotations`  | string            | Données de correction (texte ou JSON libre)                |
 | `grade`        | number            | Note globale attribuée à la copie                          |
@@ -161,6 +161,55 @@ Représente la correction d'une copie (`Submission`) faite par un enseignant. Co
 ### Contraintes
 
 - Une seule correction par `submission` (`unique: submissionId`)
+
+---
+
+## 💬 Commentaire (`Comment`)
+
+Représente un commentaire associé à une soumission. Permet aux enseignants et élèves de discuter d'une copie.
+
+### Champs
+
+| Champ          | Type              | Description                                                |
+|----------------|-------------------|------------------------------------------------------------|
+| `_id`          | string (UUID)     | Identifiant unique                                         |
+| `submissionId` | string            | Référence vers la copie soumise                            |
+| `userId`       | string            | Référence vers l'utilisateur ayant créé le commentaire     |
+| `content`      | string            | Contenu textuel du commentaire                             |
+| `parentId`     | string \| null    | Référence vers un commentaire parent (réponses)            |
+| `createdAt`    | Date              | Date de création                                           |
+| `updatedAt`    | Date              | Dernière modification                                      |
+
+### Relations
+
+- `submission`: Soumission à laquelle le commentaire est attaché
+- `user`: Utilisateur ayant créé le commentaire
+- `parent`: Commentaire parent (si réponse)
+- `replies`: Liste des réponses à ce commentaire
+
+---
+
+## 🔍 Annotation (`Annotation`)
+
+Représente une annotation spécifique attachée à une partie précise d'une soumission, avec des métadonnées JSON.
+
+### Champs
+
+| Champ          | Type              | Description                                                |
+|----------------|-------------------|------------------------------------------------------------|
+| `_id`          | string (UUID)     | Identifiant unique                                         |
+| `submissionId` | string            | Référence vers la copie soumise                            |
+| `userId`       | string            | Référence vers l'utilisateur ayant créé l'annotation       |
+| `pageNumber`   | number            | Numéro de la page concernée (1-indexé)                     |
+| `position`     | object            | Position sur la page `{x: number, y: number, width: number, height: number}` |
+| `metadata`     | object            | Métadonnées JSON (contenu, type, etc.)                     |
+| `createdAt`    | Date              | Date de création                                           |
+| `updatedAt`    | Date              | Dernière modification                                      |
+
+### Relations
+
+- `submission`: Soumission à laquelle l'annotation est attachée
+- `user`: Utilisateur ayant créé l'annotation
 
 ---
 
@@ -199,23 +248,23 @@ Crée une nouvelle classe (enseignant)
 ```
 
 #### Règles
-- L’utilisateur doit être authentifié
-- Un code d’accès est généré automatiquement
+- L'utilisateur doit être authentifié
+- Un code d'accès est généré automatiquement
 - `Membership` créé automatiquement avec `role: "Teacher"`
 
 ---
 
 ### ✅ [GET] /classes  
-Liste les classes visibles par l’utilisateur
+Liste les classes visibles par l'utilisateur
 
 #### Règles
 - Si `User.role = "admin"` → retourne toutes les classes
-- Sinon → retourne les classes liées à l’utilisateur via `Membership`
+- Sinon → retourne les classes liées à l'utilisateur via `Membership`
 
 ---
 
 ### ✅ [POST] /classes/join  
-Rejoindre une classe avec un code d’accès
+Rejoindre une classe avec un code d'accès
 
 #### Input
 ```json
@@ -227,7 +276,7 @@ Rejoindre une classe avec un code d’accès
 #### Règles
 - Le code doit exister et avoir été généré depuis moins de 3 jours
 - Crée un `Membership` avec `role: "Student"` si non existant
-- Retourne une erreur si l’utilisateur est déjà membre
+- Retourne une erreur si l'utilisateur est déjà membre
 
 ---
 
@@ -252,7 +301,7 @@ Archive une classe (readonly)
 ---
 
 ### ✅ [POST] /classes/:id/regenerate-code  
-Régénère le code d’accès d’une classe
+Régénère le code d'accès d'une classe
 
 #### Règles
 - Réservé aux enseignants ou admins
@@ -278,14 +327,14 @@ Crée une nouvelle tâche dans une classe
 ```
 
 #### Règles
-- L’utilisateur doit être `Teacher` dans la classe cible
+- L'utilisateur doit être `Teacher` dans la classe cible
 - `status` initial = "draft"
 - `createdById` est automatiquement rempli
 
 ---
 
 ### ✅ [GET] /tasks/:id  
-Retourne les détails d’une tâche
+Retourne les détails d'une tâche
 
 #### Règles
 - Accessible aux enseignants et élèves **membres de la classe**
@@ -294,7 +343,7 @@ Retourne les détails d’une tâche
 ---
 
 ### ✅ [GET] /classes/:classId/tasks  
-Liste toutes les tâches d’une classe
+Liste toutes les tâches d'une classe
 
 #### Règles
 - Filtrage possible par statut (`draft`, `published`, `archived`)
@@ -305,7 +354,7 @@ Liste toutes les tâches d’une classe
 ---
 
 ### ✅ [PATCH] /tasks/:id  
-Met à jour les champs d’une tâche
+Met à jour les champs d'une tâche
 
 #### Input (exemple)
 ```json
@@ -316,7 +365,7 @@ Met à jour les champs d’une tâche
 ```
 
 #### Règles
-- L’utilisateur doit être `Teacher` ou `admin`
+- L'utilisateur doit être `Teacher` ou `admin`
 - Seules les tâches non archivées peuvent être modifiées
 
 ---
@@ -372,7 +421,7 @@ Supprime une ressource par son index dans le tableau
 ## 📝 API – Soumissions (`Submission`)
 
 ### ✅ [POST] /submissions  
-Crée une soumission (copie de l’élève pour une tâche)
+Crée une soumission (copie de l'élève pour une tâche)
 
 #### Input
 ```json
@@ -386,7 +435,7 @@ Crée une soumission (copie de l’élève pour une tâche)
 ```
 
 #### Règles
-- L’utilisateur doit être `Student` dans la classe
+- L'utilisateur doit être `Student` dans la classe
 - Une seule soumission par (user, task)
 - `uploadedBy` rempli automatiquement
 
@@ -401,11 +450,11 @@ Liste les soumissions à une tâche
 ---
 
 ### ✅ [GET] /submissions/:id  
-Détail d’une soumission
+Détail d'une soumission
 
 #### Règles
 - Accessible par :
-  - l’élève auteur
+  - l'élève auteur
   - les `Teacher` ou `admin`
 
 ---
@@ -425,7 +474,7 @@ Met à jour une soumission
 ```
 
 #### Règles
-- Modifiable uniquement par l’auteur ou un `Teacher`
+- Modifiable uniquement par l'auteur ou un `Teacher`
 - Passage à `submitted` remplit `submittedAt`
 
 ---
@@ -455,7 +504,7 @@ Crée une correction pour une soumission
 Récupère la correction liée à une soumission
 
 #### Règles
-- Accessible à l’élève concerné, `Teacher`, ou `admin`
+- Accessible à l'élève concerné, `Teacher`, ou `admin`
 
 ---
 
@@ -465,6 +514,153 @@ Met à jour la correction
 #### Règles
 - Possible uniquement si `status != completed`, sauf pour `admin`
 - Passage à `completed` remplit `finalizedAt`
+
+---
+
+## 💬 API – Commentaires (`Comment`)
+
+### ✅ [POST] /comments  
+Crée un nouveau commentaire sur une soumission
+
+#### Input
+```json
+{
+  "submissionId": "xyz123",
+  "content": "Excellent travail sur cette partie du devoir",
+  "parentId": null
+}
+```
+
+#### Règles
+- L'utilisateur doit être membre de la classe (enseignant ou élève)
+- `userId` est automatiquement ajouté
+- `parentId` est optionnel (null si commentaire racine)
+
+---
+
+### ✅ [GET] /comments/submission/:submissionId  
+Liste les commentaires d'une soumission
+
+#### Règles
+- Accessible au propriétaire de la soumission et aux enseignants de la classe
+- Retourne les commentaires organisés en thread (commentaires + réponses)
+
+---
+
+### ✅ [GET] /comments/:id  
+Récupère un commentaire spécifique
+
+#### Règles
+- Accessible aux membres de la classe concernée
+
+---
+
+### ✅ [PATCH] /comments/:id  
+Met à jour un commentaire
+
+#### Input
+```json
+{
+  "content": "Contenu modifié du commentaire"
+}
+```
+
+#### Règles
+- Modifiable uniquement par l'auteur du commentaire
+- Les administrateurs peuvent modifier tous les commentaires
+
+---
+
+### ✅ [DELETE] /comments/:id  
+Supprime un commentaire
+
+#### Règles
+- Supprimable par l'auteur du commentaire
+- Les enseignants peuvent supprimer les commentaires de leur classe
+- Les administrateurs peuvent supprimer n'importe quel commentaire
+
+---
+
+## 🔍 API – Annotations (`Annotation`)
+
+### ✅ [POST] /annotations  
+Crée une nouvelle annotation sur une soumission
+
+#### Input
+```json
+{
+  "submissionId": "xyz123",
+  "pageNumber": 2,
+  "position": {
+    "x": 150,
+    "y": 200,
+    "width": 100,
+    "height": 50
+  },
+  "metadata": {
+    "type": "highlight",
+    "color": "yellow",
+    "comment": "Très bonne explication"
+  }
+}
+```
+
+#### Règles
+- Accessible aux enseignants de la classe
+- `userId` est automatiquement ajouté
+- Le format JSON de `metadata` est flexible
+
+---
+
+### ✅ [GET] /annotations/submission/:submissionId  
+Liste les annotations d'une soumission
+
+#### Règles
+- Accessible au propriétaire de la soumission et aux enseignants de la classe
+- Peut être filtré par page avec `?pageNumber=2`
+
+---
+
+### ✅ [GET] /annotations/:id  
+Récupère une annotation spécifique
+
+#### Règles
+- Accessible aux membres de la classe concernée
+
+---
+
+### ✅ [PATCH] /annotations/:id  
+Met à jour une annotation
+
+#### Input
+```json
+{
+  "position": {
+    "x": 160,
+    "y": 210,
+    "width": 120,
+    "height": 60
+  },
+  "metadata": {
+    "type": "highlight",
+    "color": "red",
+    "comment": "Erreur de calcul ici"
+  }
+}
+```
+
+#### Règles
+- Modifiable uniquement par l'auteur de l'annotation
+- Les champs peuvent être mis à jour partiellement
+
+---
+
+### ✅ [DELETE] /annotations/:id  
+Supprime une annotation
+
+#### Règles
+- Supprimable par l'auteur de l'annotation
+- Les administrateurs peuvent supprimer n'importe quelle annotation
 
 ---
 
@@ -496,7 +692,7 @@ Liste les logs liés à une entité
 
 ## 📘 PRD – Workflows d'état (Étape 3)
 
-Ce document formalise les transitions possibles des champs `status` pour les principales entités métier. Ces règles permettent de sécuriser la logique métier, guider l’implémentation des API et prévenir les états incohérents.
+Ce document formalise les transitions possibles des champs `status` pour les principales entités métier. Ces règles permettent de sécuriser la logique métier, guider l'implémentation des API et prévenir les états incohérents.
 
 ---
 
@@ -550,13 +746,13 @@ Ce document formalise les transitions possibles des champs `status` pour les pri
 | `Submission`| Élève auteur ou enseignant de classe|
 | `Correction`| Enseignant ou admin                 |
 
-Les validations côté backend doivent vérifier la transition et l’autorisation de l’utilisateur avant mise à jour.
+Les validations côté backend doivent vérifier la transition et l'autorisation de l'utilisateur avant mise à jour.
 
 
 
 ## 📘 PRD – Workflows d'état (Étape 3)
 
-Ce document formalise les transitions possibles des champs `status` pour les principales entités métier. Ces règles permettent de sécuriser la logique métier, guider l’implémentation des API et prévenir les états incohérents.
+Ce document formalise les transitions possibles des champs `status` pour les principales entités métier. Ces règles permettent de sécuriser la logique métier, guider l'implémentation des API et prévenir les états incohérents.
 
 ---
 
@@ -610,7 +806,7 @@ Ce document formalise les transitions possibles des champs `status` pour les pri
 | `Submission`| Élève auteur ou enseignant de classe|
 | `Correction`| Enseignant ou admin                 |
 
-Les validations côté backend doivent vérifier la transition et l’autorisation de l’utilisateur avant mise à jour.
+Les validations côté backend doivent vérifier la transition et l'autorisation de l'utilisateur avant mise à jour.
 
 ---
 
@@ -631,6 +827,11 @@ Les validations côté backend doivent vérifier la transition et l’autorisati
 | `Submission`  | Voir (toutes)         | Teacher de la classe, Admin              |
 | `Correction`  | Créer / Modifier      | Teacher de la classe, Admin              |
 | `Correction`  | Voir                  | Élève concerné, Teacher, Admin           |
+| `Comment`     | Créer                 | Membres de la classe                     |
+| `Comment`     | Modifier / Supprimer  | Auteur du commentaire, Teacher, Admin    |
+| `Comment`     | Voir                  | Membres de la classe                     |
+| `Annotation`  | Créer / Modifier      | Teacher de la classe, Admin              |
+| `Annotation`  | Voir                  | Élève concerné, Teacher de la classe, Admin |
 | `AuditLog`    | Créer (auto backend)  | Tous                                     |
 | `AuditLog`    | Lire                  | Admin uniquement (ou élargissable)       |
 
@@ -645,14 +846,18 @@ src/
 ├── modules/
 │   ├── users/
 │   │   ├── user.controller.ts
-│   │   ├── user.service.ts
+│   │   ├── user.dto.ts
+│   │   ├── user.interface.ts
+│   │   ├── user.module.ts
 │   │   ├── user.schema.ts
-│   │   └── dto/
+│   │   └── user.service.ts
 │   ├── classes/
 │   ├── memberships/
 │   ├── tasks/
 │   ├── submissions/
 │   ├── corrections/
+│   ├── comments/
+│   ├── annotations/
 │   └── audit-log/
 ├── common/
 │   ├── guards/
@@ -675,7 +880,7 @@ Le projet utilise **MongoDB** comme base de données principale, avec Mongoose p
 
 Cependant, par souci de découplage :
 
-- **L'application n’utilise jamais Mongoose directement dans les services métier**
+- **L'application n'utilise jamais Mongoose directement dans les services métier**
 - Une **interface de repository** est définie pour chaque entité
 - Une **implémentation Mongoose** (nommée `Mongo<Class>Repository`) est injectée dans le module
 
