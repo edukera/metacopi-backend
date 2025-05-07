@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Membership, MembershipSchema } from './membership.schema';
 import { MembershipService } from './membership.service';
 import { MembershipController } from './membership.controller';
+import { MembershipAccessGuard } from '../../common/guards';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { MembershipController } from './membership.controller';
     ]),
   ],
   controllers: [MembershipController],
-  providers: [MembershipService],
+  providers: [MembershipService, MembershipAccessGuard],
   exports: [MembershipService],
 })
 export class MembershipModule {} 

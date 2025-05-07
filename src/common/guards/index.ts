@@ -5,4 +5,6 @@ export * from './jwt-auth.guard';
 export * from './comment-access.guard';
 export * from './submission-access.guard';
 export * from './correction-access.guard';
-export * from './annotation-access.guard'; 
+export * from './annotation-access.guard';
+export * from './membership-access.guard';
+export * from './class-access.guard';

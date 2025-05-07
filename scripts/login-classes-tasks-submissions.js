@@ -55,6 +55,31 @@ async function main() {
     
     console.log(`\nID de la première classe: ${classId}`);
     
+    // 3.1 Récupérer les adhésions (membres) de cette classe
+    // Utilisation de la nouvelle route /users/class/{classId}
+    console.log(`\nRécupération des membres de la classe "${firstClass.name}" (ID: ${classId})...`);
+    
+    try {
+      // Utiliser la nouvelle route /users/class/{classId}
+      const usersResponse = await axios.get(`${API_BASE_URL}/users/class/${classId}`, authHeaders);
+      
+      // Afficher les données brutes retournées par la route
+      console.log(`Données brutes retournées par /users/class/${classId}:`);
+      console.log(JSON.stringify(usersResponse.data, null, 2));
+      
+      // Compter le nombre d'élèves et d'enseignants dans la classe
+      const students = usersResponse.data.filter(user => user.membershipRole === 'student');
+      const teachers = usersResponse.data.filter(user => user.membershipRole === 'teacher');
+      
+      console.log(`\nRésumé des membres: ${students.length} élève(s) et ${teachers.length} enseignant(s) dans la classe "${firstClass.name}"`);
+    } catch (membershipError) {
+      console.error(`Erreur lors de la récupération des utilisateurs pour la classe ${classId}:`, membershipError.message);
+      
+      if (membershipError.response && membershipError.response.status === 403) {
+        console.log("Erreur d'autorisation. Vérifiez que vous avez les droits d'accès suffisants.");
+      }
+    }
+    
     // 4. Récupérer les tâches associées à cette classe
     console.log(`\nRécupération des tâches pour la classe "${firstClass.name}" (ID: ${classId})...`);
     const tasksResponse = await axios.get(`${API_BASE_URL}/tasks?classId=${classId}`, authHeaders);

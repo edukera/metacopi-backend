@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, HttpCode, HttpStatus } from '@nestjs/common';
-import { UserService } from './user.service';
+import { Controller, Get, Post, Body, Param, Patch, Delete, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { UserService, UserWithRole, LimitedUserWithRole } from './user.service';
 import { User } from './user.interface';
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from './dto/user.dto';
-import { AdminOnly, AuthenticatedUser, RequirePermission, RequireOwnership } from '../../common/decorators';
-import { Public } from '../../common/guards';
+import { AdminOnly, AuthenticatedUser, RequirePermission, RequireOwnership, SetPermission } from '../../common/decorators';
+import { Public, ClassAccessGuard, JwtAuthGuard } from '../../common/guards';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('users')
@@ -25,6 +25,34 @@ export class UserController {
   @ApiResponse({ status: 403, description: 'Forbidden - Requires administrator privileges' })
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
+  }
+
+  @Get('class/:classId')
+  @UseGuards(JwtAuthGuard, ClassAccessGuard)
+  @ApiOperation({ summary: 'Get all users in a class with their role', description: 'Accessible to teachers of the class and administrators' })
+  @ApiParam({ name: 'classId', description: 'ID of the class to get users for' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'List of users in class retrieved successfully with their membership role',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+          email: { type: 'string' },
+          firstName: { type: 'string' },
+          lastName: { type: 'string' },
+          avatarUrl: { type: 'string' },
+          membershipRole: { type: 'string', enum: ['teacher', 'student'] }
+        }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Must be a teacher of this class or an administrator' })
+  async findByClass(@Param('classId') classId: string): Promise<LimitedUserWithRole[]> {
+    return this.userService.findByClassId(classId);
   }
 
   @Get(':id')
