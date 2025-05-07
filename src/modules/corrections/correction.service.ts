@@ -1,15 +1,18 @@
-import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Inject, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { REQUEST } from '@nestjs/core';
 import { Correction, CorrectionStatus } from './correction.schema';
 import { CreateCorrectionDto, UpdateCorrectionDto } from './correction.dto';
+import { SubmissionService } from '../submissions/submission.service';
 
 @Injectable()
 export class CorrectionService {
   constructor(
     @InjectModel(Correction.name) private correctionModel: Model<Correction>,
     @Inject(REQUEST) private request,
+    @Inject(forwardRef(() => SubmissionService))
+    private readonly submissionService: SubmissionService,
   ) {}
 
   async create(createCorrectionDto: CreateCorrectionDto): Promise<Correction> {

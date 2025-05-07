@@ -89,6 +89,37 @@ async function main() {
     const submissionsCount = submissionsResponse.data.length || 0;
     console.log(`\nRésumé: ${submissionsCount} soumission(s) trouvée(s) pour la tâche "${firstTask.title}" dans la classe "${firstClass.name}"`);
     
+    // Si nous avons des soumissions, récupérons la première pour voir les URLs des pages
+    if (submissionsCount > 0) {
+      const firstSubmission = submissionsResponse.data[0];
+      const submissionId = firstSubmission._id || firstSubmission.id;
+      
+      console.log(`\nRécupération des détails de la soumission avec les URLs des pages pour l'ID: ${submissionId}...`);
+      try {
+        const submissionDetailsResponse = await axios.get(`${API_BASE_URL}/submissions/${submissionId}`, authHeaders);
+        
+        // Afficher les URLs des pages s'ils existent
+        if (submissionDetailsResponse.data.pageUrls && submissionDetailsResponse.data.pageUrls.length > 0) {
+          console.log(`\nURLs des pages de la soumission (${submissionDetailsResponse.data.pageUrls.length} pages):`);
+          submissionDetailsResponse.data.pageUrls.forEach((url, index) => {
+            console.log(`Page ${index + 1}: ${url}`);
+          });
+        } else {
+          console.log('\nAucune URL de page trouvée dans la réponse de soumission.');
+        }
+      } catch (submissionDetailsError) {
+        console.error(`Erreur lors de la récupération des détails de la soumission ${submissionId}:`, 
+          submissionDetailsError.message);
+        
+        if (submissionDetailsError.response) {
+          console.error('Détails:', {
+            status: submissionDetailsError.response.status,
+            data: submissionDetailsError.response.data
+          });
+        }
+      }
+    }
+    
     // 7. Récupérer les corrections associées à chaque soumission
     console.log('\n--- Récupération des corrections pour chaque soumission ---');
     

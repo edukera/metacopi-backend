@@ -7,6 +7,7 @@ import { CorrectionModule } from '../corrections/correction.module';
 import { SubmissionStatusTransitionValidator } from './validators/submission-status-transition.validator';
 import { TaskModule } from '../tasks/task.module';
 import { MembershipModule } from '../memberships/membership.module';
+import { StorageModule } from '../storage/storage.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MembershipModule } from '../memberships/membership.module';
     forwardRef(() => CorrectionModule),
     forwardRef(() => TaskModule),
     MembershipModule,
+    StorageModule,
   ],
   controllers: [SubmissionController],
   providers: [SubmissionService, SubmissionStatusTransitionValidator],

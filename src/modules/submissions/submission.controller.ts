@@ -57,8 +57,8 @@ export class SubmissionController {
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @UseGuards(JwtAuthGuard, SubmissionAccessGuard)
   @SetPermission(Permission.READ_SUBMISSIONS, 'read')
-  async findOne(@Param('id') id: string): Promise<Submission> {
-    return this.submissionService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<Submission & { pageUrls?: string[] }> {
+    return this.submissionService.findOneWithPageUrls(id);
   }
 
   @Get('task/:taskId')

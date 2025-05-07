@@ -6,6 +6,7 @@ import { Submission, SubmissionStatus } from './submission.schema';
 import { CreateSubmissionDto, UpdateSubmissionDto } from './submission.dto';
 import { CorrectionService } from '../corrections/correction.service';
 import { TaskService } from '../tasks/task.service';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable()
 export class SubmissionService {
@@ -16,6 +17,7 @@ export class SubmissionService {
     private correctionService: CorrectionService,
     @Inject(forwardRef(() => TaskService)) private taskService: TaskService,
     @Inject(REQUEST) private request,
+    private readonly storageService: StorageService,
   ) {}
 
   async create(createSubmissionDto: CreateSubmissionDto): Promise<Submission> {
@@ -182,5 +184,30 @@ export class SubmissionService {
       this.logger.error(`Error finding submissions by class: ${error.message}`, error.stack);
       return [];
     }
+  }
+
+  async findOneWithPageUrls(id: string): Promise<Submission & { pageUrls: string[] }> {
+    const submission = await this.findOne(id);
+    
+    // Générer les URLs présignées pour les images raw
+    const pageUrls = [];
+    
+    if (submission.rawPages && submission.rawPages.length > 0) {
+      // Générer des URLs présignées pour chaque page
+      const urlsMap = await this.storageService.getPresignedDownloadUrls(submission.rawPages);
+      
+      // Conserver l'ordre des pages
+      for (const rawPage of submission.rawPages) {
+        if (urlsMap[rawPage]) {
+          pageUrls.push(urlsMap[rawPage]);
+        }
+      }
+    }
+    
+    // Retourner la soumission avec les URLs des pages
+    return {
+      ...(submission as any),
+      pageUrls,
+    };
   }
 } 
