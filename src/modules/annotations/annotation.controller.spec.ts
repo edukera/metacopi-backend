@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AnnotationController } from './annotation.controller';
 import { AnnotationService } from './annotation.service';
-import { CreateAnnotationDto, UpdateAnnotationDto } from './annotation.dto';
+import { CreateAnnotationDto, UpdateAnnotationDto, AnnotationResponseDto } from './annotation.dto';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { Annotation } from './annotation.schema';
 
@@ -91,12 +91,17 @@ describe('AnnotationController', () => {
     });
 
     it('should throw NotFoundException when annotation does not belong to the correction', async () => {
-      const mockAnnotationWithDifferentCorrectionId = {
-        ...mockAnnotation,
+      const mockAnnotationWithDifferentCorrectionId: AnnotationResponseDto = {
+        id: 'annotation-id-123',
         correctionId: {
           toString: () => 'different-correction-id'
-        },
-      } as unknown as Annotation;
+        } as any,
+        key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
+        commentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
       jest.spyOn(service, 'findById').mockResolvedValue(mockAnnotationWithDifferentCorrectionId);
 
@@ -119,12 +124,17 @@ describe('AnnotationController', () => {
     });
 
     it('should throw NotFoundException when annotation does not belong to the correction', async () => {
-      const mockAnnotationWithDifferentCorrectionId = {
-        ...mockAnnotation,
+      const mockAnnotationWithDifferentCorrectionId: AnnotationResponseDto = {
+        id: 'annotation-id-123',
         correctionId: {
           toString: () => 'different-correction-id'
-        },
-      } as unknown as Annotation;
+        } as any,
+        key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
+        commentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
       jest.spyOn(service, 'findById').mockResolvedValue(mockAnnotationWithDifferentCorrectionId);
 
@@ -148,12 +158,17 @@ describe('AnnotationController', () => {
     });
 
     it('should throw NotFoundException when annotation does not belong to the correction', async () => {
-      const mockAnnotationWithDifferentCorrectionId = {
-        ...mockAnnotation,
+      const mockAnnotationWithDifferentCorrectionId: AnnotationResponseDto = {
+        id: 'annotation-id-123',
         correctionId: {
           toString: () => 'different-correction-id'
-        },
-      } as unknown as Annotation;
+        } as any,
+        key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
+        commentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
       jest.spyOn(service, 'findById').mockResolvedValue(mockAnnotationWithDifferentCorrectionId);
 

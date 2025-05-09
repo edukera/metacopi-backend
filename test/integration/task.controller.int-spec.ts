@@ -247,7 +247,7 @@ describe('TaskController (Isolated Integration)', () => {
     expect(result.createdBy.toString()).toBe(testTeacher._id.toString());
     
     // Verify it was saved to database
-    const savedTask = await taskModel.findById(result._id);
+    const savedTask = await taskModel.findById(result.id);
     expect(savedTask).toBeDefined();
     expect(savedTask.title).toBe(createTaskDto.title);
     
@@ -287,7 +287,7 @@ describe('TaskController (Isolated Integration)', () => {
     expect(tasks).toBeDefined();
     expect(Array.isArray(tasks)).toBe(true);
     expect(tasks.length).toBe(1);
-    expect(tasks[0]._id.toString()).toBe(task1._id.toString());
+    expect(tasks[0].id.toString()).toBe(task1._id.toString());
     expect(tasks[0].title).toBe('Task in Class 1');
     
     console.log('Test completed successfully');
@@ -307,7 +307,7 @@ describe('TaskController (Isolated Integration)', () => {
     const result = await taskController.findOne(task._id.toString());
     
     expect(result).toBeDefined();
-    expect(result._id.toString()).toBe(task._id.toString());
+    expect(result.id.toString()).toBe(task._id.toString());
     expect(result.title).toBe('Find This Task');
     
     console.log('Test completed successfully');

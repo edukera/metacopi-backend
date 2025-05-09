@@ -106,7 +106,7 @@ describe('TaskService', () => {
       // Assert
       expect(membershipService.findByUserAndClass).toHaveBeenCalledWith(userId, classId);
       expect(result).toBeDefined();
-      expect(result._id).toBeDefined();
+      expect(result.id).toBeDefined();
     });
 
     it('should throw BadRequestException when user is not a teacher', async () => {

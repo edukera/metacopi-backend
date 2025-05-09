@@ -37,7 +37,7 @@ export class CommentController {
   @ApiResponse({ status: 200, description: 'List of comments for the correction.', type: [CommentResponseDto] })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Correction not found.' })
-  async findAll(@Param('id') correctionId: string): Promise<Comment[]> {
+  async findAll(@Param('id') correctionId: string): Promise<CommentResponseDto[]> {
     return this.commentService.findByCorrection(correctionId);
   }
 
@@ -52,7 +52,7 @@ export class CommentController {
   async create(
     @Param('id') correctionId: string,
     @Body() createCommentDto: CreateCommentDto
-  ): Promise<Comment> {
+  ): Promise<CommentResponseDto> {
     // Ensure the correctionId from the URL is used
     createCommentDto.correctionId = correctionId;
     return this.commentService.create(createCommentDto);
@@ -65,7 +65,7 @@ export class CommentController {
   @ApiResponse({ status: 200, description: 'The found comment.', type: CommentResponseDto })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Comment not found.' })
-  async findOne(@Param('commentId') commentId: string): Promise<Comment> {
+  async findOne(@Param('commentId') commentId: string): Promise<CommentResponseDto> {
     return this.commentService.findOne(commentId);
   }
 
@@ -81,7 +81,7 @@ export class CommentController {
   async update(
     @Param('commentId') commentId: string,
     @Body() updateCommentDto: UpdateCommentDto
-  ): Promise<Comment> {
+  ): Promise<CommentResponseDto> {
     return this.commentService.update(commentId, updateCommentDto);
   }
 

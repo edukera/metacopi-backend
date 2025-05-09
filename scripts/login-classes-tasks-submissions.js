@@ -126,8 +126,8 @@ async function main() {
         // Afficher les URLs des pages s'ils existent
         if (submissionDetailsResponse.data.pageUrls && submissionDetailsResponse.data.pageUrls.length > 0) {
           console.log(`\nURLs des pages de la soumission (${submissionDetailsResponse.data.pageUrls.length} pages):`);
-          submissionDetailsResponse.data.pageUrls.forEach((url, index) => {
-            console.log(`Page ${index + 1}: ${url}`);
+          submissionDetailsResponse.data.pageUrls.forEach((data, index) => {
+            console.log(`Page ${index + 1}: ${JSON.stringify(data, null, 2)}`);
           });
         } else {
           console.log('\nAucune URL de page trouvée dans la réponse de soumission.');

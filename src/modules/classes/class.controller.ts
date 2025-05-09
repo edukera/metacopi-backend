@@ -34,7 +34,7 @@ export class ClassController {
     type: [ClassResponseDto]
   })
   @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
-  async findAll(@Query('archived') archived?: boolean): Promise<Class[]> {
+  async findAll(@Query('archived') archived?: boolean): Promise<ClassResponseDto[]> {
     return this.classService.findAll(archived);
   }
 
@@ -51,7 +51,7 @@ export class ClassController {
   @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
   @ApiResponse({ status: 403, description: 'Forbidden - You do not have access to this class' })
   @ApiResponse({ status: 404, description: 'Class not found' })
-  async findById(@Param('id') id: string): Promise<Class> {
+  async findById(@Param('id') id: string): Promise<ClassResponseDto> {
     return this.classService.findOne(id);
   }
 
@@ -67,7 +67,7 @@ export class ClassController {
   })
   @ApiResponse({ status: 400, description: 'Invalid data' })
   @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
-  async create(@Body() createClassDto: CreateClassDto): Promise<Class> {
+  async create(@Body() createClassDto: CreateClassDto): Promise<ClassResponseDto> {
     return this.classService.create(createClassDto);
   }
 
@@ -89,7 +89,7 @@ export class ClassController {
   async update(
     @Param('id') id: string,
     @Body() updateClassDto: UpdateClassDto,
-  ): Promise<Class> {
+  ): Promise<ClassResponseDto> {
     return this.classService.update(id, updateClassDto);
   }
 
@@ -121,7 +121,7 @@ export class ClassController {
   @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
   @ApiResponse({ status: 403, description: 'Forbidden - You are not the owner of this class' })
   @ApiResponse({ status: 404, description: 'Class not found' })
-  async archive(@Param('id') id: string): Promise<Class> {
+  async archive(@Param('id') id: string): Promise<ClassResponseDto> {
     return this.classService.archive(id);
   }
 
@@ -159,7 +159,7 @@ export class ClassController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
   @ApiResponse({ status: 404, description: 'Class not found or invalid code' })
-  async findByCode(@Param('code') code: string): Promise<Class> {
+  async findByCode(@Param('code') code: string): Promise<ClassResponseDto> {
     return this.classService.findByCode(code);
   }
 

@@ -201,7 +201,7 @@ describe('ClassService (Integration)', () => {
       
       expect(result).toBeDefined();
       expect(result.name).toBe('Test Class');
-      expect(result._id.toString()).toBe(classEntity._id.toString());
+      expect(result.id.toString()).toBe(classEntity._id.toString());
     });
 
     it('should throw NotFoundException when class not found', async () => {
@@ -227,7 +227,7 @@ describe('ClassService (Integration)', () => {
       
       expect(result).toBeDefined();
       expect(result.code).toBe('TEST123');
-      expect(result._id.toString()).toBe(classEntity._id.toString());
+      expect(result.id.toString()).toBe(classEntity._id.toString());
     });
 
     it('should throw NotFoundException when code not found', async () => {
@@ -260,7 +260,7 @@ describe('ClassService (Integration)', () => {
       expect(result.name).toBe(updateDto.name);
       expect(result.description).toBe(updateDto.description);
       expect(result.settings).toEqual(updateDto.settings);
-      expect(result._id.toString()).toBe(classEntity._id.toString());
+      expect(result.id.toString()).toBe(classEntity._id.toString());
     });
 
     it('should throw NotFoundException when updating non-existent class', async () => {
@@ -290,7 +290,7 @@ describe('ClassService (Integration)', () => {
 
       expect(result).toBeDefined();
       expect(result.archived).toBe(true);
-      expect(result._id.toString()).toBe(classEntity._id.toString());
+      expect(result.id.toString()).toBe(classEntity._id.toString());
     });
 
     it('should throw NotFoundException when archiving non-existent class', async () => {

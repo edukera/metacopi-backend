@@ -9,7 +9,7 @@ import { Document } from 'mongoose';
 
 // Simple type for mocks that only need certain properties
 type MockCorrection = {
-  _id: string;
+  id: string;
   submissionId: string;
   correctedById?: string;
   grade?: number;
@@ -34,7 +34,7 @@ describe('CorrectionService', () => {
   beforeEach(async () => {
     // Create a mock Mongoose Correction with constructor
     const mockCorrection = {
-      _id: 'correction-id-123',
+      id: 'correction-id-123',
       submissionId: 'submission-id-123',
       correctedById: 'teacher-id-123',
       grade: 85,
@@ -44,7 +44,7 @@ describe('CorrectionService', () => {
       createdAt: new Date(),
       finalizedAt: null,
       save: jest.fn().mockResolvedValue({
-        _id: 'correction-id-123',
+        id: 'correction-id-123',
         submissionId: 'submission-id-123',
         correctedById: 'teacher-id-123',
         grade: 85,
@@ -111,7 +111,7 @@ describe('CorrectionService', () => {
         submissionId: createDto.submissionId,
       });
       expect(result).toBeDefined();
-      expect(result._id).toBe('correction-id-123');
+      expect(result.id).toBe('correction-id-123');
     });
 
     it('should use request user id if correctedById is not provided', async () => {
@@ -141,7 +141,7 @@ describe('CorrectionService', () => {
 
       // Mock to simulate that a correction already exists
       mockCorrectionModel.findOne.mockReturnValueOnce({
-        _id: 'existing-correction-id',
+        id: 'existing-correction-id',
         submissionId: 'submission-id-123',
         annotations: '',
       });
@@ -153,8 +153,8 @@ describe('CorrectionService', () => {
   describe('findAll', () => {
     it('should return all corrections', async () => {
       const corrections = [
-        { _id: 'correction-1', submissionId: 'submission-1', annotations: '' },
-        { _id: 'correction-2', submissionId: 'submission-2', annotations: '' },
+        { id: 'correction-1', submissionId: 'submission-1', annotations: '' },
+        { id: 'correction-2', submissionId: 'submission-2', annotations: '' },
       ] as MockCorrection[];
 
       mockCorrectionModel.find.mockImplementationOnce(() => ({
@@ -171,7 +171,7 @@ describe('CorrectionService', () => {
   describe('findOne', () => {
     it('should return a correction by id', async () => {
       const correction = {
-        _id: 'correction-id-123',
+        id: 'correction-id-123',
         submissionId: 'submission-id-123',
         annotations: '',
       } as MockCorrection;
@@ -198,7 +198,7 @@ describe('CorrectionService', () => {
   describe('findBySubmission', () => {
     it('should return a correction by submissionId', async () => {
       const correction = {
-        _id: 'correction-id-123',
+        id: 'correction-id-123',
         submissionId: 'submission-id-123',
         annotations: '',
       } as MockCorrection;
@@ -225,8 +225,8 @@ describe('CorrectionService', () => {
   describe('findByTeacher', () => {
     it('should return corrections by teacherId', async () => {
       const corrections = [
-        { _id: 'correction-1', correctedById: 'teacher-id-123', annotations: '' },
-        { _id: 'correction-2', correctedById: 'teacher-id-123', annotations: '' },
+        { id: 'correction-1', correctedById: 'teacher-id-123', annotations: '' },
+        { id: 'correction-2', correctedById: 'teacher-id-123', annotations: '' },
       ] as MockCorrection[];
 
       mockCorrectionModel.find.mockImplementationOnce(() => ({
@@ -248,7 +248,7 @@ describe('CorrectionService', () => {
       };
 
       const existingCorrection = {
-        _id: 'correction-id-123',
+        id: 'correction-id-123',
         submissionId: 'submission-id-123',
         grade: 85,
         status: CorrectionStatus.IN_PROGRESS,
@@ -285,7 +285,7 @@ describe('CorrectionService', () => {
       };
 
       const existingCorrection = {
-        _id: 'correction-id-123',
+        id: 'correction-id-123',
         submissionId: 'submission-id-123',
         status: CorrectionStatus.IN_PROGRESS,
         finalizedAt: null,
@@ -320,7 +320,7 @@ describe('CorrectionService', () => {
       };
 
       const existingCorrection = {
-        _id: 'correction-id-123',
+        id: 'correction-id-123',
         submissionId: 'submission-id-123',
         grade: 85,
         annotations: '',
@@ -341,7 +341,7 @@ describe('CorrectionService', () => {
   describe('remove', () => {
     it('should remove a correction', async () => {
       const correction = {
-        _id: 'correction-id-123',
+        id: 'correction-id-123',
         submissionId: 'submission-id-123',
         annotations: '',
       } as MockCorrection;

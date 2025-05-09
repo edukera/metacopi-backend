@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, UnauthorizedExcepti
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Class } from './class.schema';
-import { CreateClassDto, UpdateClassDto } from './class.dto';
+import { CreateClassDto, UpdateClassDto, ClassResponseDto } from './class.dto';
 import { MembershipService } from '../memberships/membership.service';
 import { MembershipRole } from '../memberships/membership.schema';
 import { REQUEST } from '@nestjs/core';
@@ -17,7 +17,29 @@ export class ClassService {
     @Inject(REQUEST) private request,
   ) {}
 
-  async create(createClassDto: CreateClassDto): Promise<Class> {
+  // Convertir un objet Class en ClassResponseDto
+  private toResponseDto(classEntity: Class): ClassResponseDto {
+    const classDto = new ClassResponseDto();
+    classDto.id = classEntity._id.toString();
+    classDto.name = classEntity.name;
+    classDto.description = classEntity.description;
+    classDto.createdBy = classEntity.createdBy?.toString();
+    classDto.archived = classEntity.archived;
+    classDto.code = classEntity.code;
+    classDto.settings = classEntity.settings;
+    classDto.startDate = classEntity.startDate;
+    classDto.endDate = classEntity.endDate;
+    classDto.createdAt = classEntity.createdAt;
+    classDto.updatedAt = classEntity.updatedAt;
+    return classDto;
+  }
+
+  // Convertir une liste d'objets Class en liste de ClassResponseDto
+  private toResponseDtoList(classes: Class[]): ClassResponseDto[] {
+    return classes.map(classEntity => this.toResponseDto(classEntity));
+  }
+
+  async create(createClassDto: CreateClassDto): Promise<ClassResponseDto> {
     // Get the user ID from the request context
     const userId = this.request.user.sub;
 
@@ -35,16 +57,18 @@ export class ClassService {
       role: MembershipRole.TEACHER,
     });
     
-    return savedClass;
+    return this.toResponseDto(savedClass);
   }
 
-  async findAll(archived: boolean = false): Promise<Class[]> {
+  async findAll(archived: boolean = false): Promise<ClassResponseDto[]> {
     // If the user is an admin, they can see all classes
     const userId = this.request.user.id;
     const role = this.request.user.role;
 
+    let classes: Class[];
+
     if (role === 'admin') {
-      return this.classModel.find({ archived }).exec();
+      classes = await this.classModel.find({ archived }).exec();
     } else {
       // For normal users, get the classes they are associated with
       const memberships = await this.membershipService.findByUser(userId);
@@ -55,30 +79,32 @@ export class ClassService {
         typeof id === 'string' ? new Types.ObjectId(id) : id
       );
       
-      return this.classModel.find({ 
+      classes = await this.classModel.find({ 
         _id: { $in: classObjectIds }, 
         archived 
       }).exec();
     }
+
+    return this.toResponseDtoList(classes);
   }
 
-  async findOne(id: string): Promise<Class> {
+  async findOne(id: string): Promise<ClassResponseDto> {
     const classEntity = await this.classModel.findById(id).exec();
     if (!classEntity) {
       throw new NotFoundException(`Class with ID ${id} not found`);
     }
-    return classEntity;
+    return this.toResponseDto(classEntity);
   }
 
-  async findByCode(code: string): Promise<Class> {
+  async findByCode(code: string): Promise<ClassResponseDto> {
     const classEntity = await this.classModel.findOne({ code }).exec();
     if (!classEntity) {
       throw new NotFoundException(`Class with code ${code} not found`);
     }
-    return classEntity;
+    return this.toResponseDto(classEntity);
   }
 
-  async update(id: string, updateClassDto: UpdateClassDto): Promise<Class> {
+  async update(id: string, updateClassDto: UpdateClassDto): Promise<ClassResponseDto> {
     const updatedClass = await this.classModel
       .findByIdAndUpdate(id, updateClassDto, { new: true })
       .exec();
@@ -87,7 +113,7 @@ export class ClassService {
       throw new NotFoundException(`Class with ID ${id} not found`);
     }
     
-    return updatedClass;
+    return this.toResponseDto(updatedClass);
   }
 
   async remove(id: string): Promise<void> {
@@ -100,14 +126,15 @@ export class ClassService {
     await this.membershipService.deleteByClass(id);
   }
 
-  async archive(id: string): Promise<Class> {
+  async archive(id: string): Promise<ClassResponseDto> {
     const classEntity = await this.classModel.findById(id).exec();
     if (!classEntity) {
       throw new NotFoundException(`Class with ID ${id} not found`);
     }
     
     classEntity.archived = true;
-    return classEntity.save();
+    const savedClass = await classEntity.save();
+    return this.toResponseDto(savedClass);
   }
 
   async regenerateCode(id: string): Promise<{ code: string }> {

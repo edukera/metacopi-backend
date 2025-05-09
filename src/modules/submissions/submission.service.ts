@@ -3,10 +3,18 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { REQUEST } from '@nestjs/core';
 import { Submission, SubmissionStatus } from './submission.schema';
-import { CreateSubmissionDto, UpdateSubmissionDto } from './submission.dto';
+import { CreateSubmissionDto, UpdateSubmissionDto, SubmissionResponseDto } from './submission.dto';
 import { CorrectionService } from '../corrections/correction.service';
 import { TaskService } from '../tasks/task.service';
 import { StorageService } from '../storage/storage.service';
+
+// Interface pour le type de retour des pages
+export interface PageInfo {
+  id: string;
+  url: string;
+  width: number;
+  height: number;
+}
 
 @Injectable()
 export class SubmissionService {
@@ -20,7 +28,29 @@ export class SubmissionService {
     private readonly storageService: StorageService,
   ) {}
 
-  async create(createSubmissionDto: CreateSubmissionDto): Promise<Submission> {
+  // Convertir un objet Submission en SubmissionResponseDto
+  private toResponseDto(submission: Submission): SubmissionResponseDto {
+    const submissionDto = new SubmissionResponseDto();
+    submissionDto.id = submission['_id'].toString();
+    submissionDto.studentId = submission.studentId?.toString();
+    submissionDto.taskId = submission.taskId?.toString();
+    submissionDto.uploadedBy = submission.uploadedBy?.toString();
+    submissionDto.status = submission.status;
+    submissionDto.rawPages = submission.rawPages || [];
+    submissionDto.processedPages = submission.processedPages || [];
+    submissionDto.submittedAt = submission.submittedAt;
+    submissionDto.reviewedAt = submission.reviewedAt;
+    submissionDto.createdAt = (submission as any).createdAt;
+    submissionDto.updatedAt = (submission as any).updatedAt;
+    return submissionDto;
+  }
+
+  // Convertir une liste d'objets Submission en liste de SubmissionResponseDto
+  private toResponseDtoList(submissions: Submission[]): SubmissionResponseDto[] {
+    return submissions.map(submission => this.toResponseDto(submission));
+  }
+
+  async create(createSubmissionDto: CreateSubmissionDto): Promise<SubmissionResponseDto> {
     // Si studentId n'est pas fourni, utiliser l'utilisateur actuel
     if (!createSubmissionDto.studentId) {
       createSubmissionDto.studentId = this.request.user.sub;
@@ -45,33 +75,37 @@ export class SubmissionService {
       ...createSubmissionDto,
       uploadedBy,
     });
-    return newSubmission.save();
+    const savedSubmission = await newSubmission.save();
+    return this.toResponseDto(savedSubmission);
   }
 
-  async findAll(): Promise<Submission[]> {
-    return this.submissionModel.find().exec();
+  async findAll(): Promise<SubmissionResponseDto[]> {
+    const submissions = await this.submissionModel.find().exec();
+    return this.toResponseDtoList(submissions);
   }
 
-  async findOne(id: string): Promise<Submission> {
+  async findOne(id: string): Promise<SubmissionResponseDto> {
     const submission = await this.submissionModel.findById(id).exec();
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-    return submission;
+    return this.toResponseDto(submission);
   }
 
-  async findByTask(taskId: string): Promise<Submission[]> {
-    return this.submissionModel.find({ taskId }).exec();
+  async findByTask(taskId: string): Promise<SubmissionResponseDto[]> {
+    const submissions = await this.submissionModel.find({ taskId }).exec();
+    return this.toResponseDtoList(submissions);
   }
 
-  async findByStudent(studentId: string): Promise<Submission[]> {
-    return this.submissionModel.find({ studentId }).exec();
+  async findByStudent(studentId: string): Promise<SubmissionResponseDto[]> {
+    const submissions = await this.submissionModel.find({ studentId }).exec();
+    return this.toResponseDtoList(submissions);
   }
 
   async findByStudentAndTask(
     studentId: string,
     taskId: string,
-  ): Promise<Submission> {
+  ): Promise<SubmissionResponseDto> {
     const submission = await this.submissionModel
       .findOne({ studentId, taskId })
       .exec();
@@ -80,14 +114,14 @@ export class SubmissionService {
         `Submission for student ${studentId} and task ${taskId} not found`,
       );
     }
-    return submission;
+    return this.toResponseDto(submission);
   }
 
   async update(
     id: string,
     updateSubmissionDto: UpdateSubmissionDto,
-  ): Promise<Submission> {
-    const submission = await this.findOne(id);
+  ): Promise<SubmissionResponseDto> {
+    const submission = await this.findSubmissionEntity(id);
     
     // Check if a status change to 'submitted' is requested
     if (updateSubmissionDto.status === SubmissionStatus.SUBMITTED && 
@@ -109,11 +143,11 @@ export class SubmissionService {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
     
-    return updatedSubmission;
+    return this.toResponseDto(updatedSubmission);
   }
 
-  async remove(id: string): Promise<Submission> {
-    const submission = await this.findOne(id);
+  async remove(id: string): Promise<void> {
+    const submission = await this.findSubmissionEntity(id);
     
     // Delete corrections associated with this submission
     try {
@@ -131,12 +165,20 @@ export class SubmissionService {
     if (!deletedSubmission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-    return deletedSubmission;
+  }
+
+  // Pour l'utilisation interne uniquement - récupère l'entité Submission sans la convertir en DTO
+  private async findSubmissionEntity(id: string): Promise<Submission> {
+    const submission = await this.submissionModel.findById(id).exec();
+    if (!submission) {
+      throw new NotFoundException(`Submission with ID ${id} not found`);
+    }
+    return submission;
   }
 
   async removeByTask(taskId: string): Promise<void> {
     // Get all submissions for this task
-    const submissions = await this.findByTask(taskId);
+    const submissions = await this.submissionModel.find({ taskId }).exec();
     
     // Delete corrections for each submission
     for (const submission of submissions) {
@@ -160,7 +202,7 @@ export class SubmissionService {
    * @param classId ID de la classe
    * @returns Liste des soumissions pour la classe
    */
-  async findByClass(classId: string): Promise<Submission[]> {
+  async findByClass(classId: string): Promise<SubmissionResponseDto[]> {
     this.logger.debug(`Finding submissions for class: ${classId}`);
     
     try {
@@ -173,40 +215,50 @@ export class SubmissionService {
       }
       
       // 2. Extraire les IDs des tâches
-      const taskIds = tasks.map(task => task._id.toString());
+      const taskIds = tasks.map(task => task.id.toString());
       this.logger.debug(`Found ${taskIds.length} tasks for class ${classId}`);
       
       // 3. Trouver toutes les soumissions pour ces tâches
-      return this.submissionModel.find({
+      const submissions = await this.submissionModel.find({
         taskId: { $in: taskIds }
       }).exec();
+
+      return this.toResponseDtoList(submissions);
     } catch (error) {
       this.logger.error(`Error finding submissions by class: ${error.message}`, error.stack);
       return [];
     }
   }
 
-  async findOneWithPageUrls(id: string): Promise<Submission & { pageUrls: string[] }> {
-    const submission = await this.findOne(id);
+  async findOneWithPageUrls(id: string): Promise<SubmissionResponseDto & { pageUrls: PageInfo[] }> {
+    const submission = await this.findSubmissionEntity(id);
+    const submissionDto = this.toResponseDto(submission);
     
     // Générer les URLs présignées pour les images raw
-    const pageUrls = [];
+    const pageUrls: PageInfo[] = [];
     
     if (submission.rawPages && submission.rawPages.length > 0) {
       // Générer des URLs présignées pour chaque page
       const urlsMap = await this.storageService.getPresignedDownloadUrls(submission.rawPages);
       
-      // Conserver l'ordre des pages
-      for (const rawPage of submission.rawPages) {
+      // Conserver l'ordre des pages et créer les objets PageInfo
+      submission.rawPages.forEach((rawPage, index) => {
         if (urlsMap[rawPage]) {
-          pageUrls.push(urlsMap[rawPage]);
+          // Pour cet exemple, nous utilisons des valeurs par défaut pour width et height
+          // Dans un cas réel, ces valeurs devraient provenir des métadonnées de l'image
+          pageUrls.push({
+            id: `p${index + 1}`,
+            url: urlsMap[rawPage],
+            width: 3468, // Valeur par défaut, à remplacer par la vraie largeur
+            height: 4624, // Valeur par défaut, à remplacer par la vraie hauteur
+          });
         }
-      }
+      });
     }
     
     // Retourner la soumission avec les URLs des pages
     return {
-      ...(submission as any),
+      ...submissionDto,
       pageUrls,
     };
   }

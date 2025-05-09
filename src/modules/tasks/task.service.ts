@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, Inject, forwardRef 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task, TaskStatus } from './task.schema';
-import { CreateTaskDto, UpdateTaskDto } from './task.dto';
+import { CreateTaskDto, UpdateTaskDto, TaskResponseDto } from './task.dto';
 import { MembershipService } from '../memberships/membership.service';
 import { SubmissionService } from '../submissions/submission.service';
 import { REQUEST } from '@nestjs/core';
@@ -16,7 +16,32 @@ export class TaskService {
     @Inject(REQUEST) private request,
   ) {}
 
-  async create(createTaskDto: CreateTaskDto): Promise<Task> {
+  // Convertir un objet Task en TaskResponseDto
+  private toResponseDto(task: Task): TaskResponseDto {
+    const taskDto = new TaskResponseDto();
+    taskDto.id = task._id.toString();
+    taskDto.title = task.title;
+    taskDto.description = task.description;
+    taskDto.classId = task.classId?.toString();
+    taskDto.createdBy = task.createdBy?.toString();
+    taskDto.status = task.status;
+    taskDto.dueDate = task.dueDate;
+    taskDto.points = task.points;
+    taskDto.tags = task.tags;
+    taskDto.metadata = task.metadata;
+    taskDto.settings = task.settings;
+    // Task étend Document de Mongoose qui inclut ces propriétés grâce à { timestamps: true }
+    taskDto.createdAt = (task as any).createdAt;
+    taskDto.updatedAt = (task as any).updatedAt;
+    return taskDto;
+  }
+
+  // Convertir une liste d'objets Task en liste de TaskResponseDto
+  private toResponseDtoList(tasks: Task[]): TaskResponseDto[] {
+    return tasks.map(task => this.toResponseDto(task));
+  }
+
+  async create(createTaskDto: CreateTaskDto): Promise<TaskResponseDto> {
     const userId = this.request.user.sub;
     
     // Check if the user is a teacher in this class
@@ -30,28 +55,31 @@ export class TaskService {
       createdBy: userId,
     });
     
-    return task.save();
+    const savedTask = await task.save();
+    return this.toResponseDto(savedTask);
   }
 
-  async findAll(filters: Record<string, any> = {}): Promise<Task[]> {
-    return this.taskModel.find(filters).exec();
+  async findAll(filters: Record<string, any> = {}): Promise<TaskResponseDto[]> {
+    const tasks = await this.taskModel.find(filters).exec();
+    return this.toResponseDtoList(tasks);
   }
 
-  async findOne(id: string): Promise<Task> {
+  async findOne(id: string): Promise<TaskResponseDto> {
     const task = await this.taskModel.findById(id).exec();
     if (!task) {
       throw new NotFoundException(`Task with ID ${id} not found`);
     }
-    return task;
+    return this.toResponseDto(task);
   }
 
-  async findByClass(classId: string): Promise<Task[]> {
-    return this.taskModel.find({ classId }).exec();
+  async findByClass(classId: string): Promise<TaskResponseDto[]> {
+    const tasks = await this.taskModel.find({ classId }).exec();
+    return this.toResponseDtoList(tasks);
   }
 
-  async update(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
+  async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskResponseDto> {
     const userId = this.request.user.sub;
-    const task = await this.findOne(id);
+    const task = await this.findTaskEntity(id);
     
     // Check if the user is a teacher in this class
     const membership = await this.membershipService.findByUserAndClass(userId, task.classId);
@@ -59,14 +87,16 @@ export class TaskService {
       throw new BadRequestException('You must be a teacher in this class to modify a task');
     }
     
-    return this.taskModel
+    const updatedTask = await this.taskModel
       .findByIdAndUpdate(id, updateTaskDto, { new: true })
       .exec();
+    
+    return this.toResponseDto(updatedTask);
   }
 
-  async archive(id: string): Promise<Task> {
+  async archive(id: string): Promise<TaskResponseDto> {
     const userId = this.request.user.sub;
-    const task = await this.findOne(id);
+    const task = await this.findTaskEntity(id);
     
     // Check if the user is a teacher in this class
     const membership = await this.membershipService.findByUserAndClass(userId, task.classId);
@@ -74,14 +104,16 @@ export class TaskService {
       throw new BadRequestException('You must be a teacher in this class to archive a task');
     }
     
-    return this.taskModel
+    const updatedTask = await this.taskModel
       .findByIdAndUpdate(id, { status: TaskStatus.ARCHIVED }, { new: true })
       .exec();
+    
+    return this.toResponseDto(updatedTask);
   }
 
-  async publish(id: string): Promise<Task> {
+  async publish(id: string): Promise<TaskResponseDto> {
     const userId = this.request.user.sub;
-    const task = await this.findOne(id);
+    const task = await this.findTaskEntity(id);
     
     // Check if the user is a teacher in this class
     const membership = await this.membershipService.findByUserAndClass(userId, task.classId);
@@ -89,14 +121,16 @@ export class TaskService {
       throw new BadRequestException('You must be a teacher in this class to publish a task');
     }
     
-    return this.taskModel
+    const updatedTask = await this.taskModel
       .findByIdAndUpdate(id, { status: TaskStatus.PUBLISHED }, { new: true })
       .exec();
+    
+    return this.toResponseDto(updatedTask);
   }
 
-  async remove(id: string): Promise<Task> {
+  async remove(id: string): Promise<void> {
     const userId = this.request.user.sub;
-    const task = await this.findOne(id);
+    const task = await this.findTaskEntity(id);
     
     // Check if the user is a teacher in this class
     const membership = await this.membershipService.findByUserAndClass(userId, task.classId);
@@ -107,11 +141,20 @@ export class TaskService {
     // Delete all submissions associated with this task
     await this.submissionService.removeByTask(id);
     
-    return this.taskModel.findByIdAndDelete(id).exec();
+    await this.taskModel.findByIdAndDelete(id).exec();
+  }
+
+  // Pour l'utilisation interne uniquement - récupère l'entité Task sans la convertir en DTO
+  private async findTaskEntity(id: string): Promise<Task> {
+    const task = await this.taskModel.findById(id).exec();
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+    return task;
   }
 
   // For retrieving tasks related to a user
-  async findTasksForUser(): Promise<Task[]> {
+  async findTasksForUser(): Promise<TaskResponseDto[]> {
     const userId = this.request.user.sub;
     
     // Get the classes of which the user is a member
@@ -119,9 +162,11 @@ export class TaskService {
     const classIds = memberships.map(m => m.classId);
     
     // Get all published tasks for these classes
-    return this.taskModel.find({
+    const tasks = await this.taskModel.find({
       classId: { $in: classIds },
       status: TaskStatus.PUBLISHED
     }).exec();
+    
+    return this.toResponseDtoList(tasks);
   }
 } 

@@ -238,7 +238,20 @@ describe('CorrectionController (Integration)', () => {
           throw new BadRequestException('The submission must be at the SUBMITTED status to be corrected');
         }
         
-        return new correctionModel(dto);
+        const correction = new correctionModel(dto);
+        // Convertir en CorrectionResponseDto pour correspondre à la signature du service
+        return {
+          id: correction._id.toString(),
+          submissionId: correction.submissionId.toString(),
+          correctedById: dto.correctedById || teacher.id,
+          status: correction.status,
+          annotations: correction.annotations,
+          grade: correction.grade,
+          appreciation: correction.appreciation,
+          finalizedAt: correction.finalizedAt,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
       });
       
       const createCorrectionDto: CreateCorrectionDto = {

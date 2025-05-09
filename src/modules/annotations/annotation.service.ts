@@ -1,25 +1,45 @@
-import { Injectable, NotFoundException, BadRequestException, Inject, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Inject, ForbiddenException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { REQUEST } from '@nestjs/core';
 import { Annotation } from './annotation.schema';
-import { CreateAnnotationDto, UpdateAnnotationDto } from './annotation.dto';
+import { CreateAnnotationDto, UpdateAnnotationDto, AnnotationResponseDto } from './annotation.dto';
 import { CorrectionService } from '../corrections/correction.service';
 
 @Injectable()
 export class AnnotationService {
+  private readonly logger = new Logger(AnnotationService.name);
+
   constructor(
     @InjectModel(Annotation.name) private annotationModel: Model<Annotation>,
     private correctionService: CorrectionService,
     @Inject(REQUEST) private request,
   ) {}
 
+  // Convertir un objet Annotation en AnnotationResponseDto
+  private toResponseDto(annotation: Annotation): AnnotationResponseDto {
+    const annotationDto = new AnnotationResponseDto();
+    annotationDto.id = annotation['_id'].toString();
+    annotationDto.correctionId = annotation.correctionId?.toString();
+    annotationDto.key = annotation.key;
+    annotationDto.value = annotation.value;
+    annotationDto.commentIds = annotation.commentIds || [];
+    annotationDto.createdAt = (annotation as any).createdAt;
+    annotationDto.updatedAt = (annotation as any).updatedAt;
+    return annotationDto;
+  }
+
+  // Convertir une liste d'objets Annotation en liste de AnnotationResponseDto
+  private toResponseDtoList(annotations: Annotation[]): AnnotationResponseDto[] {
+    return annotations.map(annotation => this.toResponseDto(annotation));
+  }
+
   /**
    * Crée une nouvelle annotation
    * @param createAnnotationDto Les données de l'annotation à créer
    * @returns La nouvelle annotation créée
    */
-  async create(createAnnotationDto: CreateAnnotationDto): Promise<Annotation> {
+  async create(createAnnotationDto: CreateAnnotationDto): Promise<AnnotationResponseDto> {
     // Vérifier que la correction existe
     const correction = await this.correctionService.findOne(createAnnotationDto.correctionId);
     if (!correction) {
@@ -34,7 +54,8 @@ export class AnnotationService {
     }
 
     const newAnnotation = new this.annotationModel(createAnnotationDto);
-    return newAnnotation.save();
+    const savedAnnotation = await newAnnotation.save();
+    return this.toResponseDto(savedAnnotation);
   }
 
   /**
@@ -42,8 +63,9 @@ export class AnnotationService {
    * @param correctionId L'ID de la correction
    * @returns Liste des annotations
    */
-  async findByCorrection(correctionId: string): Promise<Annotation[]> {
-    return this.annotationModel.find({ correctionId }).exec();
+  async findByCorrection(correctionId: string): Promise<AnnotationResponseDto[]> {
+    const annotations = await this.annotationModel.find({ correctionId }).exec();
+    return this.toResponseDtoList(annotations);
   }
 
   /**
@@ -51,12 +73,12 @@ export class AnnotationService {
    * @param id L'ID de l'annotation
    * @returns L'annotation trouvée
    */
-  async findById(id: string): Promise<Annotation> {
+  async findById(id: string): Promise<AnnotationResponseDto> {
     const annotation = await this.annotationModel.findById(id).exec();
     if (!annotation) {
       throw new NotFoundException(`Annotation with ID ${id} not found`);
     }
-    return annotation;
+    return this.toResponseDto(annotation);
   }
 
   /**
@@ -65,12 +87,12 @@ export class AnnotationService {
    * @param key La clé de l'annotation
    * @returns L'annotation trouvée
    */
-  async findByKey(correctionId: string, key: string): Promise<Annotation> {
+  async findByKey(correctionId: string, key: string): Promise<AnnotationResponseDto> {
     const annotation = await this.annotationModel.findOne({ correctionId, key }).exec();
     if (!annotation) {
       throw new NotFoundException(`Annotation with key ${key} not found for correction ${correctionId}`);
     }
-    return annotation;
+    return this.toResponseDto(annotation);
   }
 
   /**
@@ -79,8 +101,8 @@ export class AnnotationService {
    * @param updateAnnotationDto Les données de mise à jour
    * @returns L'annotation mise à jour
    */
-  async update(id: string, updateAnnotationDto: UpdateAnnotationDto): Promise<Annotation> {
-    const annotation = await this.findById(id);
+  async update(id: string, updateAnnotationDto: UpdateAnnotationDto): Promise<AnnotationResponseDto> {
+    await this.findAnnotationEntity(id);
 
     // Valider que value est du JSON valide si présent
     if (updateAnnotationDto.value) {
@@ -97,17 +119,28 @@ export class AnnotationService {
       { new: true },
     ).exec();
 
-    return updatedAnnotation;
+    return this.toResponseDto(updatedAnnotation);
   }
 
   /**
    * Supprime une annotation
    * @param id L'ID de l'annotation à supprimer
-   * @returns L'annotation supprimée
    */
-  async remove(id: string): Promise<Annotation> {
-    const annotation = await this.findById(id);
-    return this.annotationModel.findByIdAndDelete(id).exec();
+  async remove(id: string): Promise<void> {
+    await this.findAnnotationEntity(id);
+    const deletedAnnotation = await this.annotationModel.findByIdAndDelete(id).exec();
+    if (!deletedAnnotation) {
+      throw new NotFoundException(`Annotation with ID ${id} not found`);
+    }
+  }
+
+  // Pour l'utilisation interne uniquement - récupère l'entité Annotation sans la convertir en DTO
+  private async findAnnotationEntity(id: string): Promise<Annotation> {
+    const annotation = await this.annotationModel.findById(id).exec();
+    if (!annotation) {
+      throw new NotFoundException(`Annotation with ID ${id} not found`);
+    }
+    return annotation;
   }
 
   /**

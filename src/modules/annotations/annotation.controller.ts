@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, NotFoundException, BadRequestException, UseGuards } from '@nestjs/common';
 import { AnnotationService } from './annotation.service';
-import { CreateAnnotationDto, UpdateAnnotationDto } from './annotation.dto';
+import { CreateAnnotationDto, UpdateAnnotationDto, AnnotationResponseDto } from './annotation.dto';
 import { Annotation } from './annotation.schema';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { AdminOnly, AuthenticatedUser, RequirePermission } from '../../common/decorators';
@@ -15,7 +15,7 @@ export class AnnotationController {
   @Post('corrections/:correctionId/annotations')
   @ApiOperation({ summary: 'Create a new annotation for a correction' })
   @ApiParam({ name: 'correctionId', description: 'ID of the correction' })
-  @ApiResponse({ status: 201, description: 'The annotation has been successfully created' })
+  @ApiResponse({ status: 201, description: 'The annotation has been successfully created', type: AnnotationResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid request body or JSON format' })
   @ApiResponse({ status: 403, description: 'Not authorized to create annotations for this correction' })
   @ApiResponse({ status: 404, description: 'Correction not found' })
@@ -24,7 +24,7 @@ export class AnnotationController {
   async create(
     @Param('correctionId') correctionId: string,
     @Body() createAnnotationDto: CreateAnnotationDto,
-  ): Promise<Annotation> {
+  ): Promise<AnnotationResponseDto> {
     // Vérifier que l'ID de correction dans l'URL correspond à celui dans le DTO
     if (correctionId !== createAnnotationDto.correctionId) {
       throw new BadRequestException('Correction ID in URL does not match the one in request body');
@@ -39,11 +39,11 @@ export class AnnotationController {
   @Get('corrections/:correctionId/annotations')
   @ApiOperation({ summary: 'Get all annotations for a correction' })
   @ApiParam({ name: 'correctionId', description: 'ID of the correction' })
-  @ApiResponse({ status: 200, description: 'List of annotations for the correction' })
+  @ApiResponse({ status: 200, description: 'List of annotations for the correction', type: [AnnotationResponseDto] })
   @ApiResponse({ status: 404, description: 'Correction not found' })
   @AuthenticatedUser
   @UseGuards(AnnotationAccessGuard)
-  async findByCorrection(@Param('correctionId') correctionId: string): Promise<Annotation[]> {
+  async findByCorrection(@Param('correctionId') correctionId: string): Promise<AnnotationResponseDto[]> {
     return this.annotationService.findByCorrection(correctionId);
   }
 
@@ -51,14 +51,14 @@ export class AnnotationController {
   @ApiOperation({ summary: 'Get a specific annotation by ID' })
   @ApiParam({ name: 'correctionId', description: 'ID of the correction' })
   @ApiParam({ name: 'id', description: 'ID of the annotation' })
-  @ApiResponse({ status: 200, description: 'The annotation has been found' })
+  @ApiResponse({ status: 200, description: 'The annotation has been found', type: AnnotationResponseDto })
   @ApiResponse({ status: 404, description: 'Annotation not found' })
   @AuthenticatedUser
   @RequirePermission(Permission.READ_CORRECTIONS, 'read')
   async findOne(
     @Param('correctionId') correctionId: string,
     @Param('id') id: string,
-  ): Promise<Annotation> {
+  ): Promise<AnnotationResponseDto> {
     const annotation = await this.annotationService.findById(id);
     
     // Vérifier que l'annotation appartient bien à la correction spécifiée
@@ -73,7 +73,7 @@ export class AnnotationController {
   @ApiOperation({ summary: 'Update an annotation' })
   @ApiParam({ name: 'correctionId', description: 'ID of the correction' })
   @ApiParam({ name: 'id', description: 'ID of the annotation' })
-  @ApiResponse({ status: 200, description: 'The annotation has been successfully updated' })
+  @ApiResponse({ status: 200, description: 'The annotation has been successfully updated', type: AnnotationResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid JSON format in the value field' })
   @ApiResponse({ status: 403, description: 'Not authorized to update annotations for this correction' })
   @ApiResponse({ status: 404, description: 'Annotation not found' })
@@ -83,7 +83,7 @@ export class AnnotationController {
     @Param('correctionId') correctionId: string,
     @Param('id') id: string,
     @Body() updateAnnotationDto: UpdateAnnotationDto,
-  ): Promise<Annotation> {
+  ): Promise<AnnotationResponseDto> {
     const annotation = await this.annotationService.findById(id);
     
     // Vérifier que l'annotation appartient bien à la correction spécifiée
