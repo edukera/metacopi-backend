@@ -188,6 +188,26 @@ async function main() {
               }
             }
             
+            // 8.1 Récupérer les commentaires AI pour chaque correction
+            console.log(`\nRécupération des commentaires AI pour la correction ID: ${correctionId}...`);
+            try {
+              const aiCommentsResponse = await axios.get(`${API_BASE_URL}/corrections/${correctionId}/ai-comments`, authHeaders);
+              
+              const aiCommentsCount = aiCommentsResponse.data.length || 0;
+              console.log(`${aiCommentsCount} commentaire(s) AI récupéré(s) avec succès pour la correction ${correctionId}:`);
+              console.log(JSON.stringify(aiCommentsResponse.data, null, 2));
+            } catch (aiCommentsError) {
+              console.error(`Erreur lors de la récupération des commentaires AI pour la correction ${correctionId}:`, 
+                aiCommentsError.message);
+              
+              if (aiCommentsError.response) {
+                console.error('Détails:', {
+                  status: aiCommentsError.response.status,
+                  data: aiCommentsError.response.data
+                });
+              }
+            }
+            
             // 9. Récupérer les annotations pour chaque correction
             console.log(`\nRécupération des annotations pour la correction ID: ${correctionId}...`);
             try {

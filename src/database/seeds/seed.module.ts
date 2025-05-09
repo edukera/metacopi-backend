@@ -11,6 +11,7 @@ import { Submission, SubmissionSchema } from '../../modules/submissions/submissi
 import { Correction, CorrectionSchema } from '../../modules/corrections/correction.schema';
 import { Annotation, AnnotationSchema } from '../../modules/annotations/annotation.schema';
 import { Comment, CommentSchema } from '../../modules/comments/comment.schema';
+import { AIComment, AICommentSchema } from '../../modules/ai-comments/ai-comment.schema';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { Comment, CommentSchema } from '../../modules/comments/comment.schema';
       { name: Submission.name, schema: SubmissionSchema },
       { name: Correction.name, schema: CorrectionSchema },
       { name: Comment.name, schema: CommentSchema },
-      { name: Annotation.name, schema: AnnotationSchema }
+      { name: Annotation.name, schema: AnnotationSchema },
+      { name: AIComment.name, schema: AICommentSchema }
     ]),
   ],
   providers: [DataSeedService],

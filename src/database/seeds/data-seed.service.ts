@@ -14,6 +14,7 @@ import { Membership, MembershipRole, MembershipStatus } from '../../modules/memb
 import { Submission, SubmissionStatus as SubmissionStatusEnum } from '../../modules/submissions/submission.schema';
 import { Correction, CorrectionStatus } from '../../modules/corrections/correction.schema';
 import { Comment, CommentDocument } from '../../modules/comments/comment.schema';
+import { AIComment, AICommentDocument } from '../../modules/ai-comments/ai-comment.schema';
 
 // Interfaces to define the JSON structure
 export interface UserSeedData {
@@ -102,6 +103,27 @@ export interface CommentSeedData {
   annotations?: string[]; // Sera généralement vide pour le seed initial
 }
 
+export interface AICommentSeedData {
+  // Identifier la Correction parente
+  submissionUserEmail: string; 
+  submissionTaskTitle: string;
+  submissionClassName: string;
+  correctorEmail: string;
+
+  // Auteur du commentaire AI
+  authorEmail: string;
+
+  // Champs du Commentaire AI
+  pageNumber: number;
+  type: string;
+  color: string;
+  text: string; // Contenu textuel simple/rendu
+  markdownSource?: string; // Contenu Markdown brut
+  isMarkdown: boolean;
+  pageY?: number;
+  annotations?: string[]; // Sera généralement vide pour le seed initial
+}
+
 export interface SeedData {
   users: UserSeedData[];
   classes: ClassSeedData[];
@@ -110,6 +132,7 @@ export interface SeedData {
   submissions: SubmissionSeedData[];
   corrections: CorrectionSeedData[];
   comments: CommentSeedData[];
+  'ai-comments': AICommentSeedData[];
 }
 
 @Injectable()
@@ -129,6 +152,7 @@ export class DataSeedService {
     @InjectModel(Submission.name) private submissionModel: Model<Submission>,
     @InjectModel(Correction.name) private correctionModel: Model<Correction>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(AIComment.name) private aiCommentModel: Model<AICommentDocument>,
     @InjectConnection() private readonly connection: Connection,
   ) {}
 
@@ -161,6 +185,7 @@ export class DataSeedService {
       await this.seedSubmissions(seedData.submissions);
       await this.seedCorrections(seedData.corrections);
       await this.seedComments(seedData.comments);
+      await this.seedAIComments(seedData['ai-comments']);
       
       this.logger.log('Seeding process completed successfully!');
     } catch (error) {
@@ -573,5 +598,63 @@ export class DataSeedService {
       }
     }
     this.logger.log(`Comments seeding completed. ${createdCount} comments created.`);
+  }
+
+  private async seedAIComments(aiComments: AICommentSeedData[]): Promise<void> {
+    if (!aiComments || aiComments.length === 0) {
+      this.logger.log('No AI comments to create.');
+      return;
+    }
+
+    let createdCount = 0;
+
+    for (const aiCommentData of aiComments) {
+      try {
+        // Trouver l'ID de la correction parente
+        const submissionKey = `${aiCommentData.submissionUserEmail}-${aiCommentData.submissionTaskTitle}-${aiCommentData.submissionClassName}`;
+        const submissionId = this.submissionIdMap.get(submissionKey);
+        if (!submissionId) {
+          this.logger.warn(`Submission for key ${submissionKey} not found. Cannot create AI comment.`);
+          continue;
+        }
+
+        const correctionKey = `${submissionId}-${aiCommentData.correctorEmail}`;
+        const correctionId = this.correctionIdMap.get(correctionKey);
+        if (!correctionId) {
+          this.logger.warn(`Correction for key ${correctionKey} not found. Cannot create AI comment.`);
+          continue;
+        }
+
+        // Trouver l'ID de l'auteur du commentaire AI
+        const authorId = this.userIdMap.get(aiCommentData.authorEmail);
+        if (!authorId) {
+          this.logger.warn(`User (author) ${aiCommentData.authorEmail} not found. Cannot create AI comment.`);
+          continue;
+        }
+
+        // Créer le commentaire AI
+        // Note: On ne vérifie pas si le commentaire AI existe déjà, car les commentaires peuvent se répéter.
+        // Si une logique d'unicité est nécessaire, elle devra être ajoutée.
+        const newAIComment = await this.aiCommentModel.create({
+          correctionId: new Types.ObjectId(correctionId),
+          createdBy: new Types.ObjectId(authorId),
+          pageNumber: aiCommentData.pageNumber,
+          type: aiCommentData.type,
+          color: aiCommentData.color,
+          text: aiCommentData.text,
+          markdownSource: aiCommentData.markdownSource,
+          isMarkdown: aiCommentData.isMarkdown,
+          pageY: aiCommentData.pageY,
+          annotations: aiCommentData.annotations || [],
+        });
+
+        createdCount++;
+        this.logger.log(`AI Comment successfully created on page ${aiCommentData.pageNumber} for correction ${correctionId} by ${aiCommentData.authorEmail}`);
+
+      } catch (error) {
+        this.logger.error(`Error while creating AI comment by ${aiCommentData.authorEmail} on page ${aiCommentData.pageNumber} for correction:`, error);
+      }
+    }
+    this.logger.log(`AI Comments seeding completed. ${createdCount} AI comments created.`);
   }
 } 

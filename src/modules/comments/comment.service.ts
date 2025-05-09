@@ -29,6 +29,7 @@ export class CommentService {
     commentDto.id = comment['_id'].toString();
     commentDto.correctionId = comment.correctionId?.toString();
     commentDto.pageNumber = comment.pageNumber;
+    commentDto.pageY = comment.pageY;
     commentDto.type = comment.type || 'note';
     commentDto.color = comment.color || '#FFD700';
     commentDto.markdown = comment.isMarkdown || false;

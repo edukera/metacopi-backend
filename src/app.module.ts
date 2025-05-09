@@ -21,6 +21,7 @@ import { JwtAuthGuard } from './common/guards';
 import { GuardsModule } from './common/guards.module';
 import { AuditLogInterceptor } from './common/interceptors';
 import { AnnotationModule } from './modules/annotations/annotation.module';
+import { AICommentModule } from './modules/ai-comments/ai-comment.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AnnotationModule } from './modules/annotations/annotation.module';
     SubmissionModule,
     CorrectionModule,
     CommentModule,
+    AICommentModule,
     AuditLogModule,
     LoggingModule,
     StorageModule,

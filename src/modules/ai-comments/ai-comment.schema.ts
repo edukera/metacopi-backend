@@ -1,0 +1,100 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+@Schema({
+  timestamps: true,
+})
+export class AIComment {
+  @ApiProperty({
+    description: 'ID of the correction this AI comment belongs to',
+    example: '605a1cb9d4d5d73598045618',
+    required: true
+  })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Correction', required: true })
+  correctionId: string;
+
+  @ApiProperty({
+    description: 'Page number in the document where the AI comment is placed',
+    example: 2,
+    required: true
+  })
+  @Prop({ required: true })
+  pageNumber: number;
+
+  @ApiPropertyOptional({
+    description: 'Type of AI comment (e.g., highlight, note, annotation)',
+    example: 'highlight',
+    default: 'note'
+  })
+  @Prop({ type: String, default: 'note' })
+  type: string;
+
+  @ApiPropertyOptional({
+    description: 'Color of the AI comment (hex code or named color)',
+    example: '#FF5733',
+    default: '#FFD700'
+  })
+  @Prop({ type: String, default: '#FFD700' })
+  color: string;
+
+  @ApiPropertyOptional({
+    description: 'Whether the main text content should be rendered as markdown',
+    example: true,
+    default: false
+  })
+  @Prop({ type: Boolean, default: false })
+  isMarkdown: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Raw Markdown content, if different from plain text or if specific Markdown features are used',
+    example: 'This section needs **more detailed** explanation. See [doc](...)'
+  })
+  @Prop({ type: String, required: false })
+  markdownSource?: string;
+
+  @ApiProperty({
+    description: 'Text content of the AI comment',
+    example: 'This section needs more detailed explanation.'
+  })
+  @Prop({ type: String, required: true })
+  text: string;
+
+  @ApiPropertyOptional({
+    description: 'Array of annotation references or IDs related to this AI comment',
+    example: ['60d21b4667d0d8992e610c85', '60d21b4667d0d8992e610c86'],
+    type: [String]
+  })
+  @Prop({ type: [String], default: [] })
+  annotations: string[];
+
+  @ApiPropertyOptional({
+    description: 'Vertical position of the AI comment on the page, if applicable',
+    example: 120.5
+  })
+  @Prop({ type: Number, required: false })
+  pageY?: number;
+
+  @ApiProperty({
+    description: 'ID of the user who created the AI comment',
+    example: '605a1cb9d4d5d73598045618'
+  })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
+  createdBy: string;
+
+  // Timestamps are added automatically by { timestamps: true }
+  @ApiProperty({
+    description: 'AI comment creation date',
+    example: '2023-01-01T12:00:00Z'
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'AI comment last update date',
+    example: '2023-01-01T12:00:00Z'
+  })
+  updatedAt: Date;
+}
+
+export type AICommentDocument = AIComment & Document;
+export const AICommentSchema = SchemaFactory.createForClass(AIComment); 

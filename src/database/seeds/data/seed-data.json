@@ -116,22 +116,7 @@
       "correctedAt": "2023-10-12T14:30:00.000Z"
     }
   ],
-  "comments": [
-    {
-      "submissionUserEmail": "alice.gribouille@monlycee.net",
-      "submissionTaskTitle": "DS 8 Arbre de Probabilités",
-      "submissionClassName": "Première 3 Spé Maths",
-      "correctorEmail": "jean.dupont@monlycee.net",
-      "authorEmail": "jean.dupont@monlycee.net",
-      "pageNumber": 1,
-      "type": "error",
-      "color": "red",
-      "text": "Votre calcul de dérivée est incorrect. La dérivée de f(x) = x^2 est f'(x) = 2x et non 2x^2. Revoyez les règles de dérivation.",
-      "markdownSource": "Votre calcul de dérivée est incorrect. La dérivée de $f(x) = x^2$ est $f'(x) = 2x$ et non $2x^2$. Revoyez les règles de dérivation.",
-      "isMarkdown": true,
-      "pageY": 100,
-      "annotations": []
-    },
+  "comments" :[
     {
       "submissionUserEmail": "alice.gribouille@monlycee.net",
       "submissionTaskTitle": "DS 8 Arbre de Probabilités",
@@ -145,6 +130,23 @@
       "markdownSource": "Excellent travail sur cette démonstration !",
       "isMarkdown": true,
       "pageY": 200,
+      "annotations": []
+    }
+  ],
+  "ai-comments": [
+    {
+      "submissionUserEmail": "alice.gribouille@monlycee.net",
+      "submissionTaskTitle": "DS 8 Arbre de Probabilités",
+      "submissionClassName": "Première 3 Spé Maths",
+      "correctorEmail": "jean.dupont@monlycee.net",
+      "authorEmail": "jean.dupont@monlycee.net",
+      "pageNumber": 1,
+      "type": "error",
+      "color": "red",
+      "text": "Votre calcul de dérivée est incorrect. La dérivée de f(x) = x^2 est f'(x) = 2x et non 2x^2. Revoyez les règles de dérivation.",
+      "markdownSource": "Votre calcul de dérivée est incorrect. La dérivée de $f(x) = x^2$ est $f'(x) = 2x$ et non $2x^2$. Revoyez les règles de dérivation.",
+      "isMarkdown": true,
+      "pageY": 100,
       "annotations": []
     },
     {
