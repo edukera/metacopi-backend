@@ -106,6 +106,7 @@
   ],
   "corrections": [
     {
+      "id": 1,
       "submissionUserEmail": "alice.gribouille@monlycee.net",
       "submissionTaskTitle": "DS 8 Arbre de Probabilités",
       "submissionClassName": "Première 3 Spé Maths",
@@ -147,9 +148,10 @@
       "markdownSource": "Votre calcul de dérivée est incorrect. La dérivée de $f(x) = x^2$ est $f'(x) = 2x$ et non $2x^2$. Revoyez les règles de dérivation.",
       "isMarkdown": true,
       "pageY": 100,
-      "annotations": []
+      "annotations": [1]
     },
     {
+      "id": "2",
       "submissionUserEmail": "alice.gribouille@monlycee.net",
       "submissionTaskTitle": "DS 8 Arbre de Probabilités",
       "submissionClassName": "Première 3 Spé Maths",
@@ -162,7 +164,27 @@
       "markdownSource": "Attention à l'application de la relation de Chasles pour le calcul des produits scalaires.\n\n- Rappelez-vous que pour trois vecteurs, on a - La linéarité du produit scalaire permet cette distribution\n- Assurez-vous de ne pas confondre avec le produit vectoriel qui ne suit pas cette règle de la même façon",
       "isMarkdown": true,
       "pageY": 3000,
-      "annotations": []
+      "annotations": [3]
+    }
+  ],
+  "annotations": [
+    {
+      "id": 1,
+      "correctionId": 1,
+      "type": "zone",
+      "color": "red",
+      "position": { "x": 100, "y": 100 },
+      "width": 100,
+      "height": 100
+    },
+    {
+      "id": 3,
+      "correctionId": 1,
+      "type": "zone",
+      "color": "orange",
+      "position": { "x": 300, "y": 300 },
+      "width": 100,
+      "height": 100
     }
   ]
 }

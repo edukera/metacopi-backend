@@ -15,6 +15,7 @@ import { Submission, SubmissionStatus as SubmissionStatusEnum } from '../../modu
 import { Correction, CorrectionStatus } from '../../modules/corrections/correction.schema';
 import { Comment, CommentDocument } from '../../modules/comments/comment.schema';
 import { AIComment, AICommentDocument } from '../../modules/ai-comments/ai-comment.schema';
+import { Annotation, AnnotationDocument } from '../../modules/annotations/annotation.schema';
 
 // Interfaces to define the JSON structure
 export interface UserSeedData {
@@ -71,6 +72,7 @@ export interface SubmissionSeedData {
 }
 
 export interface CorrectionSeedData {
+  id?: number;
   submissionUserEmail: string; // Email of the student who made the submission
   submissionTaskTitle: string; // Title of the task for the submission
   submissionClassName: string; // Class name for the submission's task
@@ -80,6 +82,12 @@ export interface CorrectionSeedData {
   status?: string; // e.g., 'draft', 'published'
   correctedAt?: Date;
   // Add other fields from CreateCorrectionDto as needed for seeding
+}
+
+export interface AnnotationSeedData {
+  id: number | string;
+  correctionId: number | string;
+  [key: string]: any;
 }
 
 export interface CommentSeedData {
@@ -100,11 +108,12 @@ export interface CommentSeedData {
   markdownSource?: string; // Contenu Markdown brut
   isMarkdown: boolean;
   pageY?: number;
-  annotations?: string[]; // Sera généralement vide pour le seed initial
+  annotations?: number[]; // Références aux annotations par leur ID logique
 }
 
 export interface AICommentSeedData {
   // Identifier la Correction parente
+  id?: string;
   submissionUserEmail: string; 
   submissionTaskTitle: string;
   submissionClassName: string;
@@ -121,7 +130,7 @@ export interface AICommentSeedData {
   markdownSource?: string; // Contenu Markdown brut
   isMarkdown: boolean;
   pageY?: number;
-  annotations?: string[]; // Sera généralement vide pour le seed initial
+  annotations?: number[]; // Références aux annotations par leur ID logique
 }
 
 export interface SeedData {
@@ -133,6 +142,7 @@ export interface SeedData {
   corrections: CorrectionSeedData[];
   comments: CommentSeedData[];
   'ai-comments': AICommentSeedData[];
+  annotations: AnnotationSeedData[];
 }
 
 @Injectable()
@@ -143,6 +153,7 @@ export class DataSeedService {
   private readonly taskIdMap: Map<string, string> = new Map(); // Map title+className -> taskId
   private readonly submissionIdMap: Map<string, string> = new Map(); // Map studentEmail+taskTitle+className -> submissionId
   private readonly correctionIdMap: Map<string, string> = new Map(); // Map submissionId+correctorEmail -> correctionId
+  private readonly annotationIdMap: Map<string, string> = new Map(); // Map logicalId -> annotationId
 
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
@@ -153,6 +164,7 @@ export class DataSeedService {
     @InjectModel(Correction.name) private correctionModel: Model<Correction>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectModel(AIComment.name) private aiCommentModel: Model<AICommentDocument>,
+    @InjectModel(Annotation.name) private annotationModel: Model<AnnotationDocument>,
     @InjectConnection() private readonly connection: Connection,
   ) {}
 
@@ -184,6 +196,7 @@ export class DataSeedService {
       await this.seedMemberships(seedData.memberships);
       await this.seedSubmissions(seedData.submissions);
       await this.seedCorrections(seedData.corrections);
+      await this.seedAnnotations(seedData.annotations);
       await this.seedComments(seedData.comments);
       await this.seedAIComments(seedData['ai-comments']);
       
@@ -542,6 +555,61 @@ export class DataSeedService {
     this.logger.log(`Corrections seeding completed. ${createdCount} corrections created.`);
   }
 
+  private async seedAnnotations(annotations: AnnotationSeedData[]): Promise<void> {
+    if (!annotations || annotations.length === 0) {
+      this.logger.log('No annotations to create.');
+      return;
+    }
+
+    let createdCount = 0;
+
+    for (const annotationData of annotations) {
+      try {
+        // Convertir l'ID en chaîne pour la clé
+        const annotationKey = String(annotationData.id);
+        
+        // Trouver l'ID de la correction associée
+        const correctionLogicalId = String(annotationData.correctionId);
+        const correctionKeys = Array.from(this.correctionIdMap.keys());
+        const correctionKey = correctionKeys.find(key => key.includes(correctionLogicalId));
+        
+        if (!correctionKey) {
+          this.logger.warn(`Correction with logical ID ${correctionLogicalId} not found. Cannot create annotation with ID ${annotationKey}.`);
+          continue;
+        }
+        
+        const correctionId = this.correctionIdMap.get(correctionKey);
+        if (!correctionId) {
+          this.logger.warn(`Correction with key ${correctionKey} not found. Cannot create annotation with ID ${annotationKey}.`);
+          continue;
+        }
+
+        // Exclure seulement id et correctionId pour la sérialisation
+        const { id, correctionId: _, ...annotationValueObj } = annotationData;
+        
+        // Sérialiser en JSON tous les autres champs dynamiques
+        const annotationValue = JSON.stringify(annotationValueObj);
+        
+        // Créer l'annotation
+        const newAnnotation = await this.annotationModel.create({
+          key: annotationKey,
+          value: annotationValue,
+          correctionId: new Types.ObjectId(correctionId)
+        });
+        
+        // Stocker l'ID pour les références futures
+        this.annotationIdMap.set(annotationKey, newAnnotation._id.toString());
+        
+        createdCount++;
+        this.logger.log(`Annotation successfully created with key ${annotationKey} for correction ${correctionId}`);
+      } catch (error) {
+        this.logger.error(`Error while creating annotation with ID ${annotationData.id}:`, error);
+      }
+    }
+    
+    this.logger.log(`Annotations seeding completed. ${createdCount} annotations created.`);
+  }
+
   private async seedComments(comments: CommentSeedData[]): Promise<void> {
     if (!comments || comments.length === 0) {
       this.logger.log('No comments to create.');
@@ -574,9 +642,20 @@ export class DataSeedService {
           continue;
         }
 
+        // Convertir les IDs d'annotations logiques en IDs de base de données
+        const annotationIds = [];
+        if (commentData.annotations && commentData.annotations.length > 0) {
+          for (const annotationLogicalId of commentData.annotations) {
+            const annotationId = this.annotationIdMap.get(String(annotationLogicalId));
+            if (annotationId) {
+              annotationIds.push(annotationId);
+            } else {
+              this.logger.warn(`Annotation with logical ID ${annotationLogicalId} not found for comment.`);
+            }
+          }
+        }
+
         // Créer le commentaire
-        // Note: On ne vérifie pas si le commentaire existe déjà, car les commentaires peuvent se répéter.
-        // Si une logique d'unicité est nécessaire, elle devra être ajoutée.
         const newComment = await this.commentModel.create({
           correctionId: new Types.ObjectId(correctionId),
           createdBy: new Types.ObjectId(authorId),
@@ -587,7 +666,7 @@ export class DataSeedService {
           markdownSource: commentData.markdownSource,
           isMarkdown: commentData.isMarkdown,
           pageY: commentData.pageY,
-          annotations: commentData.annotations || [],
+          annotations: annotationIds.map(id => new Types.ObjectId(id)),
         });
 
         createdCount++;
@@ -632,9 +711,20 @@ export class DataSeedService {
           continue;
         }
 
+        // Convertir les IDs d'annotations logiques en IDs de base de données
+        const annotationIds = [];
+        if (aiCommentData.annotations && aiCommentData.annotations.length > 0) {
+          for (const annotationLogicalId of aiCommentData.annotations) {
+            const annotationId = this.annotationIdMap.get(String(annotationLogicalId));
+            if (annotationId) {
+              annotationIds.push(annotationId);
+            } else {
+              this.logger.warn(`Annotation with logical ID ${annotationLogicalId} not found for AI comment.`);
+            }
+          }
+        }
+
         // Créer le commentaire AI
-        // Note: On ne vérifie pas si le commentaire AI existe déjà, car les commentaires peuvent se répéter.
-        // Si une logique d'unicité est nécessaire, elle devra être ajoutée.
         const newAIComment = await this.aiCommentModel.create({
           correctionId: new Types.ObjectId(correctionId),
           createdBy: new Types.ObjectId(authorId),
@@ -645,7 +735,7 @@ export class DataSeedService {
           markdownSource: aiCommentData.markdownSource,
           isMarkdown: aiCommentData.isMarkdown,
           pageY: aiCommentData.pageY,
-          annotations: aiCommentData.annotations || [],
+          annotations: annotationIds.map(id => new Types.ObjectId(id)),
         });
 
         createdCount++;
