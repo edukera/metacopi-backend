@@ -26,16 +26,16 @@ export class AICommentService {
   // Convertir un objet AIComment en AICommentResponseDto
   private toResponseDto(aiComment: AIComment): AICommentResponseDto {
     const aiCommentDto = new AICommentResponseDto();
-    aiCommentDto.id = aiComment['_id'].toString();
-    aiCommentDto.correctionId = aiComment.correctionId?.toString();
-    aiCommentDto.pageNumber = aiComment.pageNumber;
+    aiCommentDto.id = aiComment.id;
+    aiCommentDto.correctionId = aiComment.correctionId;
+    aiCommentDto.pageId = aiComment.pageId;
     aiCommentDto.pageY = aiComment.pageY;
     aiCommentDto.type = aiComment.type || 'note';
     aiCommentDto.color = aiComment.color || '#FFD700';
     aiCommentDto.markdown = aiComment.isMarkdown || false;
     aiCommentDto.text = aiComment.text;
     aiCommentDto.annotations = aiComment.annotations || [];
-    aiCommentDto.createdBy = aiComment.createdBy?.toString();
+    aiCommentDto.createdByEmail = aiComment.createdByEmail;
     aiCommentDto.createdAt = (aiComment as any).createdAt;
     aiCommentDto.updatedAt = (aiComment as any).updatedAt;
     return aiCommentDto;
@@ -52,12 +52,9 @@ export class AICommentService {
    * @returns Newly created AI comment
    */
   async create(createAICommentDto: CreateAICommentDto): Promise<AICommentResponseDto> {
-    // If createdBy is not provided, use the current user
-    if (!createAICommentDto.createdBy) {
-      createAICommentDto.createdBy = this.request.user.sub;
+    if (!createAICommentDto.createdByEmail) {
+      createAICommentDto.createdByEmail = this.request.user.email;
     }
-
-    // Les vérifications d'accès sont maintenant gérées par le guard
     const newAIComment = new this.aiCommentModel(createAICommentDto);
     const savedAIComment = await newAIComment.save();
     return this.toResponseDto(savedAIComment);
@@ -78,12 +75,14 @@ export class AICommentService {
    * @returns AI Comment if found
    */
   async findOne(id: string): Promise<AICommentResponseDto> {
-    const aiComment = await this.aiCommentModel.findById(id).exec();
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let aiComment = await this.aiCommentModel.findOne({ id }).exec();
     if (!aiComment) {
-      throw new NotFoundException(`AI Comment with ID ${id} not found`);
+      aiComment = await this.aiCommentModel.findById(id).exec();
     }
-    
-    // Les vérifications d'accès sont maintenant gérées par le guard
+    if (!aiComment) {
+      throw new NotFoundException(`AI Comment with logical ID or MongoDB ID '${id}' not found`);
+    }
     return this.toResponseDto(aiComment);
   }
 
@@ -102,7 +101,6 @@ export class AICommentService {
       }
       throw error;
     }
-    
     // Les vérifications d'accès sont maintenant gérées par le guard
     const aiComments = await this.aiCommentModel.find({ correctionId }).exec();
     return this.toResponseDtoList(aiComments);
@@ -173,7 +171,7 @@ export class AICommentService {
       const correction = await this.correctionService.findOne(correctionId);
       
       // Si l'utilisateur est l'enseignant qui a créé la correction, il a accès
-      if (correction.correctedById === userId) {
+      if (correction.correctedByEmail === userId) {
         return true;
       }
       
@@ -205,7 +203,7 @@ export class AICommentService {
       // Vérifier si l'utilisateur est l'étudiant propriétaire de la soumission
       const submission = await this.submissionService.findOne(correction.submissionId);
       
-      return submission.studentId === userId;
+      return submission.studentEmail === userId;
     } catch (error) {
       if (error instanceof NotFoundException) {
         return false;

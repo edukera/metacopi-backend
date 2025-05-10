@@ -31,13 +31,12 @@ export class SubmissionService {
   // Convertir un objet Submission en SubmissionResponseDto
   private toResponseDto(submission: Submission): SubmissionResponseDto {
     const submissionDto = new SubmissionResponseDto();
-    submissionDto.id = submission['_id'].toString();
-    submissionDto.studentId = submission.studentId?.toString();
-    submissionDto.taskId = submission.taskId?.toString();
-    submissionDto.uploadedBy = submission.uploadedBy?.toString();
+    submissionDto.id = submission.id;
+    submissionDto.studentEmail = submission.studentEmail;
+    submissionDto.taskId = submission.taskId;
+    submissionDto.uploadedByEmail = submission.uploadedByEmail;
     submissionDto.status = submission.status;
-    submissionDto.rawPages = submission.rawPages || [];
-    submissionDto.processedPages = submission.processedPages || [];
+    submissionDto.pages = submission.pages;
     submissionDto.submittedAt = submission.submittedAt;
     submissionDto.reviewedAt = submission.reviewedAt;
     submissionDto.createdAt = (submission as any).createdAt;
@@ -51,17 +50,17 @@ export class SubmissionService {
   }
 
   async create(createSubmissionDto: CreateSubmissionDto): Promise<SubmissionResponseDto> {
-    // Si studentId n'est pas fourni, utiliser l'utilisateur actuel
-    if (!createSubmissionDto.studentId) {
-      createSubmissionDto.studentId = this.request.user.sub;
+    // Si studentEmail n'est pas fourni, utiliser l'utilisateur actuel
+    if (!createSubmissionDto.studentEmail) {
+      createSubmissionDto.studentEmail = this.request.user.email;
     }
 
-    // Always set uploadedBy to the current user
-    const uploadedBy = this.request.user.sub;
+    // Always set uploadedByEmail to the current user email
+    const uploadedByEmail = this.request.user.email;
 
     // Check if a submission already exists for this student and task
     const existingSubmission = await this.submissionModel.findOne({
-      studentId: createSubmissionDto.studentId,
+      studentEmail: createSubmissionDto.studentEmail,
       taskId: createSubmissionDto.taskId,
     });
 
@@ -73,7 +72,7 @@ export class SubmissionService {
 
     const newSubmission = new this.submissionModel({
       ...createSubmissionDto,
-      uploadedBy,
+      uploadedByEmail,
     });
     const savedSubmission = await newSubmission.save();
     return this.toResponseDto(savedSubmission);
@@ -85,9 +84,13 @@ export class SubmissionService {
   }
 
   async findOne(id: string): Promise<SubmissionResponseDto> {
-    const submission = await this.submissionModel.findById(id).exec();
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let submission = await this.submissionModel.findOne({ id }).exec();
     if (!submission) {
-      throw new NotFoundException(`Submission with ID ${id} not found`);
+      submission = await this.submissionModel.findById(id).exec();
+    }
+    if (!submission) {
+      throw new NotFoundException(`Submission with logical ID or MongoDB ID '${id}' not found`);
     }
     return this.toResponseDto(submission);
   }
@@ -97,21 +100,21 @@ export class SubmissionService {
     return this.toResponseDtoList(submissions);
   }
 
-  async findByStudent(studentId: string): Promise<SubmissionResponseDto[]> {
-    const submissions = await this.submissionModel.find({ studentId }).exec();
+  async findByStudent(studentEmail: string): Promise<SubmissionResponseDto[]> {
+    const submissions = await this.submissionModel.find({ studentEmail }).exec();
     return this.toResponseDtoList(submissions);
   }
 
   async findByStudentAndTask(
-    studentId: string,
+    studentEmail: string,
     taskId: string,
   ): Promise<SubmissionResponseDto> {
     const submission = await this.submissionModel
-      .findOne({ studentId, taskId })
+      .findOne({ studentEmail, taskId })
       .exec();
     if (!submission) {
       throw new NotFoundException(
-        `Submission for student ${studentId} and task ${taskId} not found`,
+        `Submission for student ${studentEmail} and task ${taskId} not found`,
       );
     }
     return this.toResponseDto(submission);
@@ -121,46 +124,53 @@ export class SubmissionService {
     id: string,
     updateSubmissionDto: UpdateSubmissionDto,
   ): Promise<SubmissionResponseDto> {
-    const submission = await this.findSubmissionEntity(id);
-    
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let submission = await this.submissionModel.findOne({ id }).exec();
+    if (!submission) {
+      submission = await this.submissionModel.findById(id).exec();
+    }
+    if (!submission) {
+      throw new NotFoundException(`Submission with logical ID or MongoDB ID '${id}' not found`);
+    }
     // Check if a status change to 'submitted' is requested
     if (updateSubmissionDto.status === SubmissionStatus.SUBMITTED && 
         submission.status !== SubmissionStatus.SUBMITTED) {
       updateSubmissionDto.submittedAt = new Date();
     }
-    
     // Check if a status change to 'corrected' is requested
     if (updateSubmissionDto.status === SubmissionStatus.CORRECTED && 
         submission.status !== SubmissionStatus.CORRECTED) {
       updateSubmissionDto.reviewedAt = new Date();
     }
-    
     const updatedSubmission = await this.submissionModel
-      .findByIdAndUpdate(id, updateSubmissionDto, { new: true })
+      .findByIdAndUpdate(submission._id, updateSubmissionDto, { new: true })
       .exec();
-      
     if (!updatedSubmission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-    
     return this.toResponseDto(updatedSubmission);
   }
 
   async remove(id: string): Promise<void> {
-    const submission = await this.findSubmissionEntity(id);
-    
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let submission = await this.submissionModel.findOne({ id }).exec();
+    if (!submission) {
+      submission = await this.submissionModel.findById(id).exec();
+    }
+    if (!submission) {
+      throw new NotFoundException(`Submission with logical ID or MongoDB ID '${id}' not found`);
+    }
     // Delete corrections associated with this submission
     try {
-      await this.correctionService.removeBySubmission(id);
+      await this.correctionService.removeBySubmission(submission._id.toString());
     } catch (error) {
       // If there's no correction, continue
       if (!(error instanceof NotFoundException)) {
         throw error;
       }
     }
-    
     const deletedSubmission = await this.submissionModel
-      .findByIdAndDelete(id)
+      .findByIdAndDelete(submission._id)
       .exec();
     if (!deletedSubmission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
@@ -169,9 +179,13 @@ export class SubmissionService {
 
   // Pour l'utilisation interne uniquement - récupère l'entité Submission sans la convertir en DTO
   private async findSubmissionEntity(id: string): Promise<Submission> {
-    const submission = await this.submissionModel.findById(id).exec();
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let submission = await this.submissionModel.findOne({ id }).exec();
     if (!submission) {
-      throw new NotFoundException(`Submission with ID ${id} not found`);
+      submission = await this.submissionModel.findById(id).exec();
+    }
+    if (!submission) {
+      throw new NotFoundException(`Submission with logical ID or MongoDB ID '${id}' not found`);
     }
     return submission;
   }
@@ -214,8 +228,8 @@ export class SubmissionService {
         return [];
       }
       
-      // 2. Extraire les IDs des tâches
-      const taskIds = tasks.map(task => task.id.toString());
+      // 2. Extraire les IDs des tâches (id logique)
+      const taskIds = tasks.map(task => task.id);
       this.logger.debug(`Found ${taskIds.length} tasks for class ${classId}`);
       
       // 3. Trouver toutes les soumissions pour ces tâches
@@ -237,20 +251,21 @@ export class SubmissionService {
     // Générer les URLs présignées pour les images raw
     const pageUrls: PageInfo[] = [];
     
-    if (submission.rawPages && submission.rawPages.length > 0) {
-      // Générer des URLs présignées pour chaque page
-      const urlsMap = await this.storageService.getPresignedDownloadUrls(submission.rawPages);
-      
+    if (submission.pages && submission.pages.length > 0) {
+      // Générer des URLs présignées pour chaque page (en utilisant le chemin de l'image raw)
+      const imagePaths = submission.pages.map(page => page.raw.image_path);
+      const urlsMap = await this.storageService.getPresignedDownloadUrls(imagePaths);
+
       // Conserver l'ordre des pages et créer les objets PageInfo
-      submission.rawPages.forEach((rawPage, index) => {
-        if (urlsMap[rawPage]) {
-          // Pour cet exemple, nous utilisons des valeurs par défaut pour width et height
-          // Dans un cas réel, ces valeurs devraient provenir des métadonnées de l'image
+      submission.pages.forEach((page, index) => {
+        const imagePath = page.raw.image_path;
+        if (urlsMap[imagePath]) {
+          // Pour cet exemple, nous utilisons les vraies dimensions de la page
           pageUrls.push({
-            id: `p${index + 1}`,
-            url: urlsMap[rawPage],
-            width: 3468, // Valeur par défaut, à remplacer par la vraie largeur
-            height: 4624, // Valeur par défaut, à remplacer par la vraie hauteur
+            id: page.id,
+            url: urlsMap[imagePath],
+            width: page.raw.width,
+            height: page.raw.height,
           });
         }
       });

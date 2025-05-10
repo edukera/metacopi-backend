@@ -11,6 +11,10 @@ export class CreateAuditLogDto {
   @IsMongoId()
   userId?: string; // Can be automatically filled by the backend
 
+  @ApiProperty({ description: 'User email (unique identifier)', example: 'user@example.com' })
+  @IsString()
+  email?: string;
+
   @ApiProperty({ 
     description: 'The action performed',
     example: 'CREATE_TASK'
@@ -51,13 +55,10 @@ export class CreateAuditLogDto {
 }
 
 export class FindAuditLogsDto {
-  @ApiPropertyOptional({ 
-    description: 'Filter logs by user ID',
-    example: '60d21b4667d0d8992e610c85'
-  })
+  @ApiPropertyOptional({ description: 'User email (unique identifier)', example: 'user@example.com' })
   @IsOptional()
-  @IsMongoId()
-  userId?: string;
+  @IsString()
+  email?: string;
 
   @ApiPropertyOptional({ 
     description: 'Filter logs by action type',

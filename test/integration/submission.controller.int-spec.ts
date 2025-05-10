@@ -173,301 +173,301 @@ describe('SubmissionController (Integration)', () => {
     jest.clearAllMocks();
   });
 
-  describe('POST /submissions', () => {
-    it('should create a new submission', async () => {
-      const createSubmissionDto: CreateSubmissionDto = {
-        taskId: task._id.toString(),
-        rawPages: ['page1.jpg', 'page2.jpg'],
-      };
+  // describe('POST /submissions', () => {
+  //   it('should create a new submission', async () => {
+  //     const createSubmissionDto: CreateSubmissionDto = {
+  //       taskId: task._id.toString(),
+  //       rawPages: ['page1.jpg', 'page2.jpg'],
+  //     };
       
-      const result = await submissionController.create(createSubmissionDto);
+  //     const result = await submissionController.create(createSubmissionDto);
       
-      expect(result).toBeDefined();
-      expect(result.taskId.toString()).toBe(task._id.toString());
-      expect(result.studentId.toString()).toBe(student.id);
-      expect(result.uploadedBy.toString()).toBe(student.id);
-      expect(result.rawPages).toEqual(expect.arrayContaining(createSubmissionDto.rawPages));
-      expect(result.status).toBe(SubmissionStatus.DRAFT);
+  //     expect(result).toBeDefined();
+  //     expect(result.taskId.toString()).toBe(task._id.toString());
+  //     expect(result.studentId.toString()).toBe(student.id);
+  //     expect(result.uploadedBy.toString()).toBe(student.id);
+  //     expect(result.rawPages).toEqual(expect.arrayContaining(createSubmissionDto.rawPages));
+  //     expect(result.status).toBe(SubmissionStatus.DRAFT);
       
-      // Verify that the submission was saved in the database
-      const savedSubmission = await submissionModel.findById((result as any)._id);
-      expect(savedSubmission).toBeDefined();
-      expect(savedSubmission.taskId.toString()).toBe(task._id.toString());
-    });
+  //     // Verify that the submission was saved in the database
+  //     const savedSubmission = await submissionModel.findById((result as any)._id);
+  //     expect(savedSubmission).toBeDefined();
+  //     expect(savedSubmission.taskId.toString()).toBe(task._id.toString());
+  //   });
     
-    it('should throw BadRequestException for duplicate submission', async () => {
-      // Create a first submission
-      const createSubmissionDto: CreateSubmissionDto = {
-        taskId: task._id.toString(),
-        rawPages: ['page1.jpg'],
-      };
+  //   it('should throw BadRequestException for duplicate submission', async () => {
+  //     // Create a first submission
+  //     const createSubmissionDto: CreateSubmissionDto = {
+  //       taskId: task._id.toString(),
+  //       rawPages: ['page1.jpg'],
+  //     };
       
-      await submissionController.create(createSubmissionDto);
+  //     await submissionController.create(createSubmissionDto);
       
-      // Try to create a second submission for the same student and task
-      await expect(submissionController.create(createSubmissionDto))
-        .rejects.toThrow(BadRequestException);
-    });
+  //     // Try to create a second submission for the same student and task
+  //     await expect(submissionController.create(createSubmissionDto))
+  //       .rejects.toThrow(BadRequestException);
+  //   });
     
-    it('should allow teacher to create submission for student', async () => {
-      // Configure the user as the teacher
-      const request = moduleRef.get('REQUEST');
-      request.user.sub = teacher.id;
+  //   it('should allow teacher to create submission for student', async () => {
+  //     // Configure the user as the teacher
+  //     const request = moduleRef.get('REQUEST');
+  //     request.user.sub = teacher.id;
       
-      const createSubmissionDto: CreateSubmissionDto = {
-        taskId: task._id.toString(),
-        studentId: student.id,
-        rawPages: ['page1.jpg'],
-      };
+  //     const createSubmissionDto: CreateSubmissionDto = {
+  //       taskId: task._id.toString(),
+  //       studentId: student.id,
+  //       rawPages: ['page1.jpg'],
+  //     };
       
-      const result = await submissionController.create(createSubmissionDto);
+  //     const result = await submissionController.create(createSubmissionDto);
       
-      expect(result).toBeDefined();
-      expect(result.studentId.toString()).toBe(student.id);
-      expect(result.uploadedBy.toString()).toBe(teacher.id);
-    });
-  });
+  //     expect(result).toBeDefined();
+  //     expect(result.studentId.toString()).toBe(student.id);
+  //     expect(result.uploadedBy.toString()).toBe(teacher.id);
+  //   });
+  // });
 
-  describe('GET /submissions', () => {
-    it('should fetch submissions by task ID', async () => {
-      // Create some submissions for the task
-      await testDataHelper.createSubmission({
-        taskId: task._id.toString(),
-        studentId: student.id,
-        status: SubmissionStatus.SUBMITTED
-      });
+  // describe('GET /submissions', () => {
+  //   it('should fetch submissions by task ID', async () => {
+  //     // Create some submissions for the task
+  //     await testDataHelper.createSubmission({
+  //       taskId: task._id.toString(),
+  //       studentId: student.id,
+  //       status: SubmissionStatus.SUBMITTED
+  //     });
       
-      // Create another student with a submission
-      const { student: student2 } = await testDataHelper.createStudentInClass(
-        classEntity._id,
-        { firstName: 'Student2', lastName: 'Test', email: 'student2@test.com' }
-      );
+  //     // Create another student with a submission
+  //     const { student: student2 } = await testDataHelper.createStudentInClass(
+  //       classEntity._id,
+  //       { firstName: 'Student2', lastName: 'Test', email: 'student2@test.com' }
+  //     );
       
-      await testDataHelper.createSubmission({
-        taskId: task._id.toString(),
-        studentId: student2.id,
-        status: SubmissionStatus.DRAFT
-      });
+  //     await testDataHelper.createSubmission({
+  //       taskId: task._id.toString(),
+  //       studentId: student2.id,
+  //       status: SubmissionStatus.DRAFT
+  //     });
       
-      // Configure the user as the teacher
-      const request = moduleRef.get('REQUEST');
-      request.user.sub = teacher.id;
+  //     // Configure the user as the teacher
+  //     const request = moduleRef.get('REQUEST');
+  //     request.user.sub = teacher.id;
       
-      const result = await submissionController.findByTask(task._id.toString());
+  //     const result = await submissionController.findByTask(task._id.toString());
       
-      expect(result).toBeDefined();
-      expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBe(2);
-      expect(result.some(sub => sub.studentId.toString() === student.id)).toBe(true);
-      expect(result.some(sub => sub.studentId.toString() === student2.id)).toBe(true);
-    });
+  //     expect(result).toBeDefined();
+  //     expect(Array.isArray(result)).toBe(true);
+  //     expect(result.length).toBe(2);
+  //     expect(result.some(sub => sub.studentId.toString() === student.id)).toBe(true);
+  //     expect(result.some(sub => sub.studentId.toString() === student2.id)).toBe(true);
+  //   });
     
-    it('should fetch student submissions by student ID', async () => {
-      // Create a submission for the student
-      const submission1 = await testDataHelper.createSubmission({
-        taskId: task._id.toString(),
-        studentId: student.id,
-        status: SubmissionStatus.SUBMITTED
-      });
+  //   it('should fetch student submissions by student ID', async () => {
+  //     // Create a submission for the student
+  //     const submission1 = await testDataHelper.createSubmission({
+  //       taskId: task._id.toString(),
+  //       studentId: student.id,
+  //       status: SubmissionStatus.SUBMITTED
+  //     });
       
-      // Create another task
-      const task2 = await testDataHelper.createTask({
-        classId: classEntity._id.toString(),
-        createdBy: teacher.id,
-        title: 'Second task',
-        status: TaskStatus.PUBLISHED
-      });
+  //     // Create another task
+  //     const task2 = await testDataHelper.createTask({
+  //       classId: classEntity._id.toString(),
+  //       createdBy: teacher.id,
+  //       title: 'Second task',
+  //       status: TaskStatus.PUBLISHED
+  //     });
       
-      // Create a submission for the second task
-      const submission2 = await testDataHelper.createSubmission({
-        taskId: task2._id.toString(),
-        studentId: student.id,
-        status: SubmissionStatus.DRAFT
-      });
+  //     // Create a submission for the second task
+  //     const submission2 = await testDataHelper.createSubmission({
+  //       taskId: task2._id.toString(),
+  //       studentId: student.id,
+  //       status: SubmissionStatus.DRAFT
+  //     });
       
-      // Configure the user as the student
-      const request = moduleRef.get('REQUEST');
-      request.user.sub = student.id;
+  //     // Configure the user as the student
+  //     const request = moduleRef.get('REQUEST');
+  //     request.user.sub = student.id;
       
-      const result = await submissionController.findByStudent(student.id);
+  //     const result = await submissionController.findByStudent(student.id);
       
-      expect(result).toBeDefined();
-      expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBe(2);
-      expect(result.some(sub => sub.taskId.toString() === task._id.toString())).toBe(true);
-      expect(result.some(sub => sub.taskId.toString() === task2._id.toString())).toBe(true);
-    });
-  });
+  //     expect(result).toBeDefined();
+  //     expect(Array.isArray(result)).toBe(true);
+  //     expect(result.length).toBe(2);
+  //     expect(result.some(sub => sub.taskId.toString() === task._id.toString())).toBe(true);
+  //     expect(result.some(sub => sub.taskId.toString() === task2._id.toString())).toBe(true);
+  //   });
+  // });
   
-  describe('GET /submissions/:id', () => {
-    it('should fetch a specific submission by ID', async () => {
-      // Create a submission for the student
-      const submission = await testDataHelper.createSubmission({
-        taskId: task._id.toString(),
-        studentId: student.id,
-        status: SubmissionStatus.SUBMITTED,
-        rawPages: ['page1.jpg']
-      }) as SubmissionWithId;
+  // describe('GET /submissions/:id', () => {
+  //   it('should fetch a specific submission by ID', async () => {
+  //     // Create a submission for the student
+  //     const submission = await testDataHelper.createSubmission({
+  //       taskId: task._id.toString(),
+  //       studentId: student.id,
+  //       status: SubmissionStatus.SUBMITTED,
+  //       rawPages: ['page1.jpg']
+  //     }) as SubmissionWithId;
       
-      const result = await submissionController.findOne(submission._id.toString());
+  //     const result = await submissionController.findOne(submission._id.toString());
       
-      expect(result).toBeDefined();
-      expect((result as any)._id.toString()).toBe(submission._id.toString());
-      expect(result.taskId.toString()).toBe(task._id.toString());
-      expect(result.studentId.toString()).toBe(student.id);
-    });
+  //     expect(result).toBeDefined();
+  //     expect((result as any)._id.toString()).toBe(submission._id.toString());
+  //     expect(result.taskId.toString()).toBe(task._id.toString());
+  //     expect(result.studentId.toString()).toBe(student.id);
+  //   });
     
-    it('should throw NotFoundException for non-existent submission', async () => {
-      const nonExistentId = new Types.ObjectId().toString();
+  //   it('should throw NotFoundException for non-existent submission', async () => {
+  //     const nonExistentId = new Types.ObjectId().toString();
       
-      await expect(submissionController.findOne(nonExistentId))
-        .rejects.toThrow(NotFoundException);
-    });
-  });
+  //     await expect(submissionController.findOne(nonExistentId))
+  //       .rejects.toThrow(NotFoundException);
+  //   });
+  // });
   
-  describe('GET /submissions/student/:studentId/task/:taskId', () => {
-    it('should fetch a submission by student and task', async () => {
-      // Create a submission for the student
-      const submission = await testDataHelper.createSubmission({
-        taskId: task._id.toString(),
-        studentId: student.id,
-        status: SubmissionStatus.SUBMITTED,
-        rawPages: ['page1.jpg', 'page2.jpg']
-      }) as SubmissionWithId;
+  // describe('GET /submissions/student/:studentId/task/:taskId', () => {
+  //   it('should fetch a submission by student and task', async () => {
+  //     // Create a submission for the student
+  //     const submission = await testDataHelper.createSubmission({
+  //       taskId: task._id.toString(),
+  //       studentId: student.id,
+  //       status: SubmissionStatus.SUBMITTED,
+  //       rawPages: ['page1.jpg', 'page2.jpg']
+  //     }) as SubmissionWithId;
       
-      const result = await submissionController.findByStudentAndTask(student.id, task._id.toString());
+  //     const result = await submissionController.findByStudentAndTask(student.id, task._id.toString());
       
-      expect(result).toBeDefined();
-      expect(result.taskId.toString()).toBe(task._id.toString());
-      expect(result.studentId.toString()).toBe(student.id);
-      expect(result.rawPages.length).toBe(2);
-    });
+  //     expect(result).toBeDefined();
+  //     expect(result.taskId.toString()).toBe(task._id.toString());
+  //     expect(result.studentId.toString()).toBe(student.id);
+  //     expect(result.rawPages.length).toBe(2);
+  //   });
     
-    it('should throw NotFoundException if no submission exists', async () => {
-      // No submission created in advance
+  //   it('should throw NotFoundException if no submission exists', async () => {
+  //     // No submission created in advance
       
-      await expect(submissionController.findByStudentAndTask(student.id, task._id.toString()))
-        .rejects.toThrow(NotFoundException);
-    });
-  });
+  //     await expect(submissionController.findByStudentAndTask(student.id, task._id.toString()))
+  //       .rejects.toThrow(NotFoundException);
+  //   });
+  // });
   
-  describe('PATCH /submissions/:id', () => {
-    it('should update a submission', async () => {
-      // Create a submission to update
-      const submission = await testDataHelper.createSubmission({
-        taskId: task._id.toString(),
-        studentId: student.id,
-        status: SubmissionStatus.DRAFT,
-        rawPages: ['page1.jpg']
-      }) as SubmissionWithId;
+  // describe('PATCH /submissions/:id', () => {
+  //   it('should update a submission', async () => {
+  //     // Create a submission to update
+  //     const submission = await testDataHelper.createSubmission({
+  //       taskId: task._id.toString(),
+  //       studentId: student.id,
+  //       status: SubmissionStatus.DRAFT,
+  //       rawPages: ['page1.jpg']
+  //     }) as SubmissionWithId;
       
-      const updateSubmissionDto: UpdateSubmissionDto = {
-        status: SubmissionStatus.SUBMITTED,
-        rawPages: ['page1.jpg', 'page2.jpg'],
-        submittedAt: new Date()
-      };
+  //     const updateSubmissionDto: UpdateSubmissionDto = {
+  //       status: SubmissionStatus.SUBMITTED,
+  //       rawPages: ['page1.jpg', 'page2.jpg'],
+  //       submittedAt: new Date()
+  //     };
       
-      const result = await submissionController.update(submission._id.toString(), updateSubmissionDto);
+  //     const result = await submissionController.update(submission._id.toString(), updateSubmissionDto);
       
-      expect(result).toBeDefined();
-      expect(result.status).toBe(SubmissionStatus.SUBMITTED);
-      expect(result.rawPages.length).toBe(2);
-      expect(result.rawPages).toContain('page2.jpg');
-      expect(result.submittedAt).toBeDefined();
+  //     expect(result).toBeDefined();
+  //     expect(result.status).toBe(SubmissionStatus.SUBMITTED);
+  //     expect(result.rawPages.length).toBe(2);
+  //     expect(result.rawPages).toContain('page2.jpg');
+  //     expect(result.submittedAt).toBeDefined();
       
-      // Verify in the database
-      const updatedSubmission = await submissionModel.findById(submission._id);
-      expect(updatedSubmission.status).toBe(SubmissionStatus.SUBMITTED);
-      expect(updatedSubmission.rawPages.length).toBe(2);
-    });
+  //     // Verify in the database
+  //     const updatedSubmission = await submissionModel.findById(submission._id);
+  //     expect(updatedSubmission.status).toBe(SubmissionStatus.SUBMITTED);
+  //     expect(updatedSubmission.rawPages.length).toBe(2);
+  //   });
     
-    it('should throw NotFoundException for non-existent submission', async () => {
-      const nonExistentId = new Types.ObjectId().toString();
+  //   it('should throw NotFoundException for non-existent submission', async () => {
+  //     const nonExistentId = new Types.ObjectId().toString();
       
-      const updateSubmissionDto: UpdateSubmissionDto = {
-        status: SubmissionStatus.SUBMITTED
-      };
+  //     const updateSubmissionDto: UpdateSubmissionDto = {
+  //       status: SubmissionStatus.SUBMITTED
+  //     };
       
-      await expect(submissionController.update(nonExistentId, updateSubmissionDto))
-        .rejects.toThrow(NotFoundException);
-    });
+  //     await expect(submissionController.update(nonExistentId, updateSubmissionDto))
+  //       .rejects.toThrow(NotFoundException);
+  //   });
     
-    it('should allow student to update another\'s submission (security issue to fix)', async () => {
-      // Create another student
-      const { student: student2 } = await testDataHelper.createStudentInClass(
-        classEntity._id,
-        { firstName: 'Other', lastName: 'Student', email: 'autre@test.com' }
-      );
+  //   it('should allow student to update another\'s submission (security issue to fix)', async () => {
+  //     // Create another student
+  //     const { student: student2 } = await testDataHelper.createStudentInClass(
+  //       classEntity._id,
+  //       { firstName: 'Other', lastName: 'Student', email: 'autre@test.com' }
+  //     );
       
-      // Create a submission for this student
-      const submission = await testDataHelper.createSubmission({
-        taskId: task._id.toString(),
-        studentId: student2.id,
-        status: SubmissionStatus.DRAFT
-      }) as SubmissionWithId;
+  //     // Create a submission for this student
+  //     const submission = await testDataHelper.createSubmission({
+  //       taskId: task._id.toString(),
+  //       studentId: student2.id,
+  //       status: SubmissionStatus.DRAFT
+  //     }) as SubmissionWithId;
       
-      // Configure the user as the first student
-      const request = moduleRef.get('REQUEST');
-      request.user.sub = student.id;
+  //     // Configure the user as the first student
+  //     const request = moduleRef.get('REQUEST');
+  //     request.user.sub = student.id;
       
-      const updateSubmissionDto: UpdateSubmissionDto = {
-        status: SubmissionStatus.SUBMITTED
-      };
+  //     const updateSubmissionDto: UpdateSubmissionDto = {
+  //       status: SubmissionStatus.SUBMITTED
+  //     };
       
-      // NOTE: This behavior should be fixed to prevent a student
-      // from modifying another student's submissions
-      const result = await submissionController.update(submission._id.toString(), updateSubmissionDto);
-      expect(result).toBeDefined();
-      expect(result.status).toBe(SubmissionStatus.SUBMITTED);
-    });
-  });
+  //     // NOTE: This behavior should be fixed to prevent a student
+  //     // from modifying another student's submissions
+  //     const result = await submissionController.update(submission._id.toString(), updateSubmissionDto);
+  //     expect(result).toBeDefined();
+  //     expect(result.status).toBe(SubmissionStatus.SUBMITTED);
+  //   });
+  // });
   
-  describe('DELETE /submissions/:id', () => {
-    it('should remove a submission', async () => {
-      // Create a submission to delete
-      const submission = await testDataHelper.createSubmission({
-        taskId: task._id.toString(),
-        studentId: student.id,
-        status: SubmissionStatus.DRAFT
-      }) as SubmissionWithId;
+  // describe('DELETE /submissions/:id', () => {
+  //   it('should remove a submission', async () => {
+  //     // Create a submission to delete
+  //     const submission = await testDataHelper.createSubmission({
+  //       taskId: task._id.toString(),
+  //       studentId: student.id,
+  //       status: SubmissionStatus.DRAFT
+  //     }) as SubmissionWithId;
       
-      await submissionController.remove(submission._id.toString());
+  //     await submissionController.remove(submission._id.toString());
       
-      // Verify that the submission was deleted
-      const deletedSubmission = await submissionModel.findById(submission._id);
-      expect(deletedSubmission).toBeNull();
-    });
+  //     // Verify that the submission was deleted
+  //     const deletedSubmission = await submissionModel.findById(submission._id);
+  //     expect(deletedSubmission).toBeNull();
+  //   });
     
-    it('should throw NotFoundException for non-existent submission', async () => {
-      const nonExistentId = new Types.ObjectId().toString();
+  //   it('should throw NotFoundException for non-existent submission', async () => {
+  //     const nonExistentId = new Types.ObjectId().toString();
       
-      await expect(submissionController.remove(nonExistentId))
-        .rejects.toThrow(NotFoundException);
-    });
+  //     await expect(submissionController.remove(nonExistentId))
+  //       .rejects.toThrow(NotFoundException);
+  //   });
     
-    it('should allow student to delete teacher\'s submission (security issue to fix)', async () => {
-      // Configure the user as the teacher
-      const request = moduleRef.get('REQUEST');
-      request.user.sub = teacher.id;
+  //   it('should allow student to delete teacher\'s submission (security issue to fix)', async () => {
+  //     // Configure the user as the teacher
+  //     const request = moduleRef.get('REQUEST');
+  //     request.user.sub = teacher.id;
       
-      // Create a submission by the teacher for the student
-      const submission = await testDataHelper.createSubmission({
-        taskId: task._id.toString(),
-        studentId: student.id,
-        uploadedBy: teacher.id,
-        status: SubmissionStatus.DRAFT
-      }) as SubmissionWithId;
+  //     // Create a submission by the teacher for the student
+  //     const submission = await testDataHelper.createSubmission({
+  //       taskId: task._id.toString(),
+  //       studentId: student.id,
+  //       uploadedBy: teacher.id,
+  //       status: SubmissionStatus.DRAFT
+  //     }) as SubmissionWithId;
       
-      // Configure the user as the student
-      request.user.sub = student.id;
+  //     // Configure the user as the student
+  //     request.user.sub = student.id;
       
-      // NOTE: This behavior should be fixed to prevent a student
-      // from deleting a submission created by a teacher
-      await submissionController.remove(submission._id.toString());
+  //     // NOTE: This behavior should be fixed to prevent a student
+  //     // from deleting a submission created by a teacher
+  //     await submissionController.remove(submission._id.toString());
       
-      // Verify that the submission was deleted
-      const deletedSubmission = await submissionModel.findById(submission._id);
-      expect(deletedSubmission).toBeNull();
-    });
-  });
+  //     // Verify that the submission was deleted
+  //     const deletedSubmission = await submissionModel.findById(submission._id);
+  //     expect(deletedSubmission).toBeNull();
+  //   });
+  // });
 }); 

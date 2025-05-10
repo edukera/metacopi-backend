@@ -12,10 +12,11 @@ export enum TargetType {
 
 @Schema({
   timestamps: true,
+  versionKey: false,
 })
 export class AuditLog {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  userId: string;
+  @Prop({ type: String, required: true })
+  email: string;
 
   @Prop({ type: String, required: true })
   action: string;
@@ -42,5 +43,5 @@ export const AuditLogSchema = SchemaFactory.createForClass(AuditLog);
 
 // Create a composite index to improve search performance
 AuditLogSchema.index({ targetType: 1, targetId: 1 });
-AuditLogSchema.index({ userId: 1 });
+AuditLogSchema.index({ email: 1 });
 AuditLogSchema.index({ timestamp: -1 }); 

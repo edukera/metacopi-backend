@@ -19,18 +19,17 @@ export class TaskService {
   // Convertir un objet Task en TaskResponseDto
   private toResponseDto(task: Task): TaskResponseDto {
     const taskDto = new TaskResponseDto();
-    taskDto.id = task._id.toString();
+    taskDto.id = task.id;
     taskDto.title = task.title;
     taskDto.description = task.description;
-    taskDto.classId = task.classId?.toString();
-    taskDto.createdBy = task.createdBy?.toString();
+    taskDto.classId = task.classId;
+    taskDto.createdByEmail = task.createdByEmail;
     taskDto.status = task.status;
     taskDto.dueDate = task.dueDate;
     taskDto.points = task.points;
     taskDto.tags = task.tags;
     taskDto.metadata = task.metadata;
     taskDto.settings = task.settings;
-    // Task étend Document de Mongoose qui inclut ces propriétés grâce à { timestamps: true }
     taskDto.createdAt = (task as any).createdAt;
     taskDto.updatedAt = (task as any).updatedAt;
     return taskDto;
@@ -42,17 +41,17 @@ export class TaskService {
   }
 
   async create(createTaskDto: CreateTaskDto): Promise<TaskResponseDto> {
-    const userId = this.request.user.sub;
+    const email = this.request.user.email;
     
     // Check if the user is a teacher in this class
-    const membership = await this.membershipService.findByUserAndClass(userId, createTaskDto.classId);
+    const membership = await this.membershipService.findByUserAndClass(email, createTaskDto.classId);
     if (!membership || membership.role !== 'teacher') {
       throw new BadRequestException('You must be a teacher in this class to create a task');
     }
     
     const task = new this.taskModel({
       ...createTaskDto,
-      createdBy: userId,
+      createdByEmail: email,
     });
     
     const savedTask = await task.save();
@@ -65,9 +64,13 @@ export class TaskService {
   }
 
   async findOne(id: string): Promise<TaskResponseDto> {
-    const task = await this.taskModel.findById(id).exec();
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let task = await this.taskModel.findOne({ id }).exec();
     if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
+      task = await this.taskModel.findById(id).exec();
+    }
+    if (!task) {
+      throw new NotFoundException(`Task with logical ID or MongoDB ID '${id}' not found`);
     }
     return this.toResponseDto(task);
   }
@@ -78,87 +81,101 @@ export class TaskService {
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskResponseDto> {
-    const userId = this.request.user.sub;
-    const task = await this.findTaskEntity(id);
-    
+    const email = this.request.user.email;
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let task = await this.taskModel.findOne({ id }).exec();
+    if (!task) {
+      task = await this.taskModel.findById(id).exec();
+    }
+    if (!task) {
+      throw new NotFoundException(`Task with logical ID or MongoDB ID '${id}' not found`);
+    }
     // Check if the user is a teacher in this class
-    const membership = await this.membershipService.findByUserAndClass(userId, task.classId);
+    const membership = await this.membershipService.findByUserAndClass(email, task.classId);
     if (!membership || membership.role !== 'teacher') {
       throw new BadRequestException('You must be a teacher in this class to modify a task');
     }
-    
-    const updatedTask = await this.taskModel
-      .findByIdAndUpdate(id, updateTaskDto, { new: true })
-      .exec();
-    
+    const updatedTask = await this.taskModel.findByIdAndUpdate(task._id, updateTaskDto, { new: true }).exec();
     return this.toResponseDto(updatedTask);
   }
 
   async archive(id: string): Promise<TaskResponseDto> {
-    const userId = this.request.user.sub;
-    const task = await this.findTaskEntity(id);
-    
+    const email = this.request.user.email;
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let task = await this.taskModel.findOne({ id }).exec();
+    if (!task) {
+      task = await this.taskModel.findById(id).exec();
+    }
+    if (!task) {
+      throw new NotFoundException(`Task with logical ID or MongoDB ID '${id}' not found`);
+    }
     // Check if the user is a teacher in this class
-    const membership = await this.membershipService.findByUserAndClass(userId, task.classId);
+    const membership = await this.membershipService.findByUserAndClass(email, task.classId);
     if (!membership || membership.role !== 'teacher') {
       throw new BadRequestException('You must be a teacher in this class to archive a task');
     }
-    
-    const updatedTask = await this.taskModel
-      .findByIdAndUpdate(id, { status: TaskStatus.ARCHIVED }, { new: true })
-      .exec();
-    
+    const updatedTask = await this.taskModel.findByIdAndUpdate(task._id, { status: TaskStatus.ARCHIVED }, { new: true }).exec();
     return this.toResponseDto(updatedTask);
   }
 
   async publish(id: string): Promise<TaskResponseDto> {
-    const userId = this.request.user.sub;
-    const task = await this.findTaskEntity(id);
-    
+    const email = this.request.user.email;
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let task = await this.taskModel.findOne({ id }).exec();
+    if (!task) {
+      task = await this.taskModel.findById(id).exec();
+    }
+    if (!task) {
+      throw new NotFoundException(`Task with logical ID or MongoDB ID '${id}' not found`);
+    }
     // Check if the user is a teacher in this class
-    const membership = await this.membershipService.findByUserAndClass(userId, task.classId);
+    const membership = await this.membershipService.findByUserAndClass(email, task.classId);
     if (!membership || membership.role !== 'teacher') {
       throw new BadRequestException('You must be a teacher in this class to publish a task');
     }
-    
-    const updatedTask = await this.taskModel
-      .findByIdAndUpdate(id, { status: TaskStatus.PUBLISHED }, { new: true })
-      .exec();
-    
+    const updatedTask = await this.taskModel.findByIdAndUpdate(task._id, { status: TaskStatus.PUBLISHED }, { new: true }).exec();
     return this.toResponseDto(updatedTask);
   }
 
   async remove(id: string): Promise<void> {
-    const userId = this.request.user.sub;
-    const task = await this.findTaskEntity(id);
-    
+    const email = this.request.user.email;
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let task = await this.taskModel.findOne({ id }).exec();
+    if (!task) {
+      task = await this.taskModel.findById(id).exec();
+    }
+    if (!task) {
+      throw new NotFoundException(`Task with logical ID or MongoDB ID '${id}' not found`);
+    }
     // Check if the user is a teacher in this class
-    const membership = await this.membershipService.findByUserAndClass(userId, task.classId);
+    const membership = await this.membershipService.findByUserAndClass(email, task.classId);
     if (!membership || membership.role !== 'teacher') {
       throw new BadRequestException('You must be a teacher in this class to delete a task');
     }
-    
     // Delete all submissions associated with this task
-    await this.submissionService.removeByTask(id);
-    
-    await this.taskModel.findByIdAndDelete(id).exec();
+    await this.submissionService.removeByTask(task._id.toString());
+    await this.taskModel.findByIdAndDelete(task._id).exec();
   }
 
   // Pour l'utilisation interne uniquement - récupère l'entité Task sans la convertir en DTO
   private async findTaskEntity(id: string): Promise<Task> {
-    const task = await this.taskModel.findById(id).exec();
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let task = await this.taskModel.findOne({ id }).exec();
     if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
+      task = await this.taskModel.findById(id).exec();
+    }
+    if (!task) {
+      throw new NotFoundException(`Task with logical ID or MongoDB ID '${id}' not found`);
     }
     return task;
   }
 
   // For retrieving tasks related to a user
   async findTasksForUser(): Promise<TaskResponseDto[]> {
-    const userId = this.request.user.sub;
+    const email = this.request.user.email;
     
     // Get the classes of which the user is a member
-    const memberships = await this.membershipService.findByUser(userId);
+    const memberships = await this.membershipService.findByUserEmail(email);
     const classIds = memberships.map(m => m.classId);
     
     // Get all published tasks for these classes

@@ -33,7 +33,7 @@ export class CommentController {
 
   @Get()
   @ApiOperation({ summary: 'Get all comments for a correction' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: '507f1f77bcf86cd799439011' })
+  @ApiParam({ name: 'id', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
   @ApiResponse({ status: 200, description: 'List of comments for the correction.', type: [CommentResponseDto] })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Correction not found.' })
@@ -43,7 +43,7 @@ export class CommentController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new comment for a correction' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: '507f1f77bcf86cd799439011' })
+  @ApiParam({ name: 'id', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
   @ApiBody({ type: CreateCommentDto })
   @ApiResponse({ status: 201, description: 'The comment has been successfully created.', type: CommentResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
@@ -59,9 +59,9 @@ export class CommentController {
   }
 
   @Get(':commentId')
-  @ApiOperation({ summary: 'Get a specific comment by ID' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: '507f1f77bcf86cd799439011' })
-  @ApiParam({ name: 'commentId', description: 'Comment ID', example: '507f1f77bcf86cd799439012' })
+  @ApiOperation({ summary: 'Get a specific comment by ID (logical or MongoDB)' })
+  @ApiParam({ name: 'id', description: 'Correction ID', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'commentId', description: 'Comment logical ID or MongoDB ID', example: 'COMM-2024-001' })
   @ApiResponse({ status: 200, description: 'The found comment.', type: CommentResponseDto })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Comment not found.' })
@@ -70,9 +70,9 @@ export class CommentController {
   }
 
   @Patch(':commentId')
-  @ApiOperation({ summary: 'Update a comment' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: '507f1f77bcf86cd799439011' })
-  @ApiParam({ name: 'commentId', description: 'Comment ID', example: '507f1f77bcf86cd799439012' })
+  @ApiOperation({ summary: 'Update a comment (by logical or MongoDB ID)' })
+  @ApiParam({ name: 'id', description: 'Correction ID', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'commentId', description: 'Comment logical ID or MongoDB ID', example: 'COMM-2024-001' })
   @ApiBody({ type: UpdateCommentDto })
   @ApiResponse({ status: 200, description: 'The comment has been successfully updated.', type: CommentResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
@@ -86,9 +86,9 @@ export class CommentController {
   }
 
   @Delete(':commentId')
-  @ApiOperation({ summary: 'Delete a comment' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: '507f1f77bcf86cd799439011' })
-  @ApiParam({ name: 'commentId', description: 'Comment ID', example: '507f1f77bcf86cd799439012' })
+  @ApiOperation({ summary: 'Delete a comment (by logical or MongoDB ID)' })
+  @ApiParam({ name: 'id', description: 'Correction ID', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'commentId', description: 'Comment logical ID or MongoDB ID', example: 'COMM-2024-001' })
   @ApiResponse({ status: 204, description: 'The comment has been successfully deleted.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Comment not found.' })

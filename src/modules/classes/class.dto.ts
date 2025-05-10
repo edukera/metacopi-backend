@@ -4,6 +4,14 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateClassDto {
   @ApiProperty({
+    description: "Logical business identifier for the class (must be unique)",
+    example: "CLS-2024-001",
+    required: true
+  })
+  @IsString()
+  id: string;
+
+  @ApiProperty({
     description: 'Class name',
     example: 'Mathematics 101',
     required: true
@@ -44,6 +52,14 @@ export class CreateClassDto {
   @IsOptional()
   @IsObject()
   settings?: Record<string, any>;
+
+  @ApiProperty({
+    description: "Email of the user who created the class",
+    example: "user@example.com",
+    required: true
+  })
+  @IsString()
+  createdByEmail: string;
 }
 
 export class UpdateClassDto {
@@ -110,8 +126,8 @@ export class JoinClassDto {
 
 export class ClassResponseDto {
   @ApiProperty({
-    description: 'Unique class ID',
-    example: '605a1cb9d4d5d73598045618'
+    description: "Logical business identifier for the class (unique)",
+    example: "CLS-2024-001"
   })
   id: string;
 
@@ -128,10 +144,10 @@ export class ClassResponseDto {
   description?: string;
 
   @ApiProperty({
-    description: 'ID of the user who created the class',
-    example: '605a1cb9d4d5d73598045618'
+    description: "Email of the user who created the class",
+    example: "user@example.com"
   })
-  createdBy: string;
+  createdByEmail: string;
 
   @ApiProperty({
     description: 'Indicates if the class is archived',

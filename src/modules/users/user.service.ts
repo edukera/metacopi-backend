@@ -53,38 +53,30 @@ export class UserService {
    */
   async findByClassId(classId: string): Promise<LimitedUserWithRole[]> {
     this.logger.debug(`Finding users for class: ${classId}`);
-    
     try {
-      // Récupérer toutes les adhésions pour cette classe
-      const classObjectId = new Types.ObjectId(classId);
+      // Récupérer toutes les adhésions pour cette classe (classId est maintenant une string logique)
       const memberships = await this.membershipModel.find({
-        classId: classObjectId,
+        classId: classId,
         isActive: true
       }).exec();
-      
       if (!memberships || memberships.length === 0) {
         this.logger.debug(`No memberships found for class ${classId}`);
         return [];
       }
-      
       this.logger.debug(`Found ${memberships.length} memberships for class ${classId}`);
-      
-      // Créer un Map des memberships pour un accès facile par userId
+      // Créer un Map des memberships pour un accès facile par email
       const membershipMap = new Map();
       memberships.forEach(membership => {
-        membershipMap.set(membership.userId.toString(), membership);
+        membershipMap.set(membership.email, membership);
       });
-      
-      // Extraire les IDs utilisateurs des adhésions
-      const userIds = memberships.map(membership => membership.userId);
-      
+      // Extraire les emails utilisateurs des adhésions
+      const userEmails = memberships.map(membership => membership.email);
       // Récupérer tous les utilisateurs correspondants et ajouter leur rôle
       const usersWithRoles: LimitedUserWithRole[] = [];
-      for (const userId of userIds) {
-        const user = await this.userRepository.findById(userId.toString());
+      for (const email of userEmails) {
+        const user = await this.userRepository.findByEmail(email);
         if (user) {
-          const membership = membershipMap.get(userId.toString());
-          
+          const membership = membershipMap.get(email);
           // Ne retourner que les informations limitées pour chaque utilisateur
           const userWithRole: LimitedUserWithRole = {
             id: user.id,
@@ -94,14 +86,11 @@ export class UserService {
             avatarUrl: user.avatarUrl,
             membershipRole: membership ? membership.role : undefined
           };
-          
           usersWithRoles.push(userWithRole);
         }
       }
-      
       this.logger.debug(`Found ${usersWithRoles.length} users for class ${classId}`);
       return usersWithRoles;
-      
     } catch (error) {
       this.logger.error(`Error finding users for class ${classId}: ${error.message}`, error.stack);
       return [];

@@ -172,8 +172,10 @@ describe('ClassController', () => {
   describe('create', () => {
     it('should create a new class', async () => {
       const createClassDto: CreateClassDto = {
+        id: 'CLASS-123',
         name: 'New Class',
         description: 'New Description',
+        createdByEmail: 'teacher@metacopi.com',
       };
 
       const result = await controller.create(createClassDto);

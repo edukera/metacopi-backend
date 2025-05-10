@@ -12,16 +12,15 @@ describe('CorrectionController', () => {
 
   const mockCorrectionId = new mongoose.Types.ObjectId().toString();
   const mockSubmissionId = new mongoose.Types.ObjectId().toString();
-  const mockTeacherId = new mongoose.Types.ObjectId().toString();
+  const mockTeacherEmail = "teacher@metacopi.com";
 
   const mockCorrection = {
     _id: mockCorrectionId,
     submissionId: mockSubmissionId,
-    correctedById: mockTeacherId,
+    correctedByEmail: mockTeacherEmail,
     status: CorrectionStatus.IN_PROGRESS,
     grade: 15,
     appreciation: 'Good work!',
-    annotations: 'Some detailed comments here',
     finalizedAt: null,
     createdAt: new Date(),
   } as unknown as CorrectionDocument;
@@ -31,11 +30,10 @@ describe('CorrectionController', () => {
     {
       _id: new mongoose.Types.ObjectId().toString(),
       submissionId: new mongoose.Types.ObjectId().toString(),
-      correctedById: mockTeacherId,
+      correctedByEmail: mockTeacherEmail,
       status: CorrectionStatus.COMPLETED,
       grade: 18,
       appreciation: 'Excellent work!',
-      annotations: 'Very detailed comments',
       finalizedAt: new Date(),
       createdAt: new Date(),
     } as unknown as CorrectionDocument
@@ -50,7 +48,6 @@ describe('CorrectionController', () => {
         status: CorrectionStatus.IN_PROGRESS,
         grade: dto.grade || null,
         appreciation: dto.appreciation || '',
-        annotations: dto.annotations || '',
         finalizedAt: null,
         createdAt: new Date(),
       } as unknown as CorrectionDocument;
@@ -71,8 +68,8 @@ describe('CorrectionController', () => {
       }
       return Promise.resolve(correction);
     }),
-    findByTeacher: jest.fn().mockImplementation((teacherId: string) => {
-      const corrections = mockCorrections.filter(c => c.correctedById === teacherId);
+    findByTeacher: jest.fn().mockImplementation((teacherEmail: string) => {
+      const corrections = mockCorrections.filter(c => c.correctedByEmail === teacherEmail);
       return Promise.resolve(corrections);
     }),
     update: jest.fn().mockImplementation((id: string, dto: UpdateCorrectionDto) => {
@@ -124,17 +121,17 @@ describe('CorrectionController', () => {
   describe('create', () => {
     it('should create a new correction', async () => {
       const createCorrectionDto: CreateCorrectionDto = {
+        id: 'CORR-2024-001',
         submissionId: mockSubmissionId,
-        correctedById: mockTeacherId,
+        correctedByEmail: mockTeacherEmail,
         grade: 15,
-        appreciation: 'Good work!',
-        annotations: 'Some detailed comments here',
+        appreciation: 'Good work!'
       };
 
       const result = await controller.create(createCorrectionDto);
       expect(result).toHaveProperty('_id');
       expect(result.submissionId).toEqual(createCorrectionDto.submissionId);
-      expect(result.correctedById).toEqual(createCorrectionDto.correctedById);
+      expect(result.correctedByEmail).toEqual(createCorrectionDto.correctedByEmail);
       expect(result.grade).toEqual(createCorrectionDto.grade);
       expect(service.create).toHaveBeenCalledWith(createCorrectionDto);
     });
@@ -177,9 +174,9 @@ describe('CorrectionController', () => {
 
   describe('findByTeacher', () => {
     it('should return corrections for a specific teacher', async () => {
-      const result = await controller.findByTeacher(mockTeacherId);
+      const result = await controller.findByTeacher(mockTeacherEmail);
       expect(result).toEqual(expect.arrayContaining(mockCorrections));
-      expect(service.findByTeacher).toHaveBeenCalledWith(mockTeacherId);
+      expect(service.findByTeacher).toHaveBeenCalledWith(mockTeacherEmail);
     });
   });
 

@@ -25,12 +25,13 @@ export const createClassDto = (
   overrides: Partial<CreateClassDto> = {},
 ): CreateClassDto => {
   return {
+    id: overrides.id || new Types.ObjectId().toString(),
     name: overrides.name || faker.company.name(),
     ...(overrides.description !== undefined && { description: overrides.description }),
     ...(overrides.startDate !== undefined && { startDate: overrides.startDate }),
     ...(overrides.endDate !== undefined && { endDate: overrides.endDate }),
     ...(overrides.settings !== undefined && { settings: overrides.settings }),
-    ...overrides,
+    ...(overrides.createdByEmail !== undefined && { createdByEmail: overrides.createdByEmail }),
   };
 };
 

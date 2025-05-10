@@ -3,8 +3,20 @@ import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  versionKey: false
+})
 export class Class extends Document {
+  @ApiProperty({
+    description: 'Logical business identifier for the class',
+    example: 'CLS-2024-001',
+    required: true,
+    uniqueItems: true
+  })
+  @Prop({ required: true, unique: true, trim: true })
+  id: string;
+
   @ApiProperty({
     description: 'Class name',
     example: 'Mathematics 101',
@@ -21,12 +33,12 @@ export class Class extends Document {
   description: string;
 
   @ApiProperty({
-    description: 'ID of the user who created the class',
-    example: '605a1cb9d4d5d73598045618',
+    description: "Email of the user who created the class",
+    example: "user@example.com",
     required: true
   })
-  @Prop({ required: true, ref: 'User' })
-  createdBy: mongoose.Schema.Types.ObjectId;
+  @Prop({ required: true, trim: true })
+  createdByEmail: string;
 
   @ApiProperty({
     description: 'Indicates if the class is archived',

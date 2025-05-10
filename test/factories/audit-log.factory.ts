@@ -34,7 +34,7 @@ export const auditLogStub = (
   
   return {
     _id,
-    userId: overrides.userId || new Types.ObjectId().toString(),
+    email: overrides.email || new Types.ObjectId().toString(),
     action: overrides.action || faker.word.verb(),
     targetType: overrides.targetType || TargetType.USER,
     targetId: overrides.targetId || new Types.ObjectId().toString(),

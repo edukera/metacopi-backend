@@ -92,11 +92,13 @@ describe('ClassService (Integration)', () => {
   describe('create', () => {
     it('should create a new class', async () => {
       const createClassDto: CreateClassDto = {
+        id: 'CLS-2024-001',
         name: 'Test Class',
         description: 'Test Description',
         startDate: new Date(),
         endDate: new Date(),
         settings: { someKey: 'someValue' },
+        createdByEmail: 'teacher@test.com',
       };
 
       const result = await classService.create(createClassDto);
@@ -107,7 +109,7 @@ describe('ClassService (Integration)', () => {
       expect(result.startDate).toBeDefined();
       expect(result.endDate).toBeDefined();
       expect(result.settings).toEqual(createClassDto.settings);
-      expect(result.createdBy.toString()).toBe(mockRequest.user.sub);
+      expect(result.createdByEmail.toString()).toBe(mockRequest.user.sub);
       expect(result.code).toBeDefined();
       expect(result.archived).toBe(false);
     });

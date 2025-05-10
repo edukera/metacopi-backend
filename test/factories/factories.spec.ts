@@ -145,8 +145,8 @@ describe('Factory Tests', () => {
       
       // Verify the student
       const studentIdValue = student.id;
-      const submissionStudentId = typeof submission.studentId === 'string' ?
-        submission.studentId : (submission.studentId ? String(submission.studentId) : '');
+      const submissionStudentId = typeof submission.studentEmail === 'string' ?
+        submission.studentEmail : (submission.studentEmail ? String(submission.studentEmail) : '');
         
       expect(submissionStudentId).toEqual(studentIdValue);
     });
@@ -168,7 +168,7 @@ describe('Factory Tests', () => {
       
       // Verify that the correction is associated with the correct corrector
       // The helper uses correctorId but the factory maps this to correctedById
-      expect(correction.correctedById).toBeDefined();
+      expect(correction.correctedByEmail).toBeDefined();
       
       // Note: In test-data.helper.ts, createSubmissionWithCorrection defines correctorId,
       // but the schema correction.factory.ts uses correctedById. Ideally, these field names

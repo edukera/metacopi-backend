@@ -3,12 +3,12 @@ import { MembershipStatus, MembershipRole } from './membership.schema';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateMembershipDto {
-  @ApiProperty({ description: 'User ID', example: '60d21b4667d0d8992e610c85' })
-  @IsMongoId()
-  userId: string;
+  @ApiProperty({ description: 'User email (unique identifier)', example: 'user@example.com' })
+  @IsString()
+  email: string;
 
-  @ApiProperty({ description: 'Class ID', example: '60d21b4667d0d8992e610c86' })
-  @IsMongoId()
+  @ApiProperty({ description: 'Class logical ID (business id)', example: 'CLS-2024-001' })
+  @IsString()
   classId: string;
 
   @ApiPropertyOptional({

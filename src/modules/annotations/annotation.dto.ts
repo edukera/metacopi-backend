@@ -4,19 +4,11 @@ import { IsValidJson } from './validators/is-valid-json.validator';
 
 export class CreateAnnotationDto {
   @ApiProperty({
-    description: 'ID de la correction associée à cette annotation',
-    example: '60d21b4667d0d8992e610c85'
+    description: 'Logical business ID of the correction associated with this annotation',
+    example: 'CORR-2024-001'
   })
-  @IsMongoId()
+  @IsString()
   correctionId: string;
-
-  @ApiProperty({
-    description: 'Clé unique générée par le frontend (UUID v4)',
-    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
-  })
-  @IsUUID('4')
-  @IsNotEmpty()
-  key: string;
 
   @ApiProperty({
     description: 'Valeur de l\'annotation (JSON sérialisé)',
@@ -28,14 +20,20 @@ export class CreateAnnotationDto {
   value: string;
 
   @ApiPropertyOptional({
-    description: 'IDs des commentaires liés à cette annotation',
-    example: ['60d21b4667d0d8992e610c86', '60d21b4667d0d8992e610c87'],
-    type: [String]
+    description: 'Email of the user who created the annotation. If not provided, will use the current authenticated user.',
+    example: 'user@example.com'
   })
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  commentIds?: string[];
+  @IsString()
+  createdByEmail?: string;
+
+  @ApiProperty({
+    description: 'Logical business identifier for the annotation (must be unique)',
+    example: 'ANN-2024-001',
+    required: true
+  })
+  @IsString()
+  id: string;
 }
 
 export class UpdateAnnotationDto {
@@ -48,49 +46,26 @@ export class UpdateAnnotationDto {
   @IsNotEmpty()
   @Validate(IsValidJson)
   value?: string;
-
-  @ApiPropertyOptional({
-    description: 'IDs mis à jour des commentaires liés à cette annotation',
-    example: ['60d21b4667d0d8992e610c86', '60d21b4667d0d8992e610c87'],
-    type: [String]
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  commentIds?: string[];
 }
 
 export class AnnotationResponseDto {
   @ApiProperty({
-    description: 'ID unique de l\'annotation',
-    example: '60d21b4667d0d8992e610c88'
+    description: 'Logical business identifier for the annotation (unique)',
+    example: 'ANN-2024-001'
   })
   id: string;
 
   @ApiProperty({
-    description: 'ID de la correction associée à cette annotation',
-    example: '60d21b4667d0d8992e610c85'
+    description: 'Logical business ID of the correction associated with this annotation',
+    example: 'CORR-2024-001'
   })
   correctionId: string;
-
-  @ApiProperty({
-    description: 'Clé unique générée par le frontend (UUID v4)',
-    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
-  })
-  key: string;
 
   @ApiProperty({
     description: 'Valeur de l\'annotation (JSON sérialisé)',
     example: '{"type":"text","content":"Bonne approche","position":{"x":120,"y":250}}'
   })
   value: string;
-
-  @ApiProperty({
-    description: 'IDs des commentaires liés à cette annotation',
-    example: ['60d21b4667d0d8992e610c86', '60d21b4667d0d8992e610c87'],
-    type: [String]
-  })
-  commentIds: string[];
 
   @ApiProperty({
     description: 'Date de création de l\'annotation',
@@ -103,4 +78,10 @@ export class AnnotationResponseDto {
     example: '2023-01-01T12:00:00Z'
   })
   updatedAt: Date;
+
+  @ApiProperty({
+    description: 'Email of the user who created the annotation',
+    example: 'user@example.com'
+  })
+  createdByEmail: string;
 } 

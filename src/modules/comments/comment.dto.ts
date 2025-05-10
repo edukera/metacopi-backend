@@ -11,19 +11,26 @@ import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
 export class CreateCommentDto {
   @ApiProperty({
-    description: 'ID of the correction this comment belongs to',
-    example: '605a1cb9d4d5d73598045618'
+    description: 'Logical business identifier for the comment (must be unique)',
+    example: 'COMM-2024-001',
+    required: true
   })
-  @IsMongoId()
+  @IsString()
+  id: string;
+
+  @ApiProperty({
+    description: 'Logical business ID of the correction this comment belongs to',
+    example: 'CORR-2024-001'
+  })
+  @IsString()
   correctionId: string;
 
   @ApiProperty({
-    description: 'Page number in the document where the comment is placed',
-    example: 2
+    description: 'ID of the page in the submission where the comment is placed',
+    example: 'p1'
   })
-  @IsNumber()
-  @Min(1)
-  pageNumber: number;
+  @IsString()
+  pageId: string;
 
   @ApiPropertyOptional({
     description: 'Type of comment (e.g., highlight, note, annotation)',
@@ -60,8 +67,8 @@ export class CreateCommentDto {
   text: string;
 
   @ApiPropertyOptional({
-    description: 'Array of annotation references or IDs related to this comment',
-    example: ['60d21b4667d0d8992e610c85', '60d21b4667d0d8992e610c86'],
+    description: 'Array of logical annotation IDs (not Mongo IDs) related to this comment',
+    example: ['ANNOT-2024-001', 'ANNOT-2024-002'],
     type: [String]
   })
   @IsOptional()
@@ -70,12 +77,12 @@ export class CreateCommentDto {
   annotations?: string[];
 
   @ApiPropertyOptional({
-    description: 'ID of the user who created the comment. If not provided, will use the current authenticated user.',
-    example: '605a1cb9d4d5d73598045618'
+    description: 'Email of the user who created the comment. If not provided, will use the current authenticated user.',
+    example: 'user@example.com'
   })
   @IsOptional()
-  @IsMongoId()
-  createdBy?: string;
+  @IsString()
+  createdByEmail?: string;
 }
 
 // Update DTO extends Create DTO with all fields optional
@@ -83,22 +90,22 @@ export class UpdateCommentDto extends PartialType(CreateCommentDto) {}
 
 export class CommentResponseDto {
   @ApiProperty({
-    description: 'Unique identifier of the comment',
-    example: '605a1cb9d4d5d73598045618'
+    description: 'Logical business identifier for the comment (unique)',
+    example: 'COMM-2024-001'
   })
   id: string;
 
   @ApiProperty({
-    description: 'ID of the correction this comment belongs to',
-    example: '605a1cb9d4d5d73598045618'
+    description: 'Logical business ID of the correction this comment belongs to',
+    example: 'CORR-2024-001'
   })
   correctionId: string;
 
   @ApiProperty({
-    description: 'Page number in the document where the comment is placed',
-    example: 2
+    description: 'ID of the page in the submission where the comment is placed',
+    example: 'p1'
   })
-  pageNumber: number;
+  pageId: string;
 
   @ApiProperty({
     description: 'Y position of the comment',
@@ -131,17 +138,17 @@ export class CommentResponseDto {
   text: string;
 
   @ApiProperty({
-    description: 'Array of annotation references or IDs related to this comment',
-    example: ['60d21b4667d0d8992e610c85', '60d21b4667d0d8992e610c86'],
+    description: 'Array of logical annotation IDs (not Mongo IDs) related to this comment',
+    example: ['ANNOT-2024-001', 'ANNOT-2024-002'],
     type: [String]
   })
   annotations: string[];
 
   @ApiProperty({
-    description: 'ID of the user who created the comment',
-    example: '605a1cb9d4d5d73598045618'
+    description: 'Email of the user who created the comment',
+    example: 'user@example.com'
   })
-  createdBy: string;
+  createdByEmail: string;
 
   @ApiProperty({
     description: 'Comment creation date',

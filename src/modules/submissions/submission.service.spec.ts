@@ -70,7 +70,7 @@ describe('SubmissionService', () => {
       
       await expect(service.create(dto)).rejects.toThrow(BadRequestException);
       expect(model.findOne).toHaveBeenCalledWith({
-        studentId: dto.studentId,
+        studentEmail: dto.studentEmail,
         taskId: dto.taskId,
       });
     });
@@ -191,7 +191,7 @@ describe('SubmissionService', () => {
     it('should update a submission', async () => {
       const submission = submissionStub();
       const id = submission._id.toString();
-      const updateDto = { status: SubmissionStatus.SUBMITTED };
+      const updateDto = { status: SubmissionStatus.SUBMITTED, pages: [] };
       const updatedSubmission = { ...submission, ...updateDto, submittedAt: expect.any(Date) };
       
       model.findById = jest.fn().mockReturnValue({
@@ -214,7 +214,7 @@ describe('SubmissionService', () => {
 
     it('should throw NotFoundException if submission not found during update', async () => {
       const id = new Types.ObjectId().toString();
-      const updateDto = { status: SubmissionStatus.SUBMITTED };
+      const updateDto = { status: SubmissionStatus.SUBMITTED, pages: [] };
       
       model.findById = jest.fn().mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),

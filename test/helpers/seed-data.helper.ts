@@ -40,7 +40,7 @@ export class SeedDataHelper {
 
     // Create teacher membership
     const teacherMembership = await this.testDataHelper.createMembership({
-      userId: teacher.id,
+      email: teacher.email,
       classId: classEntity.id,
       role: MembershipRole.TEACHER,
     });
@@ -49,7 +49,7 @@ export class SeedDataHelper {
     const students = await Promise.all(
       Array(numStudents)
         .fill(null)
-        .map(() => this.testDataHelper.createStudentInClass(new Types.ObjectId(classEntity.id)))
+        .map(() => this.testDataHelper.createStudentInClass(classEntity.id))
     );
 
     // Create tasks
@@ -110,9 +110,8 @@ export class SeedDataHelper {
 
           // Create a correction if needed
           if (options.allCorrected || Math.random() > 0.5) {
-            const taskId = typeof task.id === 'string' ? new Types.ObjectId(task.id) : task.id;
             const { correction } = await this.testDataHelper.createSubmissionWithCorrection(
-              taskId,
+              task.id,
               new Types.ObjectId(student.id),
               new Types.ObjectId(teacher.id)
             );

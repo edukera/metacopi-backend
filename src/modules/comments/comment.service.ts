@@ -25,17 +25,18 @@ export class CommentService {
 
   // Convertir un objet Comment en CommentResponseDto
   private toResponseDto(comment: Comment): CommentResponseDto {
+    // Les annotations sont des ids logiques (pas des ObjectId Mongo)
     const commentDto = new CommentResponseDto();
-    commentDto.id = comment['_id'].toString();
-    commentDto.correctionId = comment.correctionId?.toString();
-    commentDto.pageNumber = comment.pageNumber;
+    commentDto.id = comment.id;
+    commentDto.correctionId = comment.correctionId;
+    commentDto.pageId = comment.pageId;
     commentDto.pageY = comment.pageY;
     commentDto.type = comment.type || 'note';
     commentDto.color = comment.color || '#FFD700';
     commentDto.markdown = comment.isMarkdown || false;
     commentDto.text = comment.text;
     commentDto.annotations = comment.annotations || [];
-    commentDto.createdBy = comment.createdBy?.toString();
+    commentDto.createdByEmail = comment.createdByEmail;
     commentDto.createdAt = (comment as any).createdAt;
     commentDto.updatedAt = (comment as any).updatedAt;
     return commentDto;
@@ -52,12 +53,10 @@ export class CommentService {
    * @returns Newly created comment
    */
   async create(createCommentDto: CreateCommentDto): Promise<CommentResponseDto> {
-    // If createdBy is not provided, use the current user
-    if (!createCommentDto.createdBy) {
-      createCommentDto.createdBy = this.request.user.sub;
+    if (!createCommentDto.createdByEmail) {
+      createCommentDto.createdByEmail = this.request.user.email;
     }
-
-    // Les vérifications d'accès sont maintenant gérées par le guard
+    // Les annotations doivent être des ids logiques (string)
     const newComment = new this.commentModel(createCommentDto);
     const savedComment = await newComment.save();
     return this.toResponseDto(savedComment);
@@ -78,12 +77,14 @@ export class CommentService {
    * @returns Comment if found
    */
   async findOne(id: string): Promise<CommentResponseDto> {
-    const comment = await this.commentModel.findById(id).exec();
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let comment = await this.commentModel.findOne({ id }).exec();
     if (!comment) {
-      throw new NotFoundException(`Comment with ID ${id} not found`);
+      comment = await this.commentModel.findById(id).exec();
     }
-    
-    // Les vérifications d'accès sont maintenant gérées par le guard
+    if (!comment) {
+      throw new NotFoundException(`Comment with logical ID or MongoDB ID '${id}' not found`);
+    }
     return this.toResponseDto(comment);
   }
 
@@ -102,7 +103,6 @@ export class CommentService {
       }
       throw error;
     }
-    
     // Les vérifications d'accès sont maintenant gérées par le guard
     const comments = await this.commentModel.find({ correctionId }).exec();
     return this.toResponseDtoList(comments);
@@ -163,25 +163,22 @@ export class CommentService {
 
   /**
    * Check if a user has teacher access to a correction
-   * @param userId User ID
+   * @param userEmail User Email
    * @param correctionId Correction ID
    * @returns Boolean indicating if the user has teacher access
    */
-  async checkTeacherAccess(userId: string, correctionId: string): Promise<boolean> {
+  async checkTeacherAccess(userEmail: string, correctionId: string): Promise<boolean> {
     try {
       // Get the correction
       const correction = await this.correctionService.findOne(correctionId);
-      
       // Si l'utilisateur est l'enseignant qui a créé la correction, il a accès
-      if (correction.correctedById === userId) {
+      if (correction.correctedByEmail === userEmail) {
         return true;
       }
-      
       // Vérifier si l'utilisateur est enseignant dans la classe associée
       const submission = await this.submissionService.findOne(correction.submissionId);
       const task = await this.taskService.findOne(submission.taskId);
-      const isTeacher = await this.membershipService.checkMembershipRole(userId, task.classId, MembershipRole.TEACHER);
-      
+      const isTeacher = await this.membershipService.checkMembershipRole(userEmail, task.classId, MembershipRole.TEACHER);
       return isTeacher;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -193,19 +190,17 @@ export class CommentService {
 
   /**
    * Check if a user has student access to a correction
-   * @param userId User ID
+   * @param userEmail User Email
    * @param correctionId Correction ID
    * @returns Boolean indicating if the user has student access
    */
-  async checkStudentAccess(userId: string, correctionId: string): Promise<boolean> {
+  async checkStudentAccess(userEmail: string, correctionId: string): Promise<boolean> {
     try {
       // Get the correction
       const correction = await this.correctionService.findOne(correctionId);
-      
       // Vérifier si l'utilisateur est l'étudiant propriétaire de la soumission
       const submission = await this.submissionService.findOne(correction.submissionId);
-      
-      return submission.studentId === userId;
+      return submission.studentEmail === userEmail;
     } catch (error) {
       if (error instanceof NotFoundException) {
         return false;

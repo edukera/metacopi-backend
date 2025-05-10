@@ -33,7 +33,7 @@ export class AICommentController {
 
   @Get()
   @ApiOperation({ summary: 'Get all AI comments for a correction' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: '507f1f77bcf86cd799439011' })
+  @ApiParam({ name: 'id', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
   @ApiResponse({ status: 200, description: 'List of AI comments for the correction.', type: [AICommentResponseDto] })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Correction not found.' })
@@ -43,7 +43,7 @@ export class AICommentController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new AI comment for a correction' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: '507f1f77bcf86cd799439011' })
+  @ApiParam({ name: 'id', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
   @ApiBody({ type: CreateAICommentDto })
   @ApiResponse({ status: 201, description: 'The AI comment has been successfully created.', type: AICommentResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
@@ -59,9 +59,9 @@ export class AICommentController {
   }
 
   @Get(':aiCommentId')
-  @ApiOperation({ summary: 'Get a specific AI comment by ID' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: '507f1f77bcf86cd799439011' })
-  @ApiParam({ name: 'aiCommentId', description: 'AI Comment ID', example: '507f1f77bcf86cd799439012' })
+  @ApiOperation({ summary: 'Get a specific AI comment by ID (logical or MongoDB)' })
+  @ApiParam({ name: 'id', description: 'Correction ID', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'aiCommentId', description: 'AI Comment logical ID or MongoDB ID', example: 'AIC-2024-001' })
   @ApiResponse({ status: 200, description: 'The found AI comment.', type: AICommentResponseDto })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'AI Comment not found.' })
@@ -70,9 +70,9 @@ export class AICommentController {
   }
 
   @Patch(':aiCommentId')
-  @ApiOperation({ summary: 'Update an AI comment' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: '507f1f77bcf86cd799439011' })
-  @ApiParam({ name: 'aiCommentId', description: 'AI Comment ID', example: '507f1f77bcf86cd799439012' })
+  @ApiOperation({ summary: 'Update an AI comment (by logical or MongoDB ID)' })
+  @ApiParam({ name: 'id', description: 'Correction ID', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'aiCommentId', description: 'AI Comment logical ID or MongoDB ID', example: 'AIC-2024-001' })
   @ApiBody({ type: UpdateAICommentDto })
   @ApiResponse({ status: 200, description: 'The AI comment has been successfully updated.', type: AICommentResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
@@ -86,9 +86,9 @@ export class AICommentController {
   }
 
   @Delete(':aiCommentId')
-  @ApiOperation({ summary: 'Delete an AI comment' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: '507f1f77bcf86cd799439011' })
-  @ApiParam({ name: 'aiCommentId', description: 'AI Comment ID', example: '507f1f77bcf86cd799439012' })
+  @ApiOperation({ summary: 'Delete an AI comment (by logical or MongoDB ID)' })
+  @ApiParam({ name: 'id', description: 'Correction ID', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'aiCommentId', description: 'AI Comment logical ID or MongoDB ID', example: 'AIC-2024-001' })
   @ApiResponse({ status: 204, description: 'The AI comment has been successfully deleted.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'AI Comment not found.' })

@@ -21,7 +21,7 @@ export class ClassAccessGuard implements CanActivate {
       throw new ForbiddenException('User is not authenticated');
     }
     
-    const userId = user.sub || user.id;
+    const userEmail = user.email;
     
     // Si admin, autoriser l'accès
     if (user.role === UserRole.ADMIN) {
@@ -35,15 +35,15 @@ export class ClassAccessGuard implements CanActivate {
       throw new ForbiddenException('Class ID is required');
     }
     
-    this.logger.debug(`Class access check: userId=${userId}, method=${method}, classId=${classId}`);
+    this.logger.debug(`Class access check: userEmail=${userEmail}, method=${method}, classId=${classId}`);
     
     // Pour tous les cas impliquant une classe, vérifier si l'utilisateur est enseignant de cette classe
-    return this.checkTeacherAccess(userId, classId);
+    return this.checkTeacherAccess(userEmail, classId);
   }
   
   // Vérifie si l'utilisateur est enseignant de la classe
-  private async checkTeacherAccess(userId: string, classId: string): Promise<boolean> {
-    const isTeacher = await this.membershipService.checkMembershipRole(userId, classId, MembershipRole.TEACHER);
+  private async checkTeacherAccess(userEmail: string, classId: string): Promise<boolean> {
+    const isTeacher = await this.membershipService.checkMembershipRole(userEmail, classId, MembershipRole.TEACHER);
     
     if (isTeacher) {
       return true;

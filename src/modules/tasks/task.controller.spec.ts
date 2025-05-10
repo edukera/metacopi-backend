@@ -179,9 +179,11 @@ describe('TaskController', () => {
   describe('create', () => {
     it('should create a new task', async () => {
       const createTaskDto: CreateTaskDto = {
+        id: mockTaskId,
         title: 'New Task',
         description: 'New Description',
         classId: mockClassId,
+        createdByEmail: mockUserId,
         dueDate: new Date(),
       };
 

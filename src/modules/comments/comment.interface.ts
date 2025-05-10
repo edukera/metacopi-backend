@@ -7,7 +7,7 @@ export interface Comment {
   markdown: boolean;
   text: string;
   annotations: string[];
-  createdBy: string;
+  createdByEmail: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,7 +20,7 @@ export interface CommentCreateParams {
   markdown?: boolean;
   text: string;
   annotations?: string[];
-  createdBy: string;
+  createdByEmail: string;
 }
 
 export interface CommentUpdateParams {

@@ -28,9 +28,10 @@ export const createSubmissionDto = (
   overrides: Partial<CreateSubmissionDto> = {},
 ): CreateSubmissionDto => {
   return {
+    id: overrides.id || new Types.ObjectId().toString(),
     taskId: new Types.ObjectId().toString(),
-    studentId: new Types.ObjectId().toString(),
-    rawPages: [faker.system.filePath(), faker.system.filePath()],
+    studentEmail: new Types.ObjectId().toString(),
+    pages: [],
     status: SubmissionStatus.DRAFT,
     ...overrides,
   };
@@ -52,6 +53,9 @@ export const submissionStub = (
     reviewedAt: overrides.reviewedAt || null,
     createdAt: overrides.createdAt || now,
     updatedAt: overrides.updatedAt || now,
+    studentEmail: overrides.studentEmail || faker.internet.email(),
+    pages: overrides.pages || [],
+    uploadedByEmail: overrides.uploadedByEmail || faker.internet.email(),
     save: jest.fn().mockImplementation(() => Promise.resolve(stub)),
     toObject: jest.fn().mockImplementation(() => stub),
     toJSON: jest.fn().mockImplementation(() => stub),

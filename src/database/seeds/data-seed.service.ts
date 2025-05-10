@@ -16,6 +16,7 @@ import { Correction, CorrectionStatus } from '../../modules/corrections/correcti
 import { Comment, CommentDocument } from '../../modules/comments/comment.schema';
 import { AIComment, AICommentDocument } from '../../modules/ai-comments/ai-comment.schema';
 import { Annotation, AnnotationDocument } from '../../modules/annotations/annotation.schema';
+import { AIAnnotation, AIAnnotationDocument } from '../../modules/ai-annotations/ai-annotation.schema';
 
 // Interfaces to define the JSON structure
 export interface UserSeedData {
@@ -29,6 +30,7 @@ export interface UserSeedData {
 }
 
 export interface ClassSeedData {
+  id: string;
   name: string;
   description?: string;
   code?: string;
@@ -40,9 +42,11 @@ export interface ClassSeedData {
 }
 
 export interface TaskSeedData {
+  id: string;
   title: string;
   description?: string;
-  className: string; // Name of the class
+  classId?: string;
+  className?: string; // Name of the class
   createdBy: string; // Email of the creator user
   status?: TaskStatus;
   dueDate?: Date;
@@ -54,34 +58,30 @@ export interface TaskSeedData {
 
 export interface MembershipSeedData {
   userEmail: string;
-  className: string;
+  classId: string;
   role: MembershipRole;
   status?: MembershipStatus;
   isActive?: boolean;
 }
 
 export interface SubmissionSeedData {
+  id: string;
   userEmail: string; // Email of the student
-  taskTitle: string; // Title of the task
-  className: string; // Name of the class the task belongs to (to uniquely identify the task)
-  rawPages: string[];
-  processedPages?: string[];
+  taskId: string; // Identifiant logique de la tâche
+  pages: any[]; // Tableau de pages (format {id, raw, processed})
   status?: SubmissionStatusEnum;
   submittedAt?: Date;
-  // D'autres champs de CreateSubmissionDto pourraient être ajoutés ici si nécessaire pour le seeding
 }
 
 export interface CorrectionSeedData {
-  id?: number;
-  submissionUserEmail: string; // Email of the student who made the submission
-  submissionTaskTitle: string; // Title of the task for the submission
-  submissionClassName: string; // Class name for the submission's task
-  correctorEmail: string; // Email of the user who corrects
+  id: string;
+  submissionId: string;
+  studentEmail: string;
+  correctorEmail: string;
   grade?: number;
   appreciation?: string;
-  status?: string; // e.g., 'draft', 'published'
+  status?: string;
   correctedAt?: Date;
-  // Add other fields from CreateCorrectionDto as needed for seeding
 }
 
 export interface AnnotationSeedData {
@@ -91,46 +91,37 @@ export interface AnnotationSeedData {
 }
 
 export interface CommentSeedData {
-  // Identifier la Correction parente
-  submissionUserEmail: string; 
-  submissionTaskTitle: string;
-  submissionClassName: string;
-  correctorEmail: string;
-
-  // Auteur du commentaire
+  submissionId: string;
+  correctionId: string;
   authorEmail: string;
-
-  // Champs du Commentaire
-  pageNumber: number;
+  pageId: string;
   type: string;
   color: string;
-  text: string; // Contenu textuel simple/rendu
-  markdownSource?: string; // Contenu Markdown brut
+  text: string;
+  markdownSource?: string;
   isMarkdown: boolean;
   pageY?: number;
-  annotations?: number[]; // Références aux annotations par leur ID logique
+  annotations?: number[];
 }
 
 export interface AICommentSeedData {
-  // Identifier la Correction parente
-  id?: string;
-  submissionUserEmail: string; 
-  submissionTaskTitle: string;
-  submissionClassName: string;
-  correctorEmail: string;
-
-  // Auteur du commentaire AI
+  submissionId: string;
+  correctionId: string;
   authorEmail: string;
-
-  // Champs du Commentaire AI
-  pageNumber: number;
+  pageId: string;
   type: string;
   color: string;
-  text: string; // Contenu textuel simple/rendu
-  markdownSource?: string; // Contenu Markdown brut
+  text: string;
+  markdownSource?: string;
   isMarkdown: boolean;
   pageY?: number;
-  annotations?: number[]; // Références aux annotations par leur ID logique
+  annotations?: number[];
+}
+
+export interface AIAnnotationSeedData {
+  id: number | string;
+  correctionId: number | string;
+  [key: string]: any;
 }
 
 export interface SeedData {
@@ -143,17 +134,19 @@ export interface SeedData {
   comments: CommentSeedData[];
   'ai-comments': AICommentSeedData[];
   annotations: AnnotationSeedData[];
+  'ai-annotations': AIAnnotationSeedData[];
 }
 
 @Injectable()
 export class DataSeedService {
   private readonly logger = new Logger(DataSeedService.name);
-  private readonly userIdMap: Map<string, string> = new Map(); // Map email -> userId
-  private readonly classIdMap: Map<string, string> = new Map(); // Map name -> classId
-  private readonly taskIdMap: Map<string, string> = new Map(); // Map title+className -> taskId
-  private readonly submissionIdMap: Map<string, string> = new Map(); // Map studentEmail+taskTitle+className -> submissionId
-  private readonly correctionIdMap: Map<string, string> = new Map(); // Map submissionId+correctorEmail -> correctionId
-  private readonly annotationIdMap: Map<string, string> = new Map(); // Map logicalId -> annotationId
+  private readonly userIdMap: Map<string, string> = new Map(); // Map email -> Mongo _id
+  private readonly classIdMap: Map<string, string> = new Map(); // Map id logique -> Mongo _id
+  private readonly taskIdMap: Map<string, string> = new Map(); // Map id logique -> Mongo _id
+  private readonly submissionIdMap: Map<string, string> = new Map(); // Map id logique -> Mongo _id
+  private readonly correctionIdMap: Map<string, string> = new Map(); // Map id logique -> Mongo _id
+  private readonly annotationIdMap: Map<string, string> = new Map(); // Map id logique -> Mongo _id
+  private readonly aiAnnotationIdMap: Map<string, string> = new Map();
 
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
@@ -165,6 +158,7 @@ export class DataSeedService {
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectModel(AIComment.name) private aiCommentModel: Model<AICommentDocument>,
     @InjectModel(Annotation.name) private annotationModel: Model<AnnotationDocument>,
+    @InjectModel(AIAnnotation.name) private aiAnnotationModel: Model<AIAnnotationDocument>,
     @InjectConnection() private readonly connection: Connection,
   ) {}
 
@@ -197,6 +191,7 @@ export class DataSeedService {
       await this.seedSubmissions(seedData.submissions);
       await this.seedCorrections(seedData.corrections);
       await this.seedAnnotations(seedData.annotations);
+      await this.seedAIAnnotations(seedData['ai-annotations']);
       await this.seedComments(seedData.comments);
       await this.seedAIComments(seedData['ai-comments']);
       
@@ -280,30 +275,25 @@ export class DataSeedService {
       this.logger.log('No classes to create.');
       return;
     }
-
     let createdCount = 0;
-    
     for (const classData of classes) {
       try {
-        // Check if the class already exists
-        const existingClass = await this.classModel.findOne({ name: classData.name });
-        
+        // Recherche par id logique
+        const existingClass = await this.classModel.findOne({ id: classData.id });
         if (existingClass) {
-          this.logger.log(`Class ${classData.name} already exists.`);
-          // Store ID for future references
-          this.classIdMap.set(classData.name, existingClass._id.toString());
+          this.logger.log(`Class ${classData.id} already exists.`);
+          this.classIdMap.set(classData.id, existingClass._id.toString());
           continue;
         }
-        
-        // Find the creator's ID
+        // Vérifier que le créateur existe
         const createdById = this.userIdMap.get(classData.createdBy);
         if (!createdById) {
-          this.logger.warn(`User ${classData.createdBy} does not exist. Cannot create class ${classData.name}.`);
+          this.logger.warn(`User ${classData.createdBy} does not exist. Cannot create class ${classData.id}.`);
           continue;
         }
-        
-        // Create the new class
+        // Création de la classe avec l'email du créateur
         const newClass = await this.classModel.create({
+          id: classData.id,
           name: classData.name,
           description: classData.description,
           code: classData.code,
@@ -311,19 +301,15 @@ export class DataSeedService {
           startDate: classData.startDate,
           endDate: classData.endDate,
           archived: classData.archived || false,
-          createdBy: new Types.ObjectId(createdById),
+          createdByEmail: classData.createdBy, // on passe l'email ici
         });
-        
-        // Store ID for future references
-        this.classIdMap.set(classData.name, newClass._id.toString());
-        
+        this.classIdMap.set(classData.id, newClass._id.toString());
         createdCount++;
-        this.logger.log(`Class successfully created: ${classData.name}`);
+        this.logger.log(`Class successfully created: ${classData.id}`);
       } catch (error) {
-        this.logger.error(`Error while creating class ${classData.name}:`, error);
+        this.logger.error(`Error while creating class ${classData.id}:`, error);
       }
     }
-    
     this.logger.log(`Classes seeding completed. ${createdCount} classes created.`);
   }
 
@@ -332,43 +318,43 @@ export class DataSeedService {
       this.logger.log('No tasks to create.');
       return;
     }
-
     let createdCount = 0;
-    
     for (const taskData of tasks) {
       try {
-        // Find the class ID
-        const classId = this.classIdMap.get(taskData.className);
+        // Harmonisation classId/className
+        let classId = taskData.classId;
+        if (!classId && taskData.className) {
+          // On cherche l'id logique de la classe à partir du nom
+          const foundClass = Array.from(this.classIdMap.entries()).find(([logicId, _]) => {
+            // On suppose que le nom de la classe est unique
+            return logicId === taskData.className;
+          });
+          if (foundClass) classId = foundClass[0];
+        }
         if (!classId) {
-          this.logger.warn(`Class ${taskData.className} does not exist. Cannot create task ${taskData.title}.`);
+          this.logger.warn(`Class for task ${taskData.id || taskData.title} not found. Cannot create task.`);
           continue;
         }
-        
-        // Find the creator's ID
+        // Créateur par email
         const createdById = this.userIdMap.get(taskData.createdBy);
         if (!createdById) {
-          this.logger.warn(`User ${taskData.createdBy} does not exist. Cannot create task ${taskData.title}.`);
+          this.logger.warn(`User ${taskData.createdBy} does not exist. Cannot create task ${taskData.id || taskData.title}.`);
           continue;
         }
-        
-        // Check if the task already exists
-        const existingTask = await this.taskModel.findOne({ 
-          title: taskData.title,
-          classId: new Types.ObjectId(classId)
-        });
-        
+        // Recherche par id logique
+        const existingTask = await this.taskModel.findOne({ id: taskData.id });
         if (existingTask) {
-          this.logger.log(`Task ${taskData.title} already exists in class ${taskData.className}.`);
-          this.taskIdMap.set(`${taskData.title}-${taskData.className}`, existingTask._id.toString());
+          this.logger.log(`Task ${taskData.id} already exists.`);
+          this.taskIdMap.set(taskData.id, existingTask._id.toString());
           continue;
         }
-        
-        // Create the new task
+        // Création de la tâche avec id logique
         const newTask = await this.taskModel.create({
+          id: taskData.id,
           title: taskData.title,
           description: taskData.description,
-          classId: new Types.ObjectId(classId),
-          createdBy: new Types.ObjectId(createdById),
+          classId: classId,
+          createdByEmail: taskData.createdBy,
           status: taskData.status || TaskStatus.DRAFT,
           dueDate: taskData.dueDate,
           points: taskData.points || 0,
@@ -376,15 +362,13 @@ export class DataSeedService {
           metadata: taskData.metadata || {},
           settings: taskData.settings || {},
         });
-        
-        this.taskIdMap.set(`${taskData.title}-${taskData.className}`, newTask._id.toString());
+        this.taskIdMap.set(taskData.id, newTask._id.toString());
         createdCount++;
-        this.logger.log(`Task successfully created: ${taskData.title} in class ${taskData.className}`);
+        this.logger.log(`Task successfully created: ${taskData.id}`);
       } catch (error) {
-        this.logger.error(`Error while creating task ${taskData.title}:`, error);
+        this.logger.error(`Error while creating task ${taskData.id}:`, error);
       }
     }
-    
     this.logger.log(`Tasks seeding completed. ${createdCount} tasks created.`);
   }
 
@@ -406,9 +390,9 @@ export class DataSeedService {
         }
         
         // Find the class ID
-        const classId = this.classIdMap.get(membershipData.className);
+        const classId = this.classIdMap.get(membershipData.classId);
         if (!classId) {
-          this.logger.warn(`Class ${membershipData.className} does not exist. Cannot create membership.`);
+          this.logger.warn(`Class ${membershipData.classId} does not exist. Cannot create membership.`);
           continue;
         }
         
@@ -419,14 +403,14 @@ export class DataSeedService {
         });
         
         if (existingMembership) {
-          this.logger.log(`Membership for ${membershipData.userEmail} in class ${membershipData.className} already exists.`);
+          this.logger.log(`Membership for ${membershipData.userEmail} in class ${membershipData.classId} already exists.`);
           continue;
         }
         
         // Create the new membership
         await this.membershipModel.create({
-          userId: new Types.ObjectId(userId),
-          classId: new Types.ObjectId(classId),
+          email: membershipData.userEmail,
+          classId: membershipData.classId,
           role: membershipData.role,
           status: membershipData.status || MembershipStatus.ACTIVE,
           isActive: membershipData.isActive !== undefined ? membershipData.isActive : true,
@@ -434,9 +418,9 @@ export class DataSeedService {
         });
         
         createdCount++;
-        this.logger.log(`Membership successfully created: ${membershipData.userEmail} (${membershipData.role}) in class ${membershipData.className}`);
+        this.logger.log(`Membership successfully created: ${membershipData.userEmail} (${membershipData.role}) in class ${membershipData.classId}`);
       } catch (error) {
-        this.logger.error(`Error while creating membership for ${membershipData.userEmail} in class ${membershipData.className}:`, error);
+        this.logger.error(`Error while creating membership for ${membershipData.userEmail} in class ${membershipData.classId}:`, error);
       }
     }
     
@@ -448,52 +432,43 @@ export class DataSeedService {
       this.logger.log('No submissions to create.');
       return;
     }
-
     let createdCount = 0;
-
     for (const subData of submissions) {
       try {
+        // Trouver l'étudiant par email
         const studentId = this.userIdMap.get(subData.userEmail);
         if (!studentId) {
-          this.logger.warn(`User (student) ${subData.userEmail} does not exist. Cannot create submission for task ${subData.taskTitle}.`);
+          this.logger.warn(`User (student) ${subData.userEmail} does not exist. Cannot create submission ${subData.id}.`);
           continue;
         }
-
-        const taskId = this.taskIdMap.get(`${subData.taskTitle}-${subData.className}`);
-        if (!taskId) {
-          this.logger.warn(`Task ${subData.taskTitle} in class ${subData.className} does not exist. Cannot create submission.`);
+        // Trouver la tâche par id logique
+        const taskMongoId = this.taskIdMap.get(subData.taskId);
+        if (!taskMongoId) {
+          this.logger.warn(`Task ${subData.taskId} does not exist. Cannot create submission ${subData.id}.`);
           continue;
         }
-
-        // Check if submission already exists for this student and task
-        const submissionKey = `${subData.userEmail}-${subData.taskTitle}-${subData.className}`;
-        const existingSubmission = await this.submissionModel.findOne({
-          studentId: new Types.ObjectId(studentId),
-          taskId: new Types.ObjectId(taskId),
-        });
-
+        // Recherche par id logique
+        const existingSubmission = await this.submissionModel.findOne({ id: subData.id });
         if (existingSubmission) {
-          this.logger.log(`Submission for task ${subData.taskTitle} by student ${subData.userEmail} already exists.`);
-          this.submissionIdMap.set(submissionKey, existingSubmission._id.toString());
+          this.logger.log(`Submission ${subData.id} already exists.`);
+          this.submissionIdMap.set(subData.id, existingSubmission._id.toString());
           continue;
         }
-
+        // Création de la soumission avec id logique et pages
         const newSubmission = await this.submissionModel.create({
-          studentId: new Types.ObjectId(studentId),
-          taskId: new Types.ObjectId(taskId),
-          uploadedBy: new Types.ObjectId(studentId), // Assuming student uploads their own work
-          rawPages: subData.rawPages,
-          processedPages: subData.processedPages || [],
+          id: subData.id,
+          studentEmail: subData.userEmail,
+          taskId: subData.taskId,
+          uploadedByEmail: subData.userEmail,
+          pages: subData.pages,
           status: subData.status || SubmissionStatusEnum.DRAFT,
           submittedAt: subData.submittedAt,
-          // createdAt and updatedAt will be set automatically by Mongoose
         });
-        
-        this.submissionIdMap.set(submissionKey, newSubmission._id.toString());
+        this.submissionIdMap.set(subData.id, newSubmission._id.toString());
         createdCount++;
-        this.logger.log(`Submission successfully created for task ${subData.taskTitle} by student ${subData.userEmail}`);
+        this.logger.log(`Submission successfully created: ${subData.id}`);
       } catch (error) {
-        this.logger.error(`Error while creating submission for task ${subData.taskTitle} by ${subData.userEmail}:`, error);
+        this.logger.error(`Error while creating submission ${subData.id}:`, error);
       }
     }
     this.logger.log(`Submissions seeding completed. ${createdCount} submissions created.`);
@@ -504,52 +479,44 @@ export class DataSeedService {
       this.logger.log('No corrections to create.');
       return;
     }
-
     let createdCount = 0;
-
     for (const corrData of corrections) {
       try {
-        const submissionKey = `${corrData.submissionUserEmail}-${corrData.submissionTaskTitle}-${corrData.submissionClassName}`;
-        const submissionId = this.submissionIdMap.get(submissionKey);
-        if (!submissionId) {
-          this.logger.warn(`Submission for user ${corrData.submissionUserEmail}, task ${corrData.submissionTaskTitle}, class ${corrData.submissionClassName} does not exist. Cannot create correction.`);
+        // Trouver la soumission par id logique
+        const submissionMongoId = this.submissionIdMap.get(corrData.submissionId);
+        if (!submissionMongoId) {
+          this.logger.warn(`Submission ${corrData.submissionId} does not exist. Cannot create correction ${corrData.id}.`);
           continue;
         }
-
+        // Trouver le correcteur par email
         const correctorId = this.userIdMap.get(corrData.correctorEmail);
         if (!correctorId) {
-          this.logger.warn(`User (corrector) ${corrData.correctorEmail} does not exist. Cannot create correction.`);
+          this.logger.warn(`User (corrector) ${corrData.correctorEmail} does not exist. Cannot create correction ${corrData.id}.`);
           continue;
         }
-        
-        // Check if correction already exists for this submission and corrector
-        // Note: Adjust this logic if multiple corrections per submission/corrector are allowed or if there's a unique constraint.
-        const existingCorrection = await this.correctionModel.findOne({
-          submissionId: new Types.ObjectId(submissionId),
-          correctedById: new Types.ObjectId(correctorId), 
-        });
-
+        // Recherche par id logique
+        const existingCorrection = await this.correctionModel.findOne({ id: corrData.id });
         if (existingCorrection) {
-          this.logger.log(`Correction for submission ${submissionId} by corrector ${corrData.correctorEmail} already exists.`);
-          this.correctionIdMap.set(`${submissionId}-${corrData.correctorEmail}`, existingCorrection._id.toString());
+          this.logger.log(`Correction ${corrData.id} already exists.`);
+          this.correctionIdMap.set(corrData.id, existingCorrection._id.toString());
           continue;
         }
-
+        // Création de la correction avec id logique (sans annotations)
         const newCorrection = await this.correctionModel.create({
-          submissionId: new Types.ObjectId(submissionId),
-          correctedById: new Types.ObjectId(correctorId),
+          id: corrData.id,
+          submissionId: corrData.submissionId,
+          studentEmail: corrData.studentEmail,
+          correctedByEmail: corrData.correctorEmail,
           grade: corrData.grade,
           appreciation: corrData.appreciation,
           status: corrData.status || CorrectionStatus.COMPLETED,
           finalizedAt: corrData.correctedAt || new Date(),
-          // Populate other fields as necessary from your Correction schema/DTO
         });
-        
-        this.correctionIdMap.set(`${submissionId}-${corrData.correctorEmail}`, newCorrection._id.toString());
+        this.correctionIdMap.set(corrData.id, newCorrection._id.toString());
         createdCount++;
-        this.logger.log(`Correction successfully created for submission ${submissionId} by ${corrData.correctorEmail}`);
+        this.logger.log(`Correction successfully created: ${corrData.id}`);
       } catch (error) {
-        this.logger.error(`Error while creating correction for submission by ${corrData.submissionUserEmail} (corrector ${corrData.correctorEmail}):`, error);
+        this.logger.error(`Error while creating correction ${corrData.id}:`, error);
       }
     }
     this.logger.log(`Corrections seeding completed. ${createdCount} corrections created.`);
@@ -560,54 +527,65 @@ export class DataSeedService {
       this.logger.log('No annotations to create.');
       return;
     }
-
     let createdCount = 0;
-
     for (const annotationData of annotations) {
       try {
-        // Convertir l'ID en chaîne pour la clé
-        const annotationKey = String(annotationData.id);
-        
-        // Trouver l'ID de la correction associée
-        const correctionLogicalId = String(annotationData.correctionId);
-        const correctionKeys = Array.from(this.correctionIdMap.keys());
-        const correctionKey = correctionKeys.find(key => key.includes(correctionLogicalId));
-        
-        if (!correctionKey) {
-          this.logger.warn(`Correction with logical ID ${correctionLogicalId} not found. Cannot create annotation with ID ${annotationKey}.`);
+        // On suppose que correctionId est déjà l'id logique
+        const correctionMongoId = this.correctionIdMap.get(annotationData.correctionId as string);
+        if (!correctionMongoId) {
+          this.logger.warn(`Correction ${annotationData.correctionId} does not exist. Cannot create annotation ${annotationData.id}.`);
           continue;
         }
-        
-        const correctionId = this.correctionIdMap.get(correctionKey);
-        if (!correctionId) {
-          this.logger.warn(`Correction with key ${correctionKey} not found. Cannot create annotation with ID ${annotationKey}.`);
-          continue;
-        }
-
-        // Exclure seulement id et correctionId pour la sérialisation
-        const { id, correctionId: _, ...annotationValueObj } = annotationData;
-        
-        // Sérialiser en JSON tous les autres champs dynamiques
-        const annotationValue = JSON.stringify(annotationValueObj);
-        
-        // Créer l'annotation
+        // On extrait les champs à la racine et on sérialise le reste dans 'value'
+        const { id, correctionId, createdByEmail, ...rest } = annotationData;
+        const value = JSON.stringify(rest);
         const newAnnotation = await this.annotationModel.create({
-          key: annotationKey,
-          value: annotationValue,
-          correctionId: new Types.ObjectId(correctionId)
+          id: String(id),
+          correctionId,
+          createdByEmail,
+          value,
         });
-        
-        // Stocker l'ID pour les références futures
-        this.annotationIdMap.set(annotationKey, newAnnotation._id.toString());
-        
+        this.annotationIdMap.set(String(id), newAnnotation._id.toString());
         createdCount++;
-        this.logger.log(`Annotation successfully created with key ${annotationKey} for correction ${correctionId}`);
+        this.logger.log(`Annotation successfully created: ${id}`);
       } catch (error) {
         this.logger.error(`Error while creating annotation with ID ${annotationData.id}:`, error);
       }
     }
-    
     this.logger.log(`Annotations seeding completed. ${createdCount} annotations created.`);
+  }
+
+  private async seedAIAnnotations(aiAnnotations: AIAnnotationSeedData[]): Promise<void> {
+    if (!aiAnnotations || aiAnnotations.length === 0) {
+      this.logger.log('No AI annotations to create.');
+      return;
+    }
+    let createdCount = 0;
+    for (const aiAnnotationData of aiAnnotations) {
+      try {
+        // On suppose que correctionId est déjà l'id logique
+        const correctionMongoId = this.correctionIdMap.get(aiAnnotationData.correctionId as string);
+        if (!correctionMongoId) {
+          this.logger.warn(`Correction ${aiAnnotationData.correctionId} does not exist. Cannot create AI annotation ${aiAnnotationData.id}.`);
+          continue;
+        }
+        // On extrait les champs à la racine et on sérialise le reste dans 'value'
+        const { id, correctionId, createdByEmail, ...rest } = aiAnnotationData;
+        const value = JSON.stringify(rest);
+        const newAIAnnotation = await this.aiAnnotationModel.create({
+          id: String(id),
+          correctionId,
+          createdByEmail,
+          value,
+        });
+        this.aiAnnotationIdMap.set(String(id), newAIAnnotation._id.toString());
+        createdCount++;
+        this.logger.log(`AI Annotation successfully created: ${id}`);
+      } catch (error) {
+        this.logger.error(`Error while creating AI annotation with ID ${aiAnnotationData.id}:`, error);
+      }
+    }
+    this.logger.log(`AI Annotations seeding completed. ${createdCount} AI annotations created.`);
   }
 
   private async seedComments(comments: CommentSeedData[]): Promise<void> {
@@ -615,65 +593,33 @@ export class DataSeedService {
       this.logger.log('No comments to create.');
       return;
     }
-
     let createdCount = 0;
-
     for (const commentData of comments) {
       try {
-        // Trouver l'ID de la correction parente
-        const submissionKey = `${commentData.submissionUserEmail}-${commentData.submissionTaskTitle}-${commentData.submissionClassName}`;
-        const submissionId = this.submissionIdMap.get(submissionKey);
-        if (!submissionId) {
-          this.logger.warn(`Submission for key ${submissionKey} not found. Cannot create comment.`);
+        // Trouver la correction par id logique
+        const correctionMongoId = this.correctionIdMap.get(commentData.correctionId);
+        if (!correctionMongoId) {
+          this.logger.warn(`Correction ${commentData.correctionId} does not exist. Cannot create comment.`);
           continue;
         }
-
-        const correctionKey = `${submissionId}-${commentData.correctorEmail}`;
-        const correctionId = this.correctionIdMap.get(correctionKey);
-        if (!correctionId) {
-          this.logger.warn(`Correction for key ${correctionKey} not found. Cannot create comment.`);
-          continue;
-        }
-
-        // Trouver l'ID de l'auteur du commentaire
+        // Trouver l'auteur
         const authorId = this.userIdMap.get(commentData.authorEmail);
         if (!authorId) {
           this.logger.warn(`User (author) ${commentData.authorEmail} not found. Cannot create comment.`);
           continue;
         }
-
-        // Convertir les IDs d'annotations logiques en IDs de base de données
-        const annotationIds = [];
-        if (commentData.annotations && commentData.annotations.length > 0) {
-          for (const annotationLogicalId of commentData.annotations) {
-            const annotationId = this.annotationIdMap.get(String(annotationLogicalId));
-            if (annotationId) {
-              annotationIds.push(annotationId);
-            } else {
-              this.logger.warn(`Annotation with logical ID ${annotationLogicalId} not found for comment.`);
-            }
-          }
-        }
-
-        // Créer le commentaire
+        // Stocker directement les ids logiques d'annotations
         const newComment = await this.commentModel.create({
-          correctionId: new Types.ObjectId(correctionId),
-          createdBy: new Types.ObjectId(authorId),
-          pageNumber: commentData.pageNumber,
-          type: commentData.type,
-          color: commentData.color,
-          text: commentData.text,
-          markdownSource: commentData.markdownSource,
-          isMarkdown: commentData.isMarkdown,
-          pageY: commentData.pageY,
-          annotations: annotationIds.map(id => new Types.ObjectId(id)),
+          ...commentData,
+          correctionId: commentData.correctionId,
+          createdByEmail: commentData.authorEmail,
+          annotations: commentData.annotations || [],
+          pageId: commentData.pageId,
         });
-
         createdCount++;
-        this.logger.log(`Comment successfully created on page ${commentData.pageNumber} for correction ${correctionId} by ${commentData.authorEmail}`);
-
+        this.logger.log(`Comment successfully created on page ${commentData.pageId} for correction ${commentData.correctionId} by ${commentData.authorEmail}`);
       } catch (error) {
-        this.logger.error(`Error while creating comment by ${commentData.authorEmail} on page ${commentData.pageNumber} for correction:`, error);
+        this.logger.error(`Error while creating comment by ${commentData.authorEmail} on page ${commentData.pageId} for correction:`, error);
       }
     }
     this.logger.log(`Comments seeding completed. ${createdCount} comments created.`);
@@ -684,65 +630,33 @@ export class DataSeedService {
       this.logger.log('No AI comments to create.');
       return;
     }
-
     let createdCount = 0;
-
     for (const aiCommentData of aiComments) {
       try {
-        // Trouver l'ID de la correction parente
-        const submissionKey = `${aiCommentData.submissionUserEmail}-${aiCommentData.submissionTaskTitle}-${aiCommentData.submissionClassName}`;
-        const submissionId = this.submissionIdMap.get(submissionKey);
-        if (!submissionId) {
-          this.logger.warn(`Submission for key ${submissionKey} not found. Cannot create AI comment.`);
+        // Trouver la correction par id logique
+        const correctionMongoId = this.correctionIdMap.get(aiCommentData.correctionId);
+        if (!correctionMongoId) {
+          this.logger.warn(`Correction ${aiCommentData.correctionId} does not exist. Cannot create AI comment.`);
           continue;
         }
-
-        const correctionKey = `${submissionId}-${aiCommentData.correctorEmail}`;
-        const correctionId = this.correctionIdMap.get(correctionKey);
-        if (!correctionId) {
-          this.logger.warn(`Correction for key ${correctionKey} not found. Cannot create AI comment.`);
-          continue;
-        }
-
-        // Trouver l'ID de l'auteur du commentaire AI
+        // Trouver l'auteur
         const authorId = this.userIdMap.get(aiCommentData.authorEmail);
         if (!authorId) {
           this.logger.warn(`User (author) ${aiCommentData.authorEmail} not found. Cannot create AI comment.`);
           continue;
         }
-
-        // Convertir les IDs d'annotations logiques en IDs de base de données
-        const annotationIds = [];
-        if (aiCommentData.annotations && aiCommentData.annotations.length > 0) {
-          for (const annotationLogicalId of aiCommentData.annotations) {
-            const annotationId = this.annotationIdMap.get(String(annotationLogicalId));
-            if (annotationId) {
-              annotationIds.push(annotationId);
-            } else {
-              this.logger.warn(`Annotation with logical ID ${annotationLogicalId} not found for AI comment.`);
-            }
-          }
-        }
-
-        // Créer le commentaire AI
+        // Stocker directement les ids logiques d'annotations
         const newAIComment = await this.aiCommentModel.create({
-          correctionId: new Types.ObjectId(correctionId),
-          createdBy: new Types.ObjectId(authorId),
-          pageNumber: aiCommentData.pageNumber,
-          type: aiCommentData.type,
-          color: aiCommentData.color,
-          text: aiCommentData.text,
-          markdownSource: aiCommentData.markdownSource,
-          isMarkdown: aiCommentData.isMarkdown,
-          pageY: aiCommentData.pageY,
-          annotations: annotationIds.map(id => new Types.ObjectId(id)),
+          ...aiCommentData,
+          correctionId: aiCommentData.correctionId,
+          createdByEmail: aiCommentData.authorEmail,
+          annotations: aiCommentData.annotations || [],
+          pageId: aiCommentData.pageId,
         });
-
         createdCount++;
-        this.logger.log(`AI Comment successfully created on page ${aiCommentData.pageNumber} for correction ${correctionId} by ${aiCommentData.authorEmail}`);
-
+        this.logger.log(`AI Comment successfully created on page ${aiCommentData.pageId} for correction ${aiCommentData.correctionId} by ${aiCommentData.authorEmail}`);
       } catch (error) {
-        this.logger.error(`Error while creating AI comment by ${aiCommentData.authorEmail} on page ${aiCommentData.pageNumber} for correction:`, error);
+        this.logger.error(`Error while creating AI comment by ${aiCommentData.authorEmail} on page ${aiCommentData.pageId} for correction:`, error);
       }
     }
     this.logger.log(`AI Comments seeding completed. ${createdCount} AI comments created.`);

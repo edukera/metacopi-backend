@@ -14,7 +14,6 @@ type MockCorrection = {
   correctedById?: string;
   grade?: number;
   appreciation?: string;
-  annotations: string;
   status?: CorrectionStatus;
   createdAt?: Date;
   finalizedAt?: Date | null;
@@ -95,8 +94,9 @@ describe('CorrectionService', () => {
   describe('create', () => {
     it('should create a new correction', async () => {
       const createDto: CreateCorrectionDto = {
+        id: 'CORR-2024-001',
         submissionId: 'submission-id-123',
-        correctedById: 'teacher-id-123',
+        correctedByEmail: 'teacher@metacopi.com',
         grade: 85,
         appreciation: 'Good work',
         status: CorrectionStatus.IN_PROGRESS,
@@ -116,7 +116,9 @@ describe('CorrectionService', () => {
 
     it('should use request user id if correctedById is not provided', async () => {
       const createDto: CreateCorrectionDto = {
+        id: 'CORR-2024-001',
         submissionId: 'submission-id-123',
+        correctedByEmail: 'teacher@metacopi.com',
         grade: 85,
         appreciation: 'Good work',
         status: CorrectionStatus.IN_PROGRESS,
@@ -132,8 +134,9 @@ describe('CorrectionService', () => {
 
     it('should throw BadRequestException if correction already exists', async () => {
       const createDto: CreateCorrectionDto = {
+        id: 'CORR-2024-001',
         submissionId: 'submission-id-123',
-        correctedById: 'teacher-id-123',
+        correctedByEmail: 'teacher-id-123',
         grade: 85,
         appreciation: 'Good work',
         status: CorrectionStatus.IN_PROGRESS,
@@ -153,8 +156,8 @@ describe('CorrectionService', () => {
   describe('findAll', () => {
     it('should return all corrections', async () => {
       const corrections = [
-        { id: 'correction-1', submissionId: 'submission-1', annotations: '' },
-        { id: 'correction-2', submissionId: 'submission-2', annotations: '' },
+        { id: 'correction-1', submissionId: 'submission-1' },
+        { id: 'correction-2', submissionId: 'submission-2' },
       ] as MockCorrection[];
 
       mockCorrectionModel.find.mockImplementationOnce(() => ({
@@ -225,8 +228,8 @@ describe('CorrectionService', () => {
   describe('findByTeacher', () => {
     it('should return corrections by teacherId', async () => {
       const corrections = [
-        { id: 'correction-1', correctedById: 'teacher-id-123', annotations: '' },
-        { id: 'correction-2', correctedById: 'teacher-id-123', annotations: '' },
+        { id: 'correction-1', correctedById: 'teacher-id-123' },
+        { id: 'correction-2', correctedById: 'teacher-id-123' },
       ] as MockCorrection[];
 
       mockCorrectionModel.find.mockImplementationOnce(() => ({

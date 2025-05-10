@@ -1,41 +1,66 @@
-import { IsArray, IsDateString, IsEnum, IsMongoId, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsEnum, IsMongoId, IsOptional, IsString, IsNotEmpty } from 'class-validator';
 import { SubmissionStatus } from './submission.schema';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+export class SubmissionPageDto {
+  @ApiProperty({ description: 'Page unique identifier', example: 'p1' })
+  @IsString()
+  id: string;
+
+  @ApiProperty({
+    description: 'Raw image info',
+    example: { image_path: 'submissions/demo-submission-2/raw-page-1.jpg', width: 3468, height: 4624 }
+  })
+  @IsNotEmpty()
+  raw: { image_path: string; width: number; height: number };
+
+  @ApiProperty({
+    description: 'Processed image info',
+    example: { image_path: 'submissions/demo-submission-2/processed-page-1.jpg', width: 867, height: 1156 }
+  })
+  @IsNotEmpty()
+  processed: { image_path: string; width: number; height: number };
+}
+
 export class CreateSubmissionDto {
   @ApiProperty({
-    description: 'ID of the task associated with the submission',
-    example: '605a1cb9d4d5d73598045619'
+    description: 'Logical business identifier for the submission (must be unique)',
+    example: 'SUB-2024-001',
+    required: true
   })
-  @IsMongoId()
+  @IsString()
+  id: string;
+
+  @ApiProperty({
+    description: 'Logical business ID of the task associated with the submission',
+    example: 'TASK-2024-001'
+  })
+  @IsString()
   taskId: string;
 
   @ApiPropertyOptional({
-    description: 'ID of the student submitting the work (can be automatically filled by the backend)',
-    example: '605a1cb9d4d5d73598045618'
+    description: 'Email of the student submitting the work (can be automatically filled by the backend)',
+    example: 'student@example.com'
   })
   @IsOptional()
-  @IsMongoId()
-  studentId?: string; // Can be automatically filled by the backend
+  @IsString()
+  studentEmail?: string; // Remplace studentId
 
   @ApiProperty({
-    description: 'List of URLs of raw (unprocessed) pages of the submission',
-    example: ['https://example.com/storage/page1.jpg', 'https://example.com/storage/page2.jpg'],
-    type: [String]
+    description: 'List of pages (raw and processed info)',
+    example: [
+      {
+        id: 'p1',
+        raw: { image_path: 'submissions/demo-submission-2/raw-page-1.jpg', width: 3468, height: 4624 },
+        processed: { image_path: 'submissions/demo-submission-2/processed-page-1.jpg', width: 867, height: 1156 }
+      }
+    ],
+    type: [SubmissionPageDto],
+    required: true
   })
   @IsArray()
-  @IsString({ each: true })
-  rawPages: string[];
-
-  @ApiPropertyOptional({
-    description: 'List of URLs of processed pages of the submission',
-    example: ['https://example.com/storage/processed_page1.jpg', 'https://example.com/storage/processed_page2.jpg'],
-    type: [String]
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  processedPages?: string[];
+  @IsNotEmpty({ each: true })
+  pages: SubmissionPageDto[];
 
   @ApiPropertyOptional({
     description: 'Initial status of the submission',
@@ -50,24 +75,21 @@ export class CreateSubmissionDto {
 
 export class UpdateSubmissionDto {
   @ApiPropertyOptional({
-    description: 'List of URLs of raw (unprocessed) pages of the submission',
-    example: ['https://example.com/storage/page1.jpg', 'https://example.com/storage/page2.jpg'],
-    type: [String]
+    description: 'List of pages (raw and processed info)',
+    example: [
+      {
+        id: 'p1',
+        raw: { image_path: 'submissions/demo-submission-2/raw-page-1.jpg', width: 3468, height: 4624 },
+        processed: { image_path: 'submissions/demo-submission-2/processed-page-1.jpg', width: 867, height: 1156 }
+      }
+    ],
+    type: [SubmissionPageDto],
+    required: true
   })
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  rawPages?: string[];
-
-  @ApiPropertyOptional({
-    description: 'List of URLs of processed pages of the submission',
-    example: ['https://example.com/storage/processed_page1.jpg', 'https://example.com/storage/processed_page2.jpg'],
-    type: [String]
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  processedPages?: string[];
+  @IsNotEmpty({ each: true })
+  pages: SubmissionPageDto[];
 
   @ApiPropertyOptional({
     description: 'New status of the submission',
@@ -97,28 +119,29 @@ export class UpdateSubmissionDto {
 
 export class SubmissionResponseDto {
   @ApiProperty({
-    description: 'Unique ID of the submission',
-    example: '605a1cb9d4d5d73598045620'
+    description: 'Logical business identifier for the submission (unique)',
+    example: 'SUB-2024-001'
   })
   id: string;
 
   @ApiProperty({
-    description: 'ID of the student who submitted the work',
-    example: '605a1cb9d4d5d73598045618'
+    description: 'Email of the student who submitted the work',
+    example: 'student@example.com'
   })
-  studentId: string;
+  studentEmail: string;
 
   @ApiProperty({
-    description: 'ID of the task associated with the submission',
-    example: '605a1cb9d4d5d73598045619'
+    description: 'Logical business ID of the task associated with the submission',
+    example: 'TASK-2024-001'
   })
+  @IsString()
   taskId: string;
 
   @ApiProperty({
-    description: 'ID of the user who uploaded the submission',
-    example: '605a1cb9d4d5d73598045618'
+    description: 'Email of the user who uploaded the submission',
+    example: 'teacher@example.com'
   })
-  uploadedBy: string;
+  uploadedByEmail: string;
 
   @ApiProperty({
     description: 'Current status of the submission',
@@ -128,18 +151,18 @@ export class SubmissionResponseDto {
   status: SubmissionStatus;
 
   @ApiProperty({
-    description: 'List of URLs of raw (unprocessed) pages of the submission',
-    example: ['https://example.com/storage/page1.jpg', 'https://example.com/storage/page2.jpg'],
-    type: [String]
+    description: 'List of pages (raw and processed info)',
+    example: [
+      {
+        id: 'p1',
+        raw: { image_path: 'submissions/demo-submission-2/raw-page-1.jpg', width: 3468, height: 4624 },
+        processed: { image_path: 'submissions/demo-submission-2/processed-page-1.jpg', width: 867, height: 1156 }
+      }
+    ],
+    type: [SubmissionPageDto],
+    required: true
   })
-  rawPages: string[];
-
-  @ApiProperty({
-    description: 'List of URLs of processed pages of the submission',
-    example: ['https://example.com/storage/processed_page1.jpg', 'https://example.com/storage/processed_page2.jpg'],
-    type: [String]
-  })
-  processedPages: string[];
+  pages: SubmissionPageDto[];
 
   @ApiPropertyOptional({
     description: 'Date when the submission was submitted for correction',

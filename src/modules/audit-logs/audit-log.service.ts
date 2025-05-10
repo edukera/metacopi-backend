@@ -13,9 +13,9 @@ export class AuditLogService {
   ) {}
 
   async create(createAuditLogDto: CreateAuditLogDto): Promise<AuditLog> {
-    // If userId is not provided, use current user
-    if (!createAuditLogDto.userId && this.request.user) {
-      createAuditLogDto.userId = this.request.user.sub;
+    // If email is not provided, use current user
+    if (!createAuditLogDto.email && this.request.user) {
+      createAuditLogDto.email = this.request.user.email;
     }
 
     // Ensure timestamp is defined
@@ -31,7 +31,7 @@ export class AuditLogService {
     const query: any = {};
 
     if (filters) {
-      if (filters.userId) query.userId = filters.userId;
+      if (filters.email) query.email = filters.email;
       if (filters.action) query.action = filters.action;
       if (filters.targetType) query.targetType = filters.targetType;
       if (filters.targetId) query.targetId = filters.targetId;
@@ -58,11 +58,8 @@ export class AuditLogService {
     return auditLog;
   }
 
-  async findByUser(userId: string): Promise<AuditLog[]> {
-    return this.auditLogModel.find({ userId })
-      .sort({ timestamp: -1 })
-      .limit(100)
-      .exec();
+  async findByUser(email: string): Promise<AuditLog[]> {
+    return this.auditLogModel.find({ email }).exec();
   }
 
   async findByTarget(targetType: TargetType, targetId: string): Promise<AuditLog[]> {

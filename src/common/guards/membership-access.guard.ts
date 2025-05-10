@@ -21,7 +21,7 @@ export class MembershipAccessGuard implements CanActivate {
       throw new ForbiddenException('User is not authenticated');
     }
     
-    const userId = user.sub || user.id;
+    const userEmail = user.email;
     
     // Si admin, autoriser l'accès
     if (user.role === UserRole.ADMIN) {
@@ -31,29 +31,28 @@ export class MembershipAccessGuard implements CanActivate {
     // Extraire les paramètres pertinents
     const membershipId = request.params.id;
     const classId = request.params.classId || request.query.classId || request.body?.classId;
-    const targetUserId = request.params.userId || request.query.userId || request.body?.userId;
+    const targetUserEmail = request.params.email || request.query.email || request.body?.email;
     
-    this.logger.debug(`Membership access check: userId=${userId}, method=${method}, membershipId=${membershipId}, classId=${classId}, targetUserId=${targetUserId}`);
+    this.logger.debug(`Membership access check: userEmail=${userEmail}, method=${method}, membershipId=${membershipId}, classId=${classId}, targetUserEmail=${targetUserEmail}`);
     
     // Cas 1: Accès à un membership spécifique par ID
     if (membershipId) {
-      return this.checkMembershipAccess(userId, membershipId, method);
+      return this.checkMembershipAccess(userEmail, membershipId, method);
     }
     
     // Cas 2: Liste des memberships filtrés par classe
     if (classId) {
-      return this.checkClassAccess(userId, classId, method);
+      return this.checkClassAccess(userEmail, classId, method);
     }
     
     // Cas 3: Liste des memberships filtrés par utilisateur
-    if (targetUserId) {
-      return this.checkUserAccess(userId, targetUserId, method);
+    if (targetUserEmail) {
+      return this.checkUserAccess(userEmail, targetUserEmail, method);
     }
     
     // Cas 4: Pour les enseignants, limiter aux classes où ils enseignent
     if (method === 'GET') {
-      // On va filtrer les résultats au niveau du service
-      request.userAccessFilter = { userId };
+      request.userAccessFilter = { email: userEmail };
       return true;
     }
     
@@ -62,7 +61,7 @@ export class MembershipAccessGuard implements CanActivate {
   }
   
   // Vérifie l'accès à un membership spécifique
-  private async checkMembershipAccess(userId: string, membershipId: string, method: string): Promise<boolean> {
+  private async checkMembershipAccess(userEmail: string, membershipId: string, method: string): Promise<boolean> {
     const membership = await this.membershipService.findOne(membershipId);
     
     if (!membership) {
@@ -70,7 +69,7 @@ export class MembershipAccessGuard implements CanActivate {
     }
     
     // 1. Si l'utilisateur est l'utilisateur concerné par le membership
-    if (membership.userId === userId) {
+    if (membership.email === userEmail) {
       // L'utilisateur peut voir son propre membership mais pas le modifier/supprimer
       if (method === 'GET') {
         return true;
@@ -78,7 +77,7 @@ export class MembershipAccessGuard implements CanActivate {
     }
     
     // 2. Si l'utilisateur est enseignant de la classe associée
-    const isTeacher = await this.membershipService.checkMembershipRole(userId, membership.classId, MembershipRole.TEACHER);
+    const isTeacher = await this.membershipService.checkMembershipRole(userEmail, membership.classId, MembershipRole.TEACHER);
     
     if (isTeacher) {
       return true;
@@ -88,9 +87,9 @@ export class MembershipAccessGuard implements CanActivate {
   }
   
   // Vérifie l'accès aux memberships d'une classe
-  private async checkClassAccess(userId: string, classId: string, method: string): Promise<boolean> {
+  private async checkClassAccess(userEmail: string, classId: string, method: string): Promise<boolean> {
     // Vérifier si l'utilisateur est enseignant de cette classe
-    const isTeacher = await this.membershipService.checkMembershipRole(userId, classId, MembershipRole.TEACHER);
+    const isTeacher = await this.membershipService.checkMembershipRole(userEmail, classId, MembershipRole.TEACHER);
     
     if (isTeacher) {
       return true;
@@ -98,7 +97,7 @@ export class MembershipAccessGuard implements CanActivate {
     
     // Si c'est un GET et que l'utilisateur est membre de la classe, il peut voir les autres membres
     if (method === 'GET') {
-      const isMember = await this.membershipService.findByUserAndClass(userId, classId);
+      const isMember = await this.membershipService.findByUserAndClass(userEmail, classId);
       if (isMember) {
         return true;
       }
@@ -108,22 +107,21 @@ export class MembershipAccessGuard implements CanActivate {
   }
   
   // Vérifie l'accès aux memberships d'un utilisateur
-  private async checkUserAccess(userId: string, targetUserId: string, method: string): Promise<boolean> {
+  private async checkUserAccess(userEmail: string, targetUserEmail: string, method: string): Promise<boolean> {
     // 1. Si l'utilisateur veut voir ses propres memberships
-    if (userId === targetUserId) {
+    if (userEmail === targetUserEmail) {
       return true;
     }
     
-    // 2. Pour les enseignants, vérifier s'ils ont un étudiant avec ce targetUserId
-    // Récupérer tous les memberships où l'utilisateur est enseignant
-    const teacherMemberships = await this.membershipService.findByUser(userId);
+    // 2. Pour les enseignants, vérifier s'ils ont un étudiant avec ce targetUserEmail
+    const teacherMemberships = await this.membershipService.findByUserEmail(userEmail);
     const teacherClassIds = teacherMemberships
       .filter(m => m.role === MembershipRole.TEACHER)
       .map(m => m.classId);
     
     // Vérifier si l'utilisateur cible est membre d'une des classes où l'utilisateur est enseignant
     for (const classId of teacherClassIds) {
-      const targetMembership = await this.membershipService.findByUserAndClass(targetUserId, classId);
+      const targetMembership = await this.membershipService.findByUserAndClass(targetUserEmail, classId);
       if (targetMembership) {
         return true;
       }

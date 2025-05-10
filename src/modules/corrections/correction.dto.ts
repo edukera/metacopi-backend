@@ -3,19 +3,22 @@ import { CorrectionStatus } from './correction.schema';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateCorrectionDto {
-  @ApiProperty({ description: 'ID of the submission to correct', example: '60d21b4667d0d8992e610c85' })
-  @IsMongoId()
+  @ApiProperty({
+    description: 'Logical business identifier for the correction (must be unique)',
+    example: 'CORR-2024-001',
+    required: true
+  })
+  @IsString()
+  id: string;
+
+  @ApiProperty({ description: 'Logical business ID of the submission to correct', example: 'SUB-2024-001' })
+  @IsString()
   submissionId: string;
 
-  @ApiPropertyOptional({ description: 'ID of the user who corrected the submission (can be automatically filled by the backend)', example: '60d21b4667d0d8992e610c86' })
-  @IsOptional()
-  @IsMongoId()
-  correctedById?: string; // Can be automatically filled by the backend
-
-  @ApiPropertyOptional({ description: 'Annotations or comments on the submission', example: 'Good work on implementing the core functionality, but needs improvement in error handling.' })
+  @ApiPropertyOptional({ description: 'Email of the user who corrected the submission (can be automatically filled by the backend)', example: 'teacher@example.com' })
   @IsOptional()
   @IsString()
-  annotations?: string;
+  correctedByEmail?: string;
 
   @ApiPropertyOptional({ 
     description: 'Grade for the submission (0-20)',
@@ -45,17 +48,7 @@ export class CreateCorrectionDto {
 }
 
 export class UpdateCorrectionDto {
-  @ApiPropertyOptional({ description: 'Updated annotations or comments on the submission', example: 'Updated: Good work but could improve code organization.' })
-  @IsOptional()
-  @IsString()
-  annotations?: string;
-
-  @ApiPropertyOptional({ 
-    description: 'Updated grade for the submission (0-20)',
-    minimum: 0,
-    maximum: 20,
-    example: 16
-  })
+  @ApiPropertyOptional({ description: 'Updated grade for the submission (0-20)', minimum: 0, maximum: 20, example: 16 })
   @IsOptional()
   @IsNumber()
   @Min(0)
@@ -86,14 +79,17 @@ export class UpdateCorrectionDto {
 }
 
 export class CorrectionResponseDto {
-  @ApiProperty({ description: 'Unique ID of the correction', example: '60d21b4667d0d8992e610c87' })
+  @ApiProperty({
+    description: 'Logical business identifier for the correction (unique)',
+    example: 'CORR-2024-001'
+  })
   id: string;
 
   @ApiProperty({ description: 'ID of the submission being corrected', example: '60d21b4667d0d8992e610c85' })
   submissionId: string;
 
-  @ApiProperty({ description: 'ID of the user who corrected the submission', example: '60d21b4667d0d8992e610c86' })
-  correctedById: string;
+  @ApiProperty({ description: 'Email of the user who corrected the submission', example: 'teacher@example.com' })
+  correctedByEmail: string;
 
   @ApiProperty({ 
     description: 'Status of the correction',
@@ -101,9 +97,6 @@ export class CorrectionResponseDto {
     example: CorrectionStatus.COMPLETED
   })
   status: CorrectionStatus;
-
-  @ApiPropertyOptional({ description: 'Annotations or comments on the submission', example: 'Good work on implementing the core functionality, but needs improvement in error handling.' })
-  annotations?: string;
 
   @ApiPropertyOptional({ 
     description: 'Grade for the submission (0-20)',

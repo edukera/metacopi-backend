@@ -26,7 +26,7 @@ export class SubmissionAccessGuard implements CanActivate {
       throw new ForbiddenException('User is not authenticated');
     }
     
-    const userId = user.sub || user.id;
+    const userEmail = user.email;
     
     // Si admin, autoriser l'accès
     if (user.role === UserRole.ADMIN) {
@@ -38,28 +38,28 @@ export class SubmissionAccessGuard implements CanActivate {
     const taskId = request.query.taskId || request.params.taskId || request.body?.taskId;
     const classId = request.query.classId || request.params.classId || request.body?.classId;
     
-    this.logger.debug(`Access check: userId=${userId}, method=${method}, submissionId=${submissionId}, taskId=${taskId}, classId=${classId}`);
+    this.logger.debug(`Access check: userEmail=${userEmail}, method=${method}, submissionId=${submissionId}, taskId=${taskId}, classId=${classId}`);
     
     // Cas 1: Accès à une soumission spécifique par ID
     if (submissionId) {
-      return this.checkSubmissionAccess(userId, submissionId, method);
+      return this.checkSubmissionAccess(userEmail, submissionId, method);
     }
     
     // Cas 2: Liste des soumissions filtrées par tâche
     if (taskId) {
-      return this.checkTaskAccess(userId, taskId, method);
+      return this.checkTaskAccess(userEmail, taskId, method);
     }
     
     // Cas 3: Liste des soumissions filtrées par classe
     if (classId) {
-      return this.checkClassAccess(userId, classId, method);
+      return this.checkClassAccess(userEmail, classId, method);
     }
     
     // Cas 4: Pour les méthodes GET sans filtre, limiter aux soumissions de l'utilisateur
     if (method === 'GET') {
       // On va ajouter un filtre sur le service pour ne retourner que les soumissions
       // de l'utilisateur ou des classes où il est enseignant
-      request.userAccessFilter = { userId };
+      request.userAccessFilter = { email: userEmail };
       return true;
     }
     
@@ -68,11 +68,11 @@ export class SubmissionAccessGuard implements CanActivate {
   }
   
   // Vérifie l'accès à une soumission spécifique
-  private async checkSubmissionAccess(userId: string, submissionId: string, method: string): Promise<boolean> {
+  private async checkSubmissionAccess(userEmail: string, submissionId: string, method: string): Promise<boolean> {
     const submission = await this.submissionService.findOne(submissionId);
     
     // 1. Si l'utilisateur est l'auteur de la soumission
-    if (submission.studentId === userId) {
+    if (submission.studentEmail === userEmail) {
       // L'auteur peut voir mais pas modifier/supprimer
       if (method === 'GET') {
         return true;
@@ -81,7 +81,7 @@ export class SubmissionAccessGuard implements CanActivate {
     
     // 2. Si l'utilisateur est enseignant de la classe associée à la tâche
     const task = await this.taskService.findOne(submission.taskId);
-    const isTeacher = await this.membershipService.checkMembershipRole(userId, task.classId, MembershipRole.TEACHER);
+    const isTeacher = await this.membershipService.checkMembershipRole(userEmail, task.classId, MembershipRole.TEACHER);
     
     if (isTeacher) {
       return true;
@@ -91,12 +91,12 @@ export class SubmissionAccessGuard implements CanActivate {
   }
   
   // Vérifie l'accès aux soumissions d'une tâche
-  private async checkTaskAccess(userId: string, taskId: string, method: string): Promise<boolean> {
+  private async checkTaskAccess(userEmail: string, taskId: string, method: string): Promise<boolean> {
     // 1. Obtenir la classe associée à la tâche
     const task = await this.taskService.findOne(taskId);
     
     // 2. Vérifier si l'utilisateur est enseignant de cette classe
-    const isTeacher = await this.membershipService.checkMembershipRole(userId, task.classId, MembershipRole.TEACHER);
+    const isTeacher = await this.membershipService.checkMembershipRole(userEmail, task.classId, MembershipRole.TEACHER);
     
     if (isTeacher) {
       return true;
@@ -113,9 +113,9 @@ export class SubmissionAccessGuard implements CanActivate {
   }
   
   // Vérifie l'accès aux soumissions d'une classe
-  private async checkClassAccess(userId: string, classId: string, method: string): Promise<boolean> {
+  private async checkClassAccess(userEmail: string, classId: string, method: string): Promise<boolean> {
     // Vérifier si l'utilisateur est enseignant de cette classe
-    const isTeacher = await this.membershipService.checkMembershipRole(userId, classId, MembershipRole.TEACHER);
+    const isTeacher = await this.membershipService.checkMembershipRole(userEmail, classId, MembershipRole.TEACHER);
     
     if (isTeacher) {
       return true;

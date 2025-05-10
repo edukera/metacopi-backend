@@ -29,7 +29,7 @@ export class AICommentAccessGuard implements CanActivate {
       throw new ForbiddenException('User is not authenticated');
     }
     
-    const userId = user.sub || user.id;
+    const userEmail = user.email;
     
     // Si admin, autoriser l'accès
     if (user.role === UserRole.ADMIN) {
@@ -40,7 +40,7 @@ export class AICommentAccessGuard implements CanActivate {
     const correctionId = request.params.id; // ID de la correction dans l'URL
     const aiCommentId = request.params.aiCommentId; // ID du commentaire AI dans l'URL
     
-    this.logger.debug(`Access check: userId=${userId}, method=${method}, correctionId=${correctionId}, aiCommentId=${aiCommentId}`);
+    this.logger.debug(`Access check: userEmail=${userEmail}, method=${method}, correctionId=${correctionId}, aiCommentId=${aiCommentId}`);
     
     // Cas 1: Accès à un commentaire AI spécifique par ID
     if (aiCommentId) {
@@ -48,17 +48,17 @@ export class AICommentAccessGuard implements CanActivate {
       const aiComment = await this.aiCommentService.findOne(aiCommentId);
       
       // Si l'utilisateur est l'auteur du commentaire AI
-      if (aiComment.createdBy === userId) {
+      if (aiComment.createdByEmail === userEmail) {
         return true;
       }
       
       // Sinon, vérifier l'accès à la correction associée
-      return this.checkCorrectionAccess(userId, aiComment.correctionId, method);
+      return this.checkCorrectionAccess(userEmail, aiComment.correctionId, method);
     }
     
     // Cas 2: Accès à tous les commentaires AI d'une correction
     if (correctionId) {
-      return this.checkCorrectionAccess(userId, correctionId, method);
+      return this.checkCorrectionAccess(userEmail, correctionId, method);
     }
     
     // Si aucun identifiant n'est fourni, refuser l'accès
@@ -66,25 +66,25 @@ export class AICommentAccessGuard implements CanActivate {
   }
   
   // Vérifie l'accès à une correction spécifique
-  private async checkCorrectionAccess(userId: string, correctionId: string, method: string): Promise<boolean> {
+  private async checkCorrectionAccess(userEmail: string, correctionId: string, method: string): Promise<boolean> {
     const correction = await this.correctionService.findOne(correctionId);
     
     // 1. Si l'utilisateur est l'auteur de la correction
-    if (correction.correctedById === userId) {
+    if (correction.correctedByEmail === userEmail) {
       return true;
     }
     
     // 2. Si l'utilisateur est enseignant de la classe associée
     const submission = await this.submissionService.findOne(correction.submissionId);
     const task = await this.taskService.findOne(submission.taskId);
-    const isTeacher = await this.membershipService.checkMembershipRole(userId, task.classId, MembershipRole.TEACHER);
+    const isTeacher = await this.membershipService.checkMembershipRole(userEmail, task.classId, MembershipRole.TEACHER);
     
     if (isTeacher) {
       return true;
     }
     
     // 3. Si l'utilisateur est l'étudiant concerné par la correction (GET uniquement)
-    if (method === 'GET' && submission.studentId === userId) {
+    if (method === 'GET' && submission.studentEmail === userEmail) {
       return true;
     }
     

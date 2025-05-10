@@ -49,7 +49,7 @@ describe('SubmissionController', () => {
         _id: new mongoose.Types.ObjectId().toString(),
         ...dto,
         status: SubmissionStatus.DRAFT,
-        rawPages: dto.rawPages || [],
+        pages: dto.pages || [],
         processedPages: [],
         submittedAt: null,
         reviewedAt: null,
@@ -68,12 +68,12 @@ describe('SubmissionController', () => {
       const submissions = mockSubmissions.filter(s => s.taskId === taskId);
       return Promise.resolve(submissions);
     }),
-    findByStudent: jest.fn().mockImplementation((studentId: string) => {
-      const submissions = mockSubmissions.filter(s => s.studentId === studentId);
+    findByStudent: jest.fn().mockImplementation((studentEmail: string) => {
+      const submissions = mockSubmissions.filter(s => s.studentEmail === studentEmail);
       return Promise.resolve(submissions);
     }),
-    findByStudentAndTask: jest.fn().mockImplementation((studentId: string, taskId: string) => {
-      const submission = mockSubmissions.find(s => s.studentId === studentId && s.taskId === taskId);
+    findByStudentAndTask: jest.fn().mockImplementation((studentEmail: string, taskId: string) => {
+      const submission = mockSubmissions.find(s => s.studentEmail === studentEmail && s.taskId === taskId);
       if (!submission) {
         throw new NotFoundException('Submission not found');
       }
@@ -121,14 +121,15 @@ describe('SubmissionController', () => {
   describe('create', () => {
     it('should create a new submission', async () => {
       const createSubmissionDto: CreateSubmissionDto = {
-        studentId: mockStudentId,
+        id: mockSubmissionId,
+        studentEmail: mockStudentId,
         taskId: mockTaskId,
-        rawPages: ['page1.jpg'],
+        pages: [],
       };
 
       const result = await controller.create(createSubmissionDto);
       expect(result).toHaveProperty('_id');
-      expect(result.studentId).toEqual(createSubmissionDto.studentId);
+      expect(result.studentEmail).toEqual(createSubmissionDto.studentEmail);
       expect(result.taskId).toEqual(createSubmissionDto.taskId);
       expect(service.create).toHaveBeenCalledWith(createSubmissionDto);
     });
@@ -188,6 +189,7 @@ describe('SubmissionController', () => {
       const updateSubmissionDto: UpdateSubmissionDto = {
         status: SubmissionStatus.CORRECTED,
         reviewedAt: new Date(),
+        pages: [],
       };
 
       const result = await controller.update(mockSubmissionId, updateSubmissionDto);
@@ -198,6 +200,7 @@ describe('SubmissionController', () => {
     it('should throw NotFoundException if submission to update not found', async () => {
       const updateSubmissionDto: UpdateSubmissionDto = {
         status: SubmissionStatus.CORRECTED,
+        pages: [],
       };
 
       await expect(controller.update('nonexistent-id', updateSubmissionDto)).rejects.toThrow(NotFoundException);

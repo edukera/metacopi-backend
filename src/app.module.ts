@@ -22,6 +22,7 @@ import { GuardsModule } from './common/guards.module';
 import { AuditLogInterceptor } from './common/interceptors';
 import { AnnotationModule } from './modules/annotations/annotation.module';
 import { AICommentModule } from './modules/ai-comments/ai-comment.module';
+import { AIAnnotationModule } from './modules/ai-annotations/ai-annotation.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { AICommentModule } from './modules/ai-comments/ai-comment.module';
     GuardsModule,
     ValidatorsModule,
     AnnotationModule,
+    AIAnnotationModule,
   ],
   controllers: [AppController],
   providers: [

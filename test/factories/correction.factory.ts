@@ -50,9 +50,9 @@ export const createCorrectionDto = (
   override: Partial<CreateCorrectionDto> = {},
 ): CreateCorrectionDto => {
   return {
+    id: new Types.ObjectId().toString(),
     submissionId: new Types.ObjectId().toString(),
-    correctedById: new Types.ObjectId().toString(),
-    annotations: faker.lorem.paragraph(),
+    correctedByEmail: new Types.ObjectId().toString(),
     grade: faker.number.int({ min: 0, max: 20 }),
     appreciation: faker.lorem.sentence(),
     status: CorrectionStatus.IN_PROGRESS,
@@ -64,7 +64,6 @@ export const updateCorrectionDto = (
   override: Partial<UpdateCorrectionDto> = {},
 ): UpdateCorrectionDto => {
   return {
-    annotations: faker.lorem.paragraph(),
     grade: faker.number.int({ min: 0, max: 20 }),
     appreciation: faker.lorem.sentence(),
     status: CorrectionStatus.COMPLETED,
@@ -88,6 +87,7 @@ export const correctionStub = (
     finalizedAt: override.finalizedAt || null,
     createdAt: override.createdAt || now,
     updatedAt: override.updatedAt || now,
+    correctedByEmail: override.correctedByEmail || faker.internet.email(),
     save: jest.fn().mockImplementation(() => Promise.resolve(stub)),
     toObject: jest.fn().mockImplementation(() => stub),
     toJSON: jest.fn().mockImplementation(() => stub),

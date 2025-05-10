@@ -11,7 +11,10 @@ export enum ResourceType {
 
 export type TaskResourceDocument = TaskResource & Document;
 
-@Schema({ timestamps: true })
+@Schema({ 
+  timestamps: true,
+  versionKey: false,
+})
 export class TaskResource extends Document {
   @Prop({ required: true, trim: true })
   name: string;

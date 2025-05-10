@@ -103,7 +103,7 @@ export class TestDataHelper {
     const teacher = await this.createUser(userOverrides);
     const classEntity = await this.createClass({ ...classOverrides, createdBy: new Types.ObjectId(teacher.id) });
     const membership = await this.createMembership({
-      userId: teacher.id,
+      email: teacher.email,
       classId: classEntity._id.toString(),
       role: MembershipRole.TEACHER,
     });
@@ -111,13 +111,13 @@ export class TestDataHelper {
     return { teacher, class: classEntity, membership };
   }
 
-  async createStudentInClass(classId: Types.ObjectId, userOverrides?: Partial<UserWithId>): Promise<{
+  async createStudentInClass(classId: string, userOverrides?: Partial<UserWithId>): Promise<{
     student: UserWithId;
     membership: Membership;
   }> {
     const student = await this.createUser(userOverrides);
     const membership = await this.createMembership({
-      userId: student.id,
+      email: student.email,
       classId: classId.toString(),
       role: MembershipRole.STUDENT,
     });
@@ -139,7 +139,7 @@ export class TestDataHelper {
     return { task, submission };
   }
 
-  async createSubmissionWithCorrection(taskId: Types.ObjectId, studentId: Types.ObjectId, teacherId: Types.ObjectId, submissionOverrides?: Partial<SubmissionStub>, correctionOverrides?: Partial<CorrectionStub>): Promise<{
+  async createSubmissionWithCorrection(taskId: string, studentId: Types.ObjectId, teacherId: Types.ObjectId, submissionOverrides?: Partial<SubmissionStub>, correctionOverrides?: Partial<CorrectionStub>): Promise<{
     submission: Submission;
     correction: Correction;
   }> {

@@ -3,7 +3,7 @@ import { CorrectionStatus } from './correction.schema';
 
 export interface Correction extends Document {
   readonly submissionId: string;
-  readonly correctedById: string;
+  readonly correctedByEmail: string;
   readonly status: CorrectionStatus;
   readonly annotations: string;
   readonly grade: number;

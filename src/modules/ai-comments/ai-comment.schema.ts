@@ -4,23 +4,32 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 @Schema({
   timestamps: true,
+  versionKey: false,
 })
 export class AIComment {
   @ApiProperty({
-    description: 'ID of the correction this AI comment belongs to',
-    example: '605a1cb9d4d5d73598045618',
+    description: 'Logical business identifier for the AI comment (unique)',
+    example: 'AIC-2024-001',
     required: true
   })
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Correction', required: true })
+  @Prop({ type: String, required: true, unique: true, trim: true })
+  id: string;
+
+  @ApiProperty({
+    description: 'Logical business ID of the correction this AI comment belongs to',
+    example: 'CORR-2024-001',
+    required: true
+  })
+  @Prop({ type: String, required: true })
   correctionId: string;
 
   @ApiProperty({
-    description: 'Page number in the document where the AI comment is placed',
-    example: 2,
+    description: 'ID of the page in the submission where the AI comment is placed',
+    example: 'p1',
     required: true
   })
-  @Prop({ required: true })
-  pageNumber: number;
+  @Prop({ type: String, required: true })
+  pageId: string;
 
   @ApiPropertyOptional({
     description: 'Type of AI comment (e.g., highlight, note, annotation)',
@@ -61,8 +70,8 @@ export class AIComment {
   text: string;
 
   @ApiPropertyOptional({
-    description: 'Array of annotation references or IDs related to this AI comment',
-    example: ['60d21b4667d0d8992e610c85', '60d21b4667d0d8992e610c86'],
+    description: 'Array of logical AI annotation IDs (not Mongo IDs) related to this AI comment',
+    example: ['AIANN-2024-001', 'AIANN-2024-002'],
     type: [String]
   })
   @Prop({ type: [String], default: [] })
@@ -76,11 +85,12 @@ export class AIComment {
   pageY?: number;
 
   @ApiProperty({
-    description: 'ID of the user who created the AI comment',
-    example: '605a1cb9d4d5d73598045618'
+    description: 'Email of the user who created the AI comment',
+    example: 'user@example.com',
+    required: true
   })
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  createdBy: string;
+  @Prop({ type: String, required: true })
+  createdByEmail: string;
 
   // Timestamps are added automatically by { timestamps: true }
   @ApiProperty({

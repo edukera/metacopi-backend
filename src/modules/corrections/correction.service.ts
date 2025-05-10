@@ -18,11 +18,10 @@ export class CorrectionService {
   // Convertir un objet Correction en CorrectionResponseDto
   private toResponseDto(correction: Correction): CorrectionResponseDto {
     const correctionDto = new CorrectionResponseDto();
-    correctionDto.id = correction['_id'].toString();
-    correctionDto.submissionId = correction.submissionId?.toString();
-    correctionDto.correctedById = correction.correctedById?.toString();
+    correctionDto.id = correction.id;
+    correctionDto.submissionId = correction.submissionId;
+    correctionDto.correctedByEmail = correction.correctedByEmail;
     correctionDto.status = correction.status;
-    correctionDto.annotations = correction.annotations;
     correctionDto.grade = correction.grade;
     correctionDto.appreciation = correction.appreciation;
     correctionDto.finalizedAt = correction.finalizedAt;
@@ -37,9 +36,9 @@ export class CorrectionService {
   }
 
   async create(createCorrectionDto: CreateCorrectionDto): Promise<CorrectionResponseDto> {
-    // If correctedById is not provided, use the current user
-    if (!createCorrectionDto.correctedById) {
-      createCorrectionDto.correctedById = this.request.user.sub;
+    // If correctedByEmail is not provided, use the current user
+    if (!createCorrectionDto.correctedByEmail) {
+      createCorrectionDto.correctedByEmail = this.request.user.email;
     }
 
     // Check if a correction already exists for this submission
@@ -64,9 +63,13 @@ export class CorrectionService {
   }
 
   async findOne(id: string): Promise<CorrectionResponseDto> {
-    const correction = await this.correctionModel.findById(id).exec();
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let correction = await this.correctionModel.findOne({ id }).exec();
     if (!correction) {
-      throw new NotFoundException(`Correction with ID ${id} not found`);
+      correction = await this.correctionModel.findById(id).exec();
+    }
+    if (!correction) {
+      throw new NotFoundException(`Correction with logical ID or MongoDB ID '${id}' not found`);
     }
     return this.toResponseDto(correction);
   }
@@ -83,8 +86,8 @@ export class CorrectionService {
     return this.toResponseDto(correction);
   }
 
-  async findByTeacher(teacherId: string): Promise<CorrectionResponseDto[]> {
-    const corrections = await this.correctionModel.find({ correctedById: teacherId }).exec();
+  async findByTeacher(teacherEmail: string): Promise<CorrectionResponseDto[]> {
+    const corrections = await this.correctionModel.find({ correctedByEmail: teacherEmail }).exec();
     return this.toResponseDtoList(corrections);
   }
 
@@ -92,29 +95,39 @@ export class CorrectionService {
     id: string,
     updateCorrectionDto: UpdateCorrectionDto,
   ): Promise<CorrectionResponseDto> {
-    const correction = await this.findCorrectionEntity(id);
-    
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let correction = await this.correctionModel.findOne({ id }).exec();
+    if (!correction) {
+      correction = await this.correctionModel.findById(id).exec();
+    }
+    if (!correction) {
+      throw new NotFoundException(`Correction with logical ID or MongoDB ID '${id}' not found`);
+    }
     // If the user changes status from IN_PROGRESS to COMPLETED, add finalization date
     if (updateCorrectionDto.status === CorrectionStatus.COMPLETED && 
         correction.status !== CorrectionStatus.COMPLETED) {
       updateCorrectionDto.finalizedAt = new Date();
     }
-    
     const updatedCorrection = await this.correctionModel
-      .findByIdAndUpdate(id, updateCorrectionDto, { new: true })
+      .findByIdAndUpdate(correction._id, updateCorrectionDto, { new: true })
       .exec();
-      
     if (!updatedCorrection) {
       throw new NotFoundException(`Correction with ID ${id} not found`);
     }
-    
     return this.toResponseDto(updatedCorrection);
   }
 
   async remove(id: string): Promise<void> {
-    await this.findCorrectionEntity(id);
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let correction = await this.correctionModel.findOne({ id }).exec();
+    if (!correction) {
+      correction = await this.correctionModel.findById(id).exec();
+    }
+    if (!correction) {
+      throw new NotFoundException(`Correction with logical ID or MongoDB ID '${id}' not found`);
+    }
     const deletedCorrection = await this.correctionModel
-      .findByIdAndDelete(id)
+      .findByIdAndDelete(correction._id)
       .exec();
     if (!deletedCorrection) {
       throw new NotFoundException(`Correction with ID ${id} not found`);
@@ -123,9 +136,13 @@ export class CorrectionService {
 
   // Pour l'utilisation interne uniquement - récupère l'entité Correction sans la convertir en DTO
   private async findCorrectionEntity(id: string): Promise<Correction> {
-    const correction = await this.correctionModel.findById(id).exec();
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let correction = await this.correctionModel.findOne({ id }).exec();
     if (!correction) {
-      throw new NotFoundException(`Correction with ID ${id} not found`);
+      correction = await this.correctionModel.findById(id).exec();
+    }
+    if (!correction) {
+      throw new NotFoundException(`Correction with logical ID or MongoDB ID '${id}' not found`);
     }
     return correction;
   }

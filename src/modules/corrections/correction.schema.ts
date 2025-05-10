@@ -8,18 +8,17 @@ export enum CorrectionStatus {
 
 @Schema({
   timestamps: true,
+  versionKey: false,
 })
 export class Correction {
-  @Prop({ 
-    type: MongooseSchema.Types.ObjectId, 
-    ref: 'Submission', 
-    required: true,
-    unique: true
-  })
+  @Prop({ type: String, required: true, unique: true, trim: true })
+  id: string;
+
+  @Prop({ type: String, required: true, unique: true })
   submissionId: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  correctedById: string;
+  @Prop({ type: String, required: true })
+  correctedByEmail: string;
 
   @Prop({
     type: String,
@@ -27,9 +26,6 @@ export class Correction {
     default: CorrectionStatus.IN_PROGRESS,
   })
   status: CorrectionStatus;
-
-  @Prop({ type: String, default: '' })
-  annotations: string;
 
   @Prop({ type: Number })
   grade: number;

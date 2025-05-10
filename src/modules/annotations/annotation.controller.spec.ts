@@ -48,10 +48,9 @@ describe('AnnotationController', () => {
   describe('create', () => {
     it('should create a new annotation', async () => {
       const createAnnotationDto: CreateAnnotationDto = {
+        id: 'annotation-id-123',
         correctionId: 'correction-id-123',
-        key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
-        commentIds: [],
       };
 
       const result = await controller.create('correction-id-123', createAnnotationDto);
@@ -63,10 +62,9 @@ describe('AnnotationController', () => {
 
     it('should throw BadRequestException when correction ID in URL does not match DTO', async () => {
       const createAnnotationDto: CreateAnnotationDto = {
+        id: 'annotation-id-123',
         correctionId: 'different-correction-id',
-        key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
-        commentIds: [],
       };
 
       await expect(controller.create('correction-id-123', createAnnotationDto)).rejects.toThrow(BadRequestException);
@@ -93,14 +91,11 @@ describe('AnnotationController', () => {
     it('should throw NotFoundException when annotation does not belong to the correction', async () => {
       const mockAnnotationWithDifferentCorrectionId: AnnotationResponseDto = {
         id: 'annotation-id-123',
-        correctionId: {
-          toString: () => 'different-correction-id'
-        } as any,
-        key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        correctionId: 'different-correction-id',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
-        commentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
+        createdByEmail: 'teacher@metacopi.com',
       };
 
       jest.spyOn(service, 'findById').mockResolvedValue(mockAnnotationWithDifferentCorrectionId);
@@ -129,11 +124,10 @@ describe('AnnotationController', () => {
         correctionId: {
           toString: () => 'different-correction-id'
         } as any,
-        key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
-        commentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
+        createdByEmail: 'teacher@metacopi.com',
       };
 
       jest.spyOn(service, 'findById').mockResolvedValue(mockAnnotationWithDifferentCorrectionId);
@@ -163,11 +157,10 @@ describe('AnnotationController', () => {
         correctionId: {
           toString: () => 'different-correction-id'
         } as any,
-        key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
-        commentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
+        createdByEmail: 'teacher@metacopi.com',
       };
 
       jest.spyOn(service, 'findById').mockResolvedValue(mockAnnotationWithDifferentCorrectionId);

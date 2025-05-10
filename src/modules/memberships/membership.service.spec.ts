@@ -68,7 +68,7 @@ describe('MembershipService', () => {
   describe('create', () => {
     it('should create a new membership', async () => {
       const createDto: CreateMembershipDto = {
-        userId: 'user-id-1',
+        email: 'user-id-1',
         classId: 'class-id-1',
         role: MembershipRole.STUDENT,
         startDate: new Date(),
@@ -120,7 +120,7 @@ describe('MembershipService', () => {
       const memberships = [mockMembership];
       model.exec.mockResolvedValue(memberships);
 
-      const result = await service.findByUser('user-id-1');
+      const result = await service.findByUserEmail('user-id-1');
       
       expect(result).toEqual(memberships);
       expect(model.find).toHaveBeenCalledWith({ userId: 'user-id-1' });

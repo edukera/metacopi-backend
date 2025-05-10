@@ -19,11 +19,10 @@ export class AnnotationService {
   // Convertir un objet Annotation en AnnotationResponseDto
   private toResponseDto(annotation: Annotation): AnnotationResponseDto {
     const annotationDto = new AnnotationResponseDto();
-    annotationDto.id = annotation['_id'].toString();
-    annotationDto.correctionId = annotation.correctionId?.toString();
-    annotationDto.key = annotation.key;
+    annotationDto.id = annotation.id;
+    annotationDto.correctionId = annotation.correctionId;
     annotationDto.value = annotation.value;
-    annotationDto.commentIds = annotation.commentIds || [];
+    annotationDto.createdByEmail = annotation.createdByEmail;
     annotationDto.createdAt = (annotation as any).createdAt;
     annotationDto.updatedAt = (annotation as any).updatedAt;
     return annotationDto;
@@ -44,6 +43,11 @@ export class AnnotationService {
     const correction = await this.correctionService.findOne(createAnnotationDto.correctionId);
     if (!correction) {
       throw new NotFoundException(`Correction with ID ${createAnnotationDto.correctionId} not found`);
+    }
+
+    // Si createdByEmail n'est pas fourni, utiliser l'utilisateur courant
+    if (!createAnnotationDto.createdByEmail) {
+      createAnnotationDto.createdByEmail = this.request.user.email;
     }
 
     try {
@@ -74,9 +78,13 @@ export class AnnotationService {
    * @returns L'annotation trouvée
    */
   async findById(id: string): Promise<AnnotationResponseDto> {
-    const annotation = await this.annotationModel.findById(id).exec();
+    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    let annotation = await this.annotationModel.findOne({ id }).exec();
     if (!annotation) {
-      throw new NotFoundException(`Annotation with ID ${id} not found`);
+      annotation = await this.annotationModel.findById(id).exec();
+    }
+    if (!annotation) {
+      throw new NotFoundException(`Annotation with logical ID or MongoDB ID '${id}' not found`);
     }
     return this.toResponseDto(annotation);
   }

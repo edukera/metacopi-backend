@@ -61,15 +61,15 @@ export class MembershipController {
     return;
   }
 
-  @Get('user/:userId')
+  @Get('user/:email')
   @UseGuards(JwtAuthGuard, MembershipAccessGuard)
   @SetPermission(Permission.READ_MEMBERSHIPS, 'read')
   @ApiOperation({ summary: 'Get all memberships for a user' })
-  @ApiParam({ name: 'userId', description: 'User ID' })
+  @ApiParam({ name: 'email', description: 'User email' })
   @ApiResponse({ status: 200, description: 'List of memberships', type: [Membership] })
   @ApiResponse({ status: 403, description: 'Forbidden - You do not have permission to access these memberships' })
-  async findByUser(@Param('userId') userId: string): Promise<Membership[]> {
-    return this.membershipService.findByUser(userId);
+  async findByUserEmail(@Param('email') email: string): Promise<Membership[]> {
+    return this.membershipService.findByUserEmail(email);
   }
 
   @Get('class/:classId')
@@ -83,19 +83,19 @@ export class MembershipController {
     return this.membershipService.findByClass(classId);
   }
 
-  @Get('user/:userId/class/:classId')
+  @Get('user/:email/class/:classId')
   @UseGuards(JwtAuthGuard, MembershipAccessGuard)
   @SetPermission(Permission.READ_MEMBERSHIPS, 'read')
   @ApiOperation({ summary: 'Get membership for specific user and class' })
-  @ApiParam({ name: 'userId', description: 'User ID' })
+  @ApiParam({ name: 'email', description: 'User email' })
   @ApiParam({ name: 'classId', description: 'Class ID' })
   @ApiResponse({ status: 200, description: 'Membership found', type: Membership })
   @ApiResponse({ status: 403, description: 'Forbidden - You do not have permission to access this membership' })
   async findByUserAndClass(
-    @Param('userId') userId: string,
+    @Param('email') email: string,
     @Param('classId') classId: string,
   ): Promise<Membership | null> {
-    return this.membershipService.findByUserAndClass(userId, classId);
+    return this.membershipService.findByUserAndClass(email, classId);
   }
 
   @Delete('class/:classId')

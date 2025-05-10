@@ -41,8 +41,8 @@ export class ClassController {
   @Get(':id')
   @AuthenticatedUser
   @CheckPermission('Class', 'read')
-  @ApiOperation({ summary: 'Get a class by ID', description: 'Retrieves the details of a specific class' })
-  @ApiParam({ name: 'id', description: 'ID of the class to retrieve' })
+  @ApiOperation({ summary: 'Get a class by ID', description: 'Retrieves the details of a specific class by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the class to retrieve' })
   @ApiResponse({ 
     status: 200, 
     description: 'Class successfully retrieved',
@@ -58,7 +58,7 @@ export class ClassController {
   @Post()
   @AuthenticatedUser
   @CheckPermission('Class', 'create')
-  @ApiOperation({ summary: 'Create a new class', description: 'Creates a new class with the authenticated user as creator' })
+  @ApiOperation({ summary: 'Create a new class', description: 'Creates a new class with the authenticated user as creator. The logical business ID (id) must be provided and unique.' })
   @ApiBody({ type: CreateClassDto })
   @ApiResponse({ 
     status: 201, 
@@ -74,8 +74,8 @@ export class ClassController {
   @Patch(':id')
   @AuthenticatedUser
   @CheckPermission('Class', 'update')
-  @ApiOperation({ summary: 'Update a class', description: 'Updates the information of an existing class' })
-  @ApiParam({ name: 'id', description: 'ID of the class to update' })
+  @ApiOperation({ summary: 'Update a class', description: 'Updates the information of an existing class by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the class to update' })
   @ApiBody({ type: UpdateClassDto })
   @ApiResponse({ 
     status: 200, 
@@ -97,8 +97,8 @@ export class ClassController {
   @AdminOnly
   @CheckPermission('Class', 'delete')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a class', description: 'Permanently deletes a class (admin only)' })
-  @ApiParam({ name: 'id', description: 'ID of the class to delete' })
+  @ApiOperation({ summary: 'Delete a class', description: 'Permanently deletes a class (admin only) by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the class to delete' })
   @ApiResponse({ status: 204, description: 'Class successfully deleted' })
   @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
   @ApiResponse({ status: 403, description: 'Forbidden - Requires administrator privileges' })
@@ -111,8 +111,8 @@ export class ClassController {
   @Patch(':id/archive')
   @AuthenticatedUser
   @CheckPermission('Class', 'archive')
-  @ApiOperation({ summary: 'Archive a class', description: 'Marks a class as archived or active' })
-  @ApiParam({ name: 'id', description: 'ID of the class to archive' })
+  @ApiOperation({ summary: 'Archive a class', description: 'Marks a class as archived or active by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the class to archive' })
   @ApiResponse({ 
     status: 200, 
     description: 'Class successfully archived',
@@ -128,8 +128,8 @@ export class ClassController {
   @Post(':id/regenerate-code')
   @AuthenticatedUser
   @CheckPermission('Class', 'regenerateCode')
-  @ApiOperation({ summary: 'Regenerate class code', description: 'Generates a new invitation code for a class' })
-  @ApiParam({ name: 'id', description: 'ID of the class for which to regenerate the code' })
+  @ApiOperation({ summary: 'Regenerate class code', description: 'Generates a new invitation code for a class by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the class for which to regenerate the code' })
   @ApiResponse({ 
     status: 200, 
     description: 'Code successfully regenerated',
@@ -166,8 +166,8 @@ export class ClassController {
   @Post(':id/join')
   @AuthenticatedUser
   @CheckPermission('Class', 'join')
-  @ApiOperation({ summary: 'Join a class', description: 'Allows the authenticated user to join a class with the provided code' })
-  @ApiParam({ name: 'id', description: 'ID of the class to join' })
+  @ApiOperation({ summary: 'Join a class', description: 'Allows the authenticated user to join a class with the provided code, using the logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the class to join' })
   @ApiBody({ type: JoinClassDto })
   @ApiResponse({ status: 201, description: 'Class successfully joined' })
   @ApiResponse({ status: 400, description: 'Invalid or expired code' })

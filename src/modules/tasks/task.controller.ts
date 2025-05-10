@@ -36,8 +36,8 @@ export class TaskController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a task by ID' })
-  @ApiParam({ name: 'id', description: 'Task ID' })
+  @ApiOperation({ summary: 'Get a task by ID', description: 'Retrieves the details of a specific task by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the task to retrieve' })
   @ApiResponse({ status: 200, description: 'Returns the specified task.', type: TaskResponseDto })
   @ApiResponse({ status: 404, description: 'Task not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -48,7 +48,7 @@ export class TaskController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create a new task' })
+  @ApiOperation({ summary: 'Create a new task', description: 'Creates a new task. The logical business ID (id) must be provided and unique.' })
   @ApiResponse({ status: 201, description: 'The task has been successfully created.', type: TaskResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -59,8 +59,8 @@ export class TaskController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a task' })
-  @ApiParam({ name: 'id', description: 'Task ID' })
+  @ApiOperation({ summary: 'Update a task', description: 'Updates the information of an existing task by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the task to update' })
   @ApiResponse({ status: 200, description: 'The task has been successfully updated.', type: TaskResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid request.' })
   @ApiResponse({ status: 404, description: 'Task not found.' })
@@ -75,8 +75,8 @@ export class TaskController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a task' })
-  @ApiParam({ name: 'id', description: 'Task ID' })
+  @ApiOperation({ summary: 'Delete a task', description: 'Deletes a task by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the task to delete' })
   @ApiResponse({ status: 200, description: 'The task has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Task not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -88,8 +88,8 @@ export class TaskController {
   }
 
   @Patch(':id/archive')
-  @ApiOperation({ summary: 'Archive a task' })
-  @ApiParam({ name: 'id', description: 'Task ID' })
+  @ApiOperation({ summary: 'Archive a task', description: 'Archives a task by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the task to archive' })
   @ApiResponse({ status: 200, description: 'The task has been successfully archived.', type: TaskResponseDto })
   @ApiResponse({ status: 404, description: 'Task not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -100,8 +100,8 @@ export class TaskController {
   }
 
   @Patch(':id/publish')
-  @ApiOperation({ summary: 'Publish a task' })
-  @ApiParam({ name: 'id', description: 'Task ID' })
+  @ApiOperation({ summary: 'Publish a task', description: 'Publishes a task by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the task to publish' })
   @ApiResponse({ status: 200, description: 'The task has been successfully published.', type: TaskResponseDto })
   @ApiResponse({ status: 404, description: 'Task not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })

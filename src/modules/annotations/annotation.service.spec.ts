@@ -130,10 +130,10 @@ describe('AnnotationService', () => {
   describe('create', () => {
     it('should create a new annotation', async () => {
       const createAnnotationDto: CreateAnnotationDto = {
+        id: 'annotation-id-123',
         correctionId: 'correction-id-123',
-        key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
-        commentIds: [],
+        createdByEmail: 'teacher@metacopi.com',
       };
 
       const result = await service.create(createAnnotationDto);
@@ -146,10 +146,10 @@ describe('AnnotationService', () => {
       mockCorrectionService.findOne.mockResolvedValue(null);
 
       const createAnnotationDto: CreateAnnotationDto = {
+        id: 'annotation-id-123',
         correctionId: 'non-existent-id',
-        key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
-        commentIds: [],
+        createdByEmail: 'teacher@metacopi.com',
       };
 
       await expect(service.create(createAnnotationDto)).rejects.toThrow(NotFoundException);
@@ -157,10 +157,10 @@ describe('AnnotationService', () => {
 
     it('should throw BadRequestException when value is not valid JSON', async () => {
       const createAnnotationDto: CreateAnnotationDto = {
+        id: 'annotation-id-123',
         correctionId: 'correction-id-123',
-        key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
         value: 'not a valid json',
-        commentIds: [],
+        createdByEmail: 'teacher@metacopi.com',
       };
 
       await expect(service.create(createAnnotationDto)).rejects.toThrow(BadRequestException);

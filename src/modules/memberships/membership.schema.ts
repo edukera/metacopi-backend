@@ -14,12 +14,13 @@ export enum MembershipStatus {
 
 @Schema({
   timestamps: true,
+  versionKey: false,
 })
 export class Membership {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  userId: string;
+  @Prop({ type: String, required: true })
+  email: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Class', required: true })
+  @Prop({ type: String, required: true })
   classId: string;
 
   @Prop({
@@ -46,5 +47,5 @@ export class Membership {
 export type MembershipDocument = Membership & Document;
 export const MembershipSchema = SchemaFactory.createForClass(Membership);
 
-// Ensure uniqueness of the userId-classId combination
-MembershipSchema.index({ userId: 1, classId: 1 }, { unique: true }); 
+// Ensure uniqueness of the email-classId combination
+MembershipSchema.index({ email: 1, classId: 1 }, { unique: true }); 

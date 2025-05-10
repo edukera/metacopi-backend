@@ -4,6 +4,10 @@ import { TaskStatus } from './task.schema';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateTaskDto {
+  @ApiProperty({ description: 'Logical business identifier for the task (must be unique)', example: 'TASK-2024-001', required: true })
+  @IsString()
+  id: string;
+
   @ApiProperty({ description: 'Title of the task', example: 'Complete Project Phase 1' })
   @IsString()
   title: string;
@@ -13,8 +17,8 @@ export class CreateTaskDto {
   @IsString()
   description?: string;
 
-  @ApiProperty({ description: 'ID of the class this task belongs to', example: '60d21b4667d0d8992e610c85' })
-  @IsMongoId()
+  @ApiProperty({ description: 'Logical ID of the class this task belongs to (class.id)', example: 'CLS-2024-001' })
+  @IsString()
   classId: string;
 
   @ApiPropertyOptional({
@@ -68,6 +72,14 @@ export class CreateTaskDto {
   @IsOptional()
   @IsObject()
   settings?: Record<string, any>;
+
+  @ApiProperty({
+    description: "Email of the user who created the task",
+    example: "user@example.com",
+    required: true
+  })
+  @IsString()
+  createdByEmail: string;
 }
 
 export class UpdateTaskDto {
@@ -134,7 +146,7 @@ export class UpdateTaskDto {
 }
 
 export class TaskResponseDto {
-  @ApiProperty({ description: 'Unique task ID', example: '60d21b4667d0d8992e610c85' })
+  @ApiProperty({ description: 'Logical business identifier for the task (unique)', example: 'TASK-2024-001' })
   id: string;
 
   @ApiProperty({ description: 'Title of the task', example: 'Complete Project Phase 1' })
@@ -143,11 +155,14 @@ export class TaskResponseDto {
   @ApiPropertyOptional({ description: 'Description of the task', example: 'Implement the core functionality of the project as described in the requirements document.' })
   description?: string;
 
-  @ApiProperty({ description: 'ID of the class this task belongs to', example: '60d21b4667d0d8992e610c85' })
+  @ApiProperty({ description: 'Logical ID of the class this task belongs to (class.id)', example: 'CLS-2024-001' })
   classId: string;
 
-  @ApiProperty({ description: 'ID of the user who created the task', example: '60d21b4667d0d8992e610c85' })
-  createdBy: string;
+  @ApiProperty({
+    description: "Email of the user who created the task",
+    example: "user@example.com"
+  })
+  createdByEmail: string;
 
   @ApiProperty({
     description: 'Status of the task',

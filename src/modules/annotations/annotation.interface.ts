@@ -5,6 +5,7 @@ export interface Annotation extends Document {
   readonly key: string;
   readonly value: string;
   readonly commentIds: string[];
+  readonly createdByEmail: string;
   readonly createdAt: Date;
   readonly updatedAt: Date;
 }

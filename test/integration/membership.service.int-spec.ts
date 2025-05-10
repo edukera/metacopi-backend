@@ -19,10 +19,10 @@ describe('MembershipService Integration', () => {
   let membershipModel: Model<Membership>;
   let moduleRef: TestingModule;
 
-  const userId1 = new Types.ObjectId().toString();
-  const userId2 = new Types.ObjectId().toString();
-  const classId1 = new Types.ObjectId().toString();
-  const classId2 = new Types.ObjectId().toString();
+  const userId1 = "user1@metacopi.com";
+  const userId2 = "user2@metacopi.com";
+  const classId1 = "class1";
+  const classId2 = "class2";
 
   beforeAll(async () => {
     // Start in-memory MongoDB
@@ -77,7 +77,7 @@ describe('MembershipService Integration', () => {
   describe('create', () => {
     it('should create a new membership', async () => {
       const createMembershipDto: CreateMembershipDto = {
-        userId: userId1,
+        email: userId1,
         classId: classId1,
         role: MembershipRole.STUDENT,
         status: MembershipStatus.ACTIVE,
@@ -88,7 +88,7 @@ describe('MembershipService Integration', () => {
 
       // Verify the result properties directly without using assertions that compare ObjectId types
       expect(result).toBeDefined();
-      expect(result.userId.toString()).toBe(userId1);
+      expect(result.email.toString()).toBe(userId1);
       expect(result.classId.toString()).toBe(classId1);
       expect(result.role).toBe(MembershipRole.STUDENT);
       expect(result.status).toBe(MembershipStatus.ACTIVE);
@@ -98,7 +98,7 @@ describe('MembershipService Integration', () => {
 
     it('should throw an error when membership already exists', async () => {
       const createMembershipDto: CreateMembershipDto = {
-        userId: userId1,
+        email: userId1,
         classId: classId1,
         role: MembershipRole.STUDENT,
         status: MembershipStatus.ACTIVE,
@@ -160,7 +160,7 @@ describe('MembershipService Integration', () => {
       const result = await membershipService.findOne(membership._id.toString());
       
       expect(result).toBeDefined();
-      expect(result.userId.toString()).toBe(userId1);
+      expect(result.email.toString()).toBe(userId1);
       expect(result.classId.toString()).toBe(classId1);
     });
 
@@ -203,14 +203,14 @@ describe('MembershipService Integration', () => {
       ]);
 
       // Test the service method without mocking
-      const result = await membershipService.findByUser(userId1);
+      const result = await membershipService.findByUserEmail(userId1);
       
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBe(2);
       
       for (const membership of result) {
-        expect(membership.userId.toString()).toBe(userId1);
+        expect(membership.email.toString()).toBe(userId1);
       }
     });
   });
@@ -274,7 +274,7 @@ describe('MembershipService Integration', () => {
       const result = await membershipService.findByUserAndClass(userId1, classId1);
       
       expect(result).toBeDefined();
-      expect(result.userId.toString()).toBe(userId1);
+      expect(result.email.toString()).toBe(userId1);
       expect(result.classId.toString()).toBe(classId1);
     });
 

@@ -8,19 +8,25 @@ export enum TaskStatus {
   ARCHIVED = 'archived',
 }
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  versionKey: false,
+})
 export class Task extends Document {
+  @Prop({ required: true, unique: true, trim: true })
+  id: string;
+
   @Prop({ required: true, trim: true })
   title: string;
 
   @Prop({ trim: true })
   description: string;
   
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Class' })
+  @Prop({ required: true, type: String })
   classId: string;
   
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  createdBy: string;
+  @Prop({ required: true, trim: true })
+  createdByEmail: string;
   
   @Prop({
     type: String,

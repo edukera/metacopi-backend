@@ -4,7 +4,7 @@ import { CreateAuditLogDto, FindAuditLogsDto } from './audit-log.dto';
 import { AuditLog, TargetType } from './audit-log.schema';
 import { AdminOnly, RequirePermission } from '../../common/decorators';
 import { Permission } from '../../common/permissions.enum';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('audit-logs')
 @Controller('logs')
@@ -31,11 +31,12 @@ export class AuditLogController {
     return this.auditLogService.findById(id);
   }
 
-  @Get('user/:userId')
+  @Get('user/:email')
+  @ApiParam({ name: 'email', description: 'User email (unique identifier)', example: 'user@example.com' })
   @AdminOnly
   @RequirePermission(Permission.READ_AUDIT_LOGS, 'read')
-  async findByUser(@Param('userId') userId: string): Promise<AuditLog[]> {
-    return this.auditLogService.findByUser(userId);
+  async findByUser(@Param('email') email: string): Promise<AuditLog[]> {
+    return this.auditLogService.findByUser(email);
   }
 
   @Get('target/:targetType/:targetId')

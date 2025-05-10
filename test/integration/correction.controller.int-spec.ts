@@ -189,20 +189,19 @@ describe('CorrectionController (Integration)', () => {
   describe('POST /corrections', () => {
     it('should create a new correction', async () => {
       const createCorrectionDto: CreateCorrectionDto = {
+        id: 'CORR-2024-001',
         submissionId: submission['_id'].toString(),
         appreciation: 'Great work!',
         grade: 18,
-        annotations: JSON.stringify(['annotation1.json', 'annotation2.json'])
       };
       
       const result = await correctionController.create(createCorrectionDto);
       
       expect(result).toBeDefined();
       expect(result.submissionId.toString()).toBe(submission['_id'].toString());
-      expect(result.correctedById.toString()).toBe(teacher.id);
+      expect(result.correctedByEmail.toString()).toBe(teacher.email);
       expect(result.appreciation).toBe(createCorrectionDto.appreciation);
       expect(result.grade).toBe(createCorrectionDto.grade);
-      expect(result.annotations).toBe(createCorrectionDto.annotations);
       
       // Verify that the correction has been saved in the database
       const savedCorrection = await correctionModel.findById(result['_id']);
@@ -210,7 +209,8 @@ describe('CorrectionController (Integration)', () => {
       expect(savedCorrection.submissionId.toString()).toBe(submission['_id'].toString());
       
       // Manually update the submission status since it's not done automatically
-      await submissionService.update(submission['_id'].toString(), { status: SubmissionStatus.CORRECTED });
+      await submissionService.update(submission['_id'].toString(), { status: SubmissionStatus.CORRECTED, pages: []},
+      );
       
       // Verify that the submission status has been updated in the database
       const updatedSubmission = await submissionModel.findById(submission['_id']);
@@ -241,11 +241,10 @@ describe('CorrectionController (Integration)', () => {
         const correction = new correctionModel(dto);
         // Convertir en CorrectionResponseDto pour correspondre à la signature du service
         return {
-          id: correction._id.toString(),
+          id: correction.id.toString(),
           submissionId: correction.submissionId.toString(),
-          correctedById: dto.correctedById || teacher.id,
+          correctedByEmail: dto.correctedByEmail || teacher.email,
           status: correction.status,
-          annotations: correction.annotations,
           grade: correction.grade,
           appreciation: correction.appreciation,
           finalizedAt: correction.finalizedAt,
@@ -255,6 +254,7 @@ describe('CorrectionController (Integration)', () => {
       });
       
       const createCorrectionDto: CreateCorrectionDto = {
+        id: 'CORR-2024-001',
         submissionId: draftSubmission['_id'].toString(),
         appreciation: 'This assignment is not finished',
         grade: 0
@@ -267,6 +267,7 @@ describe('CorrectionController (Integration)', () => {
     it('should throw BadRequestException for duplicate correction', async () => {
       // Create the first correction
       const createCorrectionDto: CreateCorrectionDto = {
+        id: 'CORR-2024-001',
         submissionId: submission['_id'].toString(),
         appreciation: 'First correction',
         grade: 15
@@ -276,6 +277,7 @@ describe('CorrectionController (Integration)', () => {
       
       // Try to create a second correction for the same submission
       const secondCorrectionDto: CreateCorrectionDto = {
+        id: 'CORR-2024-002',
         submissionId: submission['_id'].toString(),
         appreciation: 'Second correction',
         grade: 16
@@ -330,7 +332,7 @@ describe('CorrectionController (Integration)', () => {
       expect(result).toBeDefined();
       expect(result['_id'].toString()).toBe(correction['_id'].toString());
       expect(result.submissionId.toString()).toBe(submission['_id'].toString());
-      expect(result.correctedById.toString()).toBe(teacher.id);
+      expect(result.correctedByEmail.toString()).toBe(teacher.email);
       expect(result.appreciation).toBe('Detailed feedback');
       expect(result.grade).toBe(17);
     });
@@ -381,7 +383,6 @@ describe('CorrectionController (Integration)', () => {
       const updateCorrectionDto: UpdateCorrectionDto = {
         appreciation: 'Updated feedback',
         grade: 16,
-        annotations: JSON.stringify(['new-annotation.json'])
       };
       
       const result = await correctionController.update(correction['_id'].toString(), updateCorrectionDto);
@@ -389,7 +390,6 @@ describe('CorrectionController (Integration)', () => {
       expect(result).toBeDefined();
       expect(result.appreciation).toBe(updateCorrectionDto.appreciation);
       expect(result.grade).toBe(updateCorrectionDto.grade);
-      expect(result.annotations).toBe(updateCorrectionDto.annotations);
       
       // Verify that the correction has been updated in the database
       const updatedCorrection = await correctionModel.findById(correction['_id']);

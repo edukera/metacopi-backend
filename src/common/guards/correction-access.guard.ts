@@ -28,7 +28,7 @@ export class CorrectionAccessGuard implements CanActivate {
       throw new ForbiddenException('User is not authenticated');
     }
     
-    const userId = user.sub || user.id;
+    const userEmail = user.email;
     
     // Si admin, autoriser l'accès
     if (user.role === UserRole.ADMIN) {
@@ -40,48 +40,48 @@ export class CorrectionAccessGuard implements CanActivate {
     const submissionId = request.params.submissionId;
     const teacherId = request.params.teacherId;
     
-    this.logger.debug(`Access check: userId=${userId}, method=${method}, correctionId=${correctionId}, submissionId=${submissionId}, teacherId=${teacherId}`);
+    this.logger.debug(`Access check: userEmail=${userEmail}, method=${method}, correctionId=${correctionId}, submissionId=${submissionId}, teacherId=${teacherId}`);
     
     // Si l'utilisateur est l'enseignant référencé, autoriser l'accès
-    if (teacherId && teacherId === userId) {
+    if (teacherId && teacherId === userEmail) {
       return true;
     }
     
     // Cas 1: Accès à une correction spécifique par ID
     if (correctionId) {
-      return this.checkCorrectionAccess(userId, correctionId, method);
+      return this.checkCorrectionAccess(userEmail, correctionId, method);
     }
     
     // Cas 2: Accès à une correction via l'ID de soumission
     if (submissionId) {
-      return this.checkSubmissionAccess(userId, submissionId, method);
+      return this.checkSubmissionAccess(userEmail, submissionId, method);
     }
     
     // Pour les autres cas, on vérifie uniquement si l'utilisateur est un enseignant
-    request.userAccessFilter = { userId };
+    request.userAccessFilter = { userEmail };
     return true;
   }
   
   // Vérifie l'accès à une correction spécifique
-  private async checkCorrectionAccess(userId: string, correctionId: string, method: string): Promise<boolean> {
+  private async checkCorrectionAccess(userEmail: string, correctionId: string, method: string): Promise<boolean> {
     const correction = await this.correctionService.findOne(correctionId);
     
     // 1. Si l'utilisateur est l'auteur de la correction
-    if (correction.correctedById === userId) {
+    if (correction.correctedByEmail === userEmail) {
       return true;
     }
     
     // 2. Si l'utilisateur est enseignant de la classe associée
     const submission = await this.submissionService.findOne(correction.submissionId);
     const task = await this.taskService.findOne(submission.taskId);
-    const isTeacher = await this.membershipService.checkMembershipRole(userId, task.classId, MembershipRole.TEACHER);
+    const isTeacher = await this.membershipService.checkMembershipRole(userEmail, task.classId, MembershipRole.TEACHER);
     
     if (isTeacher) {
       return true;
     }
     
     // 3. Si l'utilisateur est l'étudiant concerné par la correction (GET uniquement)
-    if (method === 'GET' && submission.studentId === userId) {
+    if (method === 'GET' && submission.studentEmail === userEmail) {
       return true;
     }
     
@@ -89,17 +89,17 @@ export class CorrectionAccessGuard implements CanActivate {
   }
   
   // Vérifie l'accès à une correction via l'ID de soumission
-  private async checkSubmissionAccess(userId: string, submissionId: string, method: string): Promise<boolean> {
+  private async checkSubmissionAccess(userEmail: string, submissionId: string, method: string): Promise<boolean> {
     const submission = await this.submissionService.findOne(submissionId);
     
     // Si l'utilisateur est l'étudiant concerné (GET uniquement)
-    if (method === 'GET' && submission.studentId === userId) {
+    if (method === 'GET' && submission.studentEmail === userEmail) {
       return true;
     }
     
     // Si l'utilisateur est enseignant de la classe associée
     const task = await this.taskService.findOne(submission.taskId);
-    const isTeacher = await this.membershipService.checkMembershipRole(userId, task.classId, MembershipRole.TEACHER);
+    const isTeacher = await this.membershipService.checkMembershipRole(userEmail, task.classId, MembershipRole.TEACHER);
     
     if (isTeacher) {
       return true;

@@ -49,8 +49,8 @@ export class SubmissionController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a submission by ID' })
-  @ApiParam({ name: 'id', description: 'Submission ID', example: '507f1f77bcf86cd799439011' })
+  @ApiOperation({ summary: 'Get a submission by ID', description: 'Retrieves the details of a specific submission by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the submission to retrieve', example: 'SUB-2024-001' })
   @ApiResponse({ status: 200, description: 'The found submission.', type: SubmissionResponseDto })
   @ApiResponse({ status: 404, description: 'Submission not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -63,7 +63,7 @@ export class SubmissionController {
 
   @Get('task/:taskId')
   @ApiOperation({ summary: 'Get all submissions for a specific task' })
-  @ApiParam({ name: 'taskId', description: 'Task ID', example: '507f1f77bcf86cd799439012' })
+  @ApiParam({ name: 'taskId', description: 'Logical business ID of the task', example: 'TASK-2024-001' })
   @ApiResponse({ status: 200, description: 'List of submissions for the specified task.', type: [SubmissionResponseDto] })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
@@ -88,7 +88,7 @@ export class SubmissionController {
   @Get('student/:studentId/task/:taskId')
   @ApiOperation({ summary: 'Get a submission for a specific student and task' })
   @ApiParam({ name: 'studentId', description: 'Student ID', example: '507f1f77bcf86cd799439013' })
-  @ApiParam({ name: 'taskId', description: 'Task ID', example: '507f1f77bcf86cd799439012' })
+  @ApiParam({ name: 'taskId', description: 'Logical business ID of the task', example: 'TASK-2024-001' })
   @ApiResponse({ status: 200, description: 'The found submission.', type: SubmissionResponseDto })
   @ApiResponse({ status: 404, description: 'Submission not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -115,8 +115,8 @@ export class SubmissionController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a submission' })
-  @ApiParam({ name: 'id', description: 'Submission ID', example: '507f1f77bcf86cd799439011' })
+  @ApiOperation({ summary: 'Update a submission', description: 'Updates a submission by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the submission to update', example: 'SUB-2024-001' })
   @ApiBody({ type: UpdateSubmissionDto })
   @ApiResponse({ status: 200, description: 'The submission has been successfully updated.', type: SubmissionResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
@@ -133,8 +133,8 @@ export class SubmissionController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a submission' })
-  @ApiParam({ name: 'id', description: 'Submission ID', example: '507f1f77bcf86cd799439011' })
+  @ApiOperation({ summary: 'Delete a submission', description: 'Deletes a submission by its logical business ID or MongoDB _id' })
+  @ApiParam({ name: 'id', description: 'Logical business ID or MongoDB _id of the submission to delete', example: 'SUB-2024-001' })
   @ApiResponse({ status: 204, description: 'The submission has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Submission not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })

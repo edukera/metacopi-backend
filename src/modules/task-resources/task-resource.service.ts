@@ -18,13 +18,13 @@ export class TaskResourceService {
   ) {}
 
   async create(createTaskResourceDto: CreateTaskResourceDto): Promise<TaskResource> {
-    const userId = this.request.user.sub;
+    const userEmail = this.request.user.email;
     
     // Check if the task exists
     const task = await this.taskService.findOne(createTaskResourceDto.taskId);
     
     // Check if the user is authorized (teacher of the class)
-    const membership = await this.membershipService.findByUserAndClass(userId, task.classId);
+    const membership = await this.membershipService.findByUserAndClass(userEmail, task.classId);
     if (!membership || membership.role !== 'teacher') {
       throw new BadRequestException('You must be a teacher in this class to add resources');
     }
@@ -66,7 +66,7 @@ export class TaskResourceService {
   }
 
   async update(id: string, updateTaskResourceDto: UpdateTaskResourceDto): Promise<TaskResource> {
-    const userId = this.request.user.sub;
+    const userEmail = this.request.user.email;
     
     // Check if the resource exists
     const resource = await this.findOne(id);
@@ -75,7 +75,7 @@ export class TaskResourceService {
     const task = await this.taskService.findOne(resource.taskId);
     
     // Check if the user is authorized (teacher of the class)
-    const membership = await this.membershipService.findByUserAndClass(userId, task.classId);
+    const membership = await this.membershipService.findByUserAndClass(userEmail, task.classId);
     if (!membership || membership.role !== 'teacher') {
       throw new BadRequestException('You must be a teacher in this class to modify resources');
     }
@@ -97,7 +97,7 @@ export class TaskResourceService {
   }
 
   async remove(id: string): Promise<void> {
-    const userId = this.request.user.sub;
+    const userEmail = this.request.user.email;
     
     // Check if the resource exists
     const resource = await this.findOne(id);
@@ -106,7 +106,7 @@ export class TaskResourceService {
     const task = await this.taskService.findOne(resource.taskId);
     
     // Check if the user is authorized (teacher of the class)
-    const membership = await this.membershipService.findByUserAndClass(userId, task.classId);
+    const membership = await this.membershipService.findByUserAndClass(userEmail, task.classId);
     if (!membership || membership.role !== 'teacher') {
       throw new BadRequestException('You must be a teacher in this class to delete resources');
     }

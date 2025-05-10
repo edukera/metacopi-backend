@@ -72,16 +72,16 @@ describe('MembershipController', () => {
       }
       return Promise.resolve();
     }),
-    findByUser: jest.fn().mockImplementation((userId: string) => {
-      const memberships = mockMemberships.filter(m => m.userId === userId);
+    findByUser: jest.fn().mockImplementation((email: string) => {
+      const memberships = mockMemberships.filter(m => m.email === email);
       return Promise.resolve(memberships);
     }),
     findByClass: jest.fn().mockImplementation((classId: string) => {
       const memberships = mockMemberships.filter(m => m.classId === classId);
       return Promise.resolve(memberships);
     }),
-    findByUserAndClass: jest.fn().mockImplementation((userId: string, classId: string) => {
-      const membership = mockMemberships.find(m => m.userId === userId && m.classId === classId);
+    findByUserAndClass: jest.fn().mockImplementation((email: string, classId: string) => {
+      const membership = mockMemberships.find(m => m.email === email && m.classId === classId);
       return Promise.resolve(membership || null);
     }),
     deleteByClass: jest.fn().mockImplementation((classId: string) => {
@@ -134,14 +134,14 @@ describe('MembershipController', () => {
   describe('create', () => {
     it('should create a new membership', async () => {
       const createMembershipDto: CreateMembershipDto = {
-        userId: mockUserId,
+        email: mockUserId,
         classId: mockClassId,
         role: MembershipRole.STUDENT,
       };
 
       const result = await controller.create(createMembershipDto);
       expect(result).toHaveProperty('_id');
-      expect(result.userId).toEqual(createMembershipDto.userId);
+      expect(result.email).toEqual(createMembershipDto.email);
       expect(result.classId).toEqual(createMembershipDto.classId);
       expect(service.create).toHaveBeenCalledWith(createMembershipDto);
     });
@@ -181,11 +181,11 @@ describe('MembershipController', () => {
     });
   });
 
-  describe('findByUser', () => {
+  describe('findByUserEmail', () => {
     it('should return memberships for a specific user', async () => {
-      const result = await controller.findByUser(mockUserId);
+      const result = await controller.findByUserEmail(mockUserId);
       expect(result).toContainEqual(mockMembership);
-      expect(service.findByUser).toHaveBeenCalledWith(mockUserId);
+      expect(service.findByUserEmail).toHaveBeenCalledWith(mockUserId);
     });
   });
 

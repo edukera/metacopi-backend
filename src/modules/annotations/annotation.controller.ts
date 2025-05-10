@@ -14,7 +14,7 @@ export class AnnotationController {
 
   @Post('corrections/:correctionId/annotations')
   @ApiOperation({ summary: 'Create a new annotation for a correction' })
-  @ApiParam({ name: 'correctionId', description: 'ID of the correction' })
+  @ApiParam({ name: 'correctionId', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
   @ApiResponse({ status: 201, description: 'The annotation has been successfully created', type: AnnotationResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid request body or JSON format' })
   @ApiResponse({ status: 403, description: 'Not authorized to create annotations for this correction' })
@@ -38,7 +38,7 @@ export class AnnotationController {
 
   @Get('corrections/:correctionId/annotations')
   @ApiOperation({ summary: 'Get all annotations for a correction' })
-  @ApiParam({ name: 'correctionId', description: 'ID of the correction' })
+  @ApiParam({ name: 'correctionId', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
   @ApiResponse({ status: 200, description: 'List of annotations for the correction', type: [AnnotationResponseDto] })
   @ApiResponse({ status: 404, description: 'Correction not found' })
   @AuthenticatedUser
@@ -48,9 +48,9 @@ export class AnnotationController {
   }
 
   @Get('corrections/:correctionId/annotations/:id')
-  @ApiOperation({ summary: 'Get a specific annotation by ID' })
-  @ApiParam({ name: 'correctionId', description: 'ID of the correction' })
-  @ApiParam({ name: 'id', description: 'ID of the annotation' })
+  @ApiOperation({ summary: 'Get a specific annotation by ID (logical or MongoDB)' })
+  @ApiParam({ name: 'correctionId', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'id', description: 'Annotation logical ID or MongoDB ID', example: 'ANN-2024-001' })
   @ApiResponse({ status: 200, description: 'The annotation has been found', type: AnnotationResponseDto })
   @ApiResponse({ status: 404, description: 'Annotation not found' })
   @AuthenticatedUser
@@ -60,19 +60,16 @@ export class AnnotationController {
     @Param('id') id: string,
   ): Promise<AnnotationResponseDto> {
     const annotation = await this.annotationService.findById(id);
-    
-    // Vérifier que l'annotation appartient bien à la correction spécifiée
     if (annotation.correctionId.toString() !== correctionId) {
       throw new NotFoundException('Annotation not found for the specified correction');
     }
-    
     return annotation;
   }
 
   @Patch('corrections/:correctionId/annotations/:id')
-  @ApiOperation({ summary: 'Update an annotation' })
-  @ApiParam({ name: 'correctionId', description: 'ID of the correction' })
-  @ApiParam({ name: 'id', description: 'ID of the annotation' })
+  @ApiOperation({ summary: 'Update an annotation (by logical or MongoDB ID)' })
+  @ApiParam({ name: 'correctionId', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'id', description: 'Annotation logical ID or MongoDB ID', example: 'ANN-2024-001' })
   @ApiResponse({ status: 200, description: 'The annotation has been successfully updated', type: AnnotationResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid JSON format in the value field' })
   @ApiResponse({ status: 403, description: 'Not authorized to update annotations for this correction' })
@@ -85,22 +82,17 @@ export class AnnotationController {
     @Body() updateAnnotationDto: UpdateAnnotationDto,
   ): Promise<AnnotationResponseDto> {
     const annotation = await this.annotationService.findById(id);
-    
-    // Vérifier que l'annotation appartient bien à la correction spécifiée
     if (annotation.correctionId.toString() !== correctionId) {
       throw new NotFoundException('Annotation not found for the specified correction');
     }
-    
-    // Vérifier les permissions d'accès du professeur
     await this.annotationService.verifyTeacherAccess(correctionId);
-    
     return this.annotationService.update(id, updateAnnotationDto);
   }
 
   @Delete('corrections/:correctionId/annotations/:id')
-  @ApiOperation({ summary: 'Delete an annotation' })
-  @ApiParam({ name: 'correctionId', description: 'ID of the correction' })
-  @ApiParam({ name: 'id', description: 'ID of the annotation' })
+  @ApiOperation({ summary: 'Delete an annotation (by logical or MongoDB ID)' })
+  @ApiParam({ name: 'correctionId', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'id', description: 'Annotation logical ID or MongoDB ID', example: 'ANN-2024-001' })
   @ApiResponse({ status: 204, description: 'The annotation has been successfully deleted' })
   @ApiResponse({ status: 403, description: 'Not authorized to delete annotations for this correction' })
   @ApiResponse({ status: 404, description: 'Annotation not found' })
@@ -112,15 +104,10 @@ export class AnnotationController {
     @Param('id') id: string,
   ): Promise<void> {
     const annotation = await this.annotationService.findById(id);
-    
-    // Vérifier que l'annotation appartient bien à la correction spécifiée
     if (annotation.correctionId.toString() !== correctionId) {
       throw new NotFoundException('Annotation not found for the specified correction');
     }
-    
-    // Vérifier les permissions d'accès du professeur
     await this.annotationService.verifyTeacherAccess(correctionId);
-    
     await this.annotationService.remove(id);
   }
 } 

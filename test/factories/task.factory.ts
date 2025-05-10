@@ -26,6 +26,7 @@ export interface TaskStub extends Omit<Task, keyof Document> {
 
 export const createTaskDto = (override: Partial<CreateTaskDto> = {}): CreateTaskDto => {
   return {
+    id: faker.string.uuid(),
     title: faker.lorem.sentence(3),
     description: faker.lorem.paragraph(),
     classId: new Types.ObjectId().toString(),
@@ -35,6 +36,7 @@ export const createTaskDto = (override: Partial<CreateTaskDto> = {}): CreateTask
     tags: [faker.lorem.word(), faker.lorem.word()],
     metadata: {},
     settings: {},
+    createdByEmail: faker.internet.email(),
     ...override,
   };
 };
@@ -69,6 +71,7 @@ export const taskStub = (override: Partial<TaskStub> = {}): TaskStub => {
     settings: {},
     createdAt: now,
     updatedAt: now,
+    createdByEmail: faker.internet.email(),
     save: jest.fn().mockImplementation(() => Promise.resolve(stub)),
     toObject: jest.fn().mockImplementation(() => stub),
     toJSON: jest.fn().mockImplementation(() => stub),

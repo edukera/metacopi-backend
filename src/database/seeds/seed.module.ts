@@ -12,6 +12,7 @@ import { Correction, CorrectionSchema } from '../../modules/corrections/correcti
 import { Annotation, AnnotationSchema } from '../../modules/annotations/annotation.schema';
 import { Comment, CommentSchema } from '../../modules/comments/comment.schema';
 import { AIComment, AICommentSchema } from '../../modules/ai-comments/ai-comment.schema';
+import { AIAnnotation, AIAnnotationSchema } from '../../modules/ai-annotations/ai-annotation.schema';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { AIComment, AICommentSchema } from '../../modules/ai-comments/ai-comment
       { name: Correction.name, schema: CorrectionSchema },
       { name: Comment.name, schema: CommentSchema },
       { name: Annotation.name, schema: AnnotationSchema },
-      { name: AIComment.name, schema: AICommentSchema }
+      { name: AIComment.name, schema: AICommentSchema },
+      { name: AIAnnotation.name, schema: AIAnnotationSchema }
     ]),
   ],
   providers: [DataSeedService],

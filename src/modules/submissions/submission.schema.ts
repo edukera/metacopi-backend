@@ -9,33 +9,76 @@ export enum SubmissionStatus {
   ARCHIVED = 'archived',
 }
 
+export class SubmissionPage {
+  @ApiProperty({ description: 'Page unique identifier', example: 'p1' })
+  @Prop({ type: String, required: true })
+  id: string;
+
+  @ApiProperty({
+    description: 'Raw image info',
+    example: { image_path: 'submissions/demo-submission-2/raw-page-1.jpg', width: 3468, height: 4624 }
+  })
+  @Prop({
+    type: {
+      image_path: { type: String, required: true },
+      width: { type: Number, required: true },
+      height: { type: Number, required: true }
+    },
+    required: true
+  })
+  raw: { image_path: string; width: number; height: number };
+
+  @ApiProperty({
+    description: 'Processed image info',
+    example: { image_path: 'submissions/demo-submission-2/processed-page-1.jpg', width: 867, height: 1156 }
+  })
+  @Prop({
+    type: {
+      image_path: { type: String, required: true },
+      width: { type: Number, required: true },
+      height: { type: Number, required: true }
+    },
+    required: true
+  })
+  processed: { image_path: string; width: number; height: number };
+}
+
 @Schema({
   timestamps: true,
+  versionKey: false,
 })
 export class Submission {
+  @ApiProperty({
+    description: 'Logical business identifier for the submission (unique)',
+    example: 'SUB-2024-001',
+    required: true
+  })
+  @Prop({ type: String, required: true, unique: true, trim: true })
+  id: string;
+
   @ApiProperty({
     description: 'ID of the student who submitted the work',
     example: '605a1cb9d4d5d73598045618',
     required: true
   })
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  studentId: string;
+  @Prop({ type: String, required: true })
+  studentEmail: string;
 
   @ApiProperty({
-    description: 'ID of the task associated with the submission',
-    example: '605a1cb9d4d5d73598045619',
+    description: 'Logical business ID of the task associated with the submission',
+    example: 'TASK-2024-001',
     required: true
   })
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Task', required: true })
+  @Prop({ type: String, required: true })
   taskId: string;
 
   @ApiProperty({
-    description: 'ID of the user who uploaded the submission (can be different from the student)',
-    example: '605a1cb9d4d5d73598045618',
+    description: 'Email of the user who uploaded the submission (can be different from the student)',
+    example: 'teacher@example.com',
     required: true
   })
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  uploadedBy: string;
+  @Prop({ type: String, required: true })
+  uploadedByEmail: string;
 
   @ApiProperty({
     description: 'Current status of the submission',
@@ -51,22 +94,19 @@ export class Submission {
   status: SubmissionStatus;
 
   @ApiProperty({
-    description: 'List of URLs of raw (unprocessed) pages of the submission',
-    example: ['https://example.com/storage/page1.jpg', 'https://example.com/storage/page2.jpg'],
-    type: [String],
-    default: []
+    description: 'List of pages (raw and processed info)',
+    example: [
+      {
+        id: 'p1',
+        raw: { image_path: 'submissions/demo-submission-2/raw-page-1.jpg', width: 3468, height: 4624 },
+        processed: { image_path: 'submissions/demo-submission-2/processed-page-1.jpg', width: 867, height: 1156 }
+      }
+    ],
+    type: [SubmissionPage],
+    required: true
   })
-  @Prop({ type: [String], default: [] })
-  rawPages: string[];
-
-  @ApiProperty({
-    description: 'List of URLs of processed pages of the submission',
-    example: ['https://example.com/storage/processed_page1.jpg', 'https://example.com/storage/processed_page2.jpg'],
-    type: [String],
-    default: []
-  })
-  @Prop({ type: [String], default: [] })
-  processedPages: string[];
+  @Prop({ type: [SubmissionPage], required: true, default: [] })
+  pages: SubmissionPage[];
 
   @ApiPropertyOptional({
     description: 'Date when the submission was submitted for correction',
@@ -99,4 +139,4 @@ export type SubmissionDocument = Submission & Document;
 export const SubmissionSchema = SchemaFactory.createForClass(Submission);
 
 // Ensure uniqueness of submission per student and task
-SubmissionSchema.index({ studentId: 1, taskId: 1 }, { unique: true }); 
+SubmissionSchema.index({ studentEmail: 1, taskId: 1 }, { unique: true }); 

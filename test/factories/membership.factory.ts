@@ -16,7 +16,7 @@ export const createMembershipDto = (
   overrides: Partial<CreateMembershipDto> = {},
 ): CreateMembershipDto => {
   return {
-    userId: overrides.userId || new Types.ObjectId().toString(),
+    email: overrides.email || new Types.ObjectId().toString(),
     classId: overrides.classId || new Types.ObjectId().toString(),
     role: overrides.role || MembershipRole.STUDENT,
     status: overrides.status || MembershipStatus.ACTIVE,
@@ -42,7 +42,7 @@ export const membershipStub = (
   
   return {
     _id,
-    userId: overrides.userId || new Types.ObjectId().toString(),
+    email: overrides.email || new Types.ObjectId().toString(),
     classId: overrides.classId || new Types.ObjectId().toString(),
     role: overrides.role || MembershipRole.STUDENT,
     status: overrides.status || MembershipStatus.ACTIVE,

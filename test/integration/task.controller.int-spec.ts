@@ -209,7 +209,7 @@ describe('TaskController (Isolated Integration)', () => {
       }
     );
     
-    jest.spyOn(membershipService, 'findByUser').mockImplementation(
+    jest.spyOn(membershipService, 'findByUserEmail').mockImplementation(
       async (userId) => {
         const memberships = await membershipModel.find({ 
           userId: new Types.ObjectId(userId)
@@ -230,11 +230,13 @@ describe('TaskController (Isolated Integration)', () => {
     console.log('Testing task creation...');
     
     const createTaskDto: CreateTaskDto = {
+      id: 'TASK-2024-001',
       title: 'Test Assignment',
       description: 'A description for the test assignment',
       classId: testClass._id.toString(),
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
       status: TaskStatus.DRAFT,
+      createdByEmail: testTeacher.email,
     };
     
     const result = await taskController.create(createTaskDto);
@@ -244,7 +246,7 @@ describe('TaskController (Isolated Integration)', () => {
     expect(result.description).toBe(createTaskDto.description);
     expect(result.classId.toString()).toBe(createTaskDto.classId);
     expect(result.status).toBe(TaskStatus.DRAFT);
-    expect(result.createdBy.toString()).toBe(testTeacher._id.toString());
+    expect(result.createdByEmail.toString()).toBe(testTeacher.email);
     
     // Verify it was saved to database
     const savedTask = await taskModel.findById(result.id);
