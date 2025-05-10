@@ -131,7 +131,7 @@
       "markdownSource": "Excellent travail sur cette démonstration !",
       "isMarkdown": true,
       "pageY": 200,
-      "annotations": []
+      "annotations": [2]
     }
   ],
   "ai-comments": [
@@ -174,6 +174,15 @@
       "type": "zone",
       "color": "red",
       "position": { "x": 100, "y": 100 },
+      "width": 100,
+      "height": 100
+    },
+    {
+      "id": 2,
+      "correctionId": 1,
+      "type": "zone",
+      "color": "yellow",
+      "position": { "x": 100, "y": 500 },
       "width": 100,
       "height": 100
     },
