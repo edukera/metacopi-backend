@@ -8,7 +8,8 @@ import {
   Delete, 
   UseGuards, 
   HttpCode, 
-  HttpStatus 
+  HttpStatus,
+  ForbiddenException
 } from '@nestjs/common';
 import { 
   ApiTags, 
@@ -26,42 +27,43 @@ import { AuthenticatedUser } from '../../common/decorators';
 
 @ApiTags('comments')
 @ApiBearerAuth()
-@Controller('corrections/:id/comments')
+@Controller('corrections/:correctionId/comments')
 @UseGuards(CommentAccessGuard)
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all comments for a correction' })
-  @ApiParam({ name: 'id', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'correctionId', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
   @ApiResponse({ status: 200, description: 'List of comments for the correction.', type: [CommentResponseDto] })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Correction not found.' })
-  async findAll(@Param('id') correctionId: string): Promise<CommentResponseDto[]> {
+  async findAll(@Param('correctionId') correctionId: string): Promise<CommentResponseDto[]> {
     return this.commentService.findByCorrection(correctionId);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create a new comment for a correction' })
-  @ApiParam({ name: 'id', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'correctionId', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
   @ApiBody({ type: CreateCommentDto })
   @ApiResponse({ status: 201, description: 'The comment has been successfully created.', type: CommentResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Correction not found.' })
   async create(
-    @Param('id') correctionId: string,
+    @Param('correctionId') correctionId: string,
     @Body() createCommentDto: CreateCommentDto
   ): Promise<CommentResponseDto> {
-    // Ensure the correctionId from the URL is used
-    createCommentDto.correctionId = correctionId;
-    return this.commentService.create(createCommentDto);
+    return this.commentService.create({
+      ...createCommentDto,
+      correctionId,
+    });
   }
 
   @Get(':commentId')
-  @ApiOperation({ summary: 'Get a specific comment by ID (logical or MongoDB)' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: 'CORR-2024-001' })
-  @ApiParam({ name: 'commentId', description: 'Comment logical ID or MongoDB ID', example: 'COMM-2024-001' })
+  @ApiOperation({ summary: 'Get a specific comment by its logical ID' })
+  @ApiParam({ name: 'correctionId', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'commentId', description: 'Logical business ID of the comment', example: 'COMM-2024-001' })
   @ApiResponse({ status: 200, description: 'The found comment.', type: CommentResponseDto })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Comment not found.' })
@@ -70,30 +72,50 @@ export class CommentController {
   }
 
   @Patch(':commentId')
-  @ApiOperation({ summary: 'Update a comment (by logical or MongoDB ID)' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: 'CORR-2024-001' })
-  @ApiParam({ name: 'commentId', description: 'Comment logical ID or MongoDB ID', example: 'COMM-2024-001' })
+  @ApiOperation({ summary: 'Update a comment by its logical ID' })
+  @ApiParam({ name: 'correctionId', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'commentId', description: 'Logical business ID of the comment', example: 'COMM-2024-001' })
   @ApiBody({ type: UpdateCommentDto })
   @ApiResponse({ status: 200, description: 'The comment has been successfully updated.', type: CommentResponseDto })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Comment not found.' })
   async update(
+    @Param('correctionId') correctionId: string,
     @Param('commentId') commentId: string,
     @Body() updateCommentDto: UpdateCommentDto
   ): Promise<CommentResponseDto> {
+    // Récupérer d'abord le commentaire pour vérifier qu'il appartient à la correction
+    const comment = await this.commentService.findOne(commentId);
+    
+    // Vérifier que le commentaire appartient bien à la correction
+    if (comment.correctionId !== correctionId) {
+      throw new ForbiddenException(`Comment with ID ${commentId} does not belong to correction with ID ${correctionId}`);
+    }
+    
     return this.commentService.update(commentId, updateCommentDto);
   }
 
   @Delete(':commentId')
-  @ApiOperation({ summary: 'Delete a comment (by logical or MongoDB ID)' })
-  @ApiParam({ name: 'id', description: 'Correction ID', example: 'CORR-2024-001' })
-  @ApiParam({ name: 'commentId', description: 'Comment logical ID or MongoDB ID', example: 'COMM-2024-001' })
+  @ApiOperation({ summary: 'Delete a comment by its logical ID' })
+  @ApiParam({ name: 'correctionId', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
+  @ApiParam({ name: 'commentId', description: 'Logical business ID of the comment', example: 'COMM-2024-001' })
   @ApiResponse({ status: 204, description: 'The comment has been successfully deleted.' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   @ApiResponse({ status: 404, description: 'Comment not found.' })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('commentId') commentId: string): Promise<void> {
+  async remove(
+    @Param('correctionId') correctionId: string,
+    @Param('commentId') commentId: string
+  ): Promise<void> {
+    // Récupérer d'abord le commentaire pour vérifier qu'il appartient à la correction
+    const comment = await this.commentService.findOne(commentId);
+    
+    // Vérifier que le commentaire appartient bien à la correction
+    if (comment.correctionId !== correctionId) {
+      throw new ForbiddenException(`Comment with ID ${commentId} does not belong to correction with ID ${correctionId}`);
+    }
+    
     await this.commentService.remove(commentId);
   }
 } 

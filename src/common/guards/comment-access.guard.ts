@@ -37,12 +37,12 @@ export class CommentAccessGuard implements CanActivate {
     }
     
     // Extraire les paramètres pertinents
-    const correctionId = request.params.id; // ID de la correction dans l'URL
-    const commentId = request.params.commentId; // ID du commentaire dans l'URL
+    const correctionId = request.params.correctionId; // ID logique de la correction dans l'URL
+    const commentId = request.params.commentId; // ID logique du commentaire dans l'URL
     
     this.logger.debug(`Access check: userEmail=${userEmail}, method=${method}, correctionId=${correctionId}, commentId=${commentId}`);
     
-    // Cas 1: Accès à un commentaire spécifique par ID
+    // Cas 1: Accès à un commentaire spécifique par ID logique
     if (commentId) {
       // Si nous avons besoin de récupérer le commentaire pour d'autres vérifications
       const comment = await this.commentService.findOne(commentId);

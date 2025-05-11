@@ -10,6 +10,11 @@ import { TaskService } from '../tasks/task.service';
 import { MembershipService } from '../memberships/membership.service';
 import { MembershipRole } from '../memberships/membership.schema';
 
+// Interface pour la création d'un commentaire avec le correctionId requis
+interface CreateCommentWithCorrectionIdDto extends CreateCommentDto {
+  correctionId: string;
+}
+
 @Injectable()
 export class CommentService {
   private readonly logger = new Logger(CommentService.name);
@@ -50,15 +55,15 @@ export class CommentService {
 
   /**
    * Create a new comment
-   * @param createCommentDto Data for creating the comment
+   * @param commentData Data for creating the comment, including correctionId
    * @returns Newly created comment
    */
-  async create(createCommentDto: CreateCommentDto): Promise<CommentResponseDto> {
-    if (!createCommentDto.createdByEmail) {
-      createCommentDto.createdByEmail = this.request.user.email;
+  async create(commentData: CreateCommentWithCorrectionIdDto): Promise<CommentResponseDto> {
+    if (!commentData.createdByEmail) {
+      commentData.createdByEmail = this.request.user.email;
     }
     // Les annotations doivent être des ids logiques (string)
-    const newComment = new this.commentModel(createCommentDto);
+    const newComment = new this.commentModel(commentData);
     const savedComment = await newComment.save();
     return this.toResponseDto(savedComment);
   }
@@ -73,18 +78,15 @@ export class CommentService {
   }
 
   /**
-   * Find a comment by ID
-   * @param id Comment ID
+   * Find a comment by logical ID
+   * @param id Comment logical ID
    * @returns Comment if found
    */
   async findOne(id: string): Promise<CommentResponseDto> {
-    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
-    let comment = await this.commentModel.findOne({ id }).exec();
+    // Recherche uniquement par id logique
+    const comment = await this.commentModel.findOne({ id }).exec();
     if (!comment) {
-      comment = await this.commentModel.findById(id).exec();
-    }
-    if (!comment) {
-      throw new NotFoundException(`Comment with logical ID or MongoDB ID '${id}' not found`);
+      throw new NotFoundException(`Comment with ID '${id}' not found`);
     }
     return this.toResponseDto(comment);
   }
@@ -111,7 +113,7 @@ export class CommentService {
 
   /**
    * Update a comment
-   * @param id Comment ID
+   * @param id Comment logical ID
    * @param updateCommentDto Data for updating the comment
    * @returns Updated comment
    */
@@ -119,12 +121,12 @@ export class CommentService {
     id: string,
     updateCommentDto: UpdateCommentDto,
   ): Promise<CommentResponseDto> {
-    // Vérifier que le commentaire existe
-    await this.findCommentEntity(id);
+    // Vérifier que le commentaire existe et récupérer son document
+    const comment = await this.findCommentEntity(id);
     
-    // Les vérifications d'accès sont maintenant gérées par le guard
+    // Mettre à jour le commentaire en utilisant l'ID logique
     const updatedComment = await this.commentModel
-      .findByIdAndUpdate(id, updateCommentDto, { new: true })
+      .findOneAndUpdate({ id }, updateCommentDto, { new: true })
       .exec();
       
     if (!updatedComment) {
@@ -136,7 +138,7 @@ export class CommentService {
 
   /**
    * Remove a comment
-   * @param id Comment ID
+   * @param id Comment logical ID
    * @returns Removed comment
    */
   async remove(id: string): Promise<void> {
@@ -145,7 +147,7 @@ export class CommentService {
     
     // Les vérifications d'accès sont maintenant gérées par le guard
     const deletedComment = await this.commentModel
-      .findByIdAndDelete(id)
+      .findOneAndDelete({ id })
       .exec();
       
     if (!deletedComment) {
@@ -211,10 +213,11 @@ export class CommentService {
   }
 
   // Pour l'utilisation interne uniquement - récupère l'entité Comment sans la convertir en DTO
-  private async findCommentEntity(id: string): Promise<Comment> {
-    const comment = await this.commentModel.findById(id).exec();
+  private async findCommentEntity(id: string): Promise<Comment & { _id: any }> {
+    // Recherche uniquement par id logique
+    const comment = await this.commentModel.findOne({ id }).exec();
     if (!comment) {
-      throw new NotFoundException(`Comment with ID ${id} not found`);
+      throw new NotFoundException(`Comment with ID '${id}' not found`);
     }
     return comment;
   }

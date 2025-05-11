@@ -11,19 +11,12 @@ import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
 export class CreateCommentDto {
   @ApiProperty({
-    description: 'Logical business identifier for the comment (must be unique)',
+    description: 'Logical business identifier for the comment (unique)',
     example: 'COMM-2024-001',
     required: true
   })
   @IsString()
   id: string;
-
-  @ApiProperty({
-    description: 'Logical business ID of the correction this comment belongs to',
-    example: 'CORR-2024-001'
-  })
-  @IsString()
-  correctionId: string;
 
   @ApiProperty({
     description: 'ID of the page in the submission where the comment is placed',
@@ -33,7 +26,14 @@ export class CreateCommentDto {
   pageId: string;
 
   @ApiProperty({
-    description: 'Type of comment (e.g., highlight, note, annotation)',
+    description: 'Vertical position of the comment on the page',
+    example: 100
+  })
+  @IsNumber()
+  pageY: number;
+
+  @ApiProperty({
+    description: 'Type of comment',
     example: 'highlight',
     default: 'note'
   })
@@ -41,19 +41,12 @@ export class CreateCommentDto {
   type: string;
 
   @ApiProperty({
-    description: 'Color of the comment (hex code or named color)',
+    description: 'Color of the comment',
     example: '#FF5733',
     default: '#FFD700'
   })
   @IsString()
   color: string;
-
-  @ApiProperty({
-    description: 'Text content of the comment',
-    example: 'This section needs more detailed explanation.'
-  })
-  @IsString()
-  text: string;
 
   @ApiProperty({
     description: 'Raw Markdown content, if different from plain text or if specific Markdown features are used',
@@ -63,11 +56,11 @@ export class CreateCommentDto {
   markdown: string;
 
   @ApiProperty({
-    description: 'Vertical position of the comment on the page, if applicable',
-    example: 120.5
+    description: 'Text content of the comment',
+    example: 'This section needs more detailed explanation.'
   })
-  @IsNumber()
-  pageY: number;
+  @IsString()
+  text: string;
 
   @ApiProperty({
     description: 'Array of logical annotation IDs (not Mongo IDs) related to this comment',
@@ -79,20 +72,20 @@ export class CreateCommentDto {
   annotations: string[];
 
   @ApiPropertyOptional({
-    description: 'Email of the user who created the comment. If not provided, will use the current authenticated user.',
-    example: 'user@example.com'
-  })
-  @IsOptional()
-  @IsString()
-  createdByEmail?: string;
-
-  @ApiPropertyOptional({
     description: 'ID of the AI source if this comment was generated from an AI',
     example: 'AIC-2024-001'
   })
   @IsOptional()
   @IsString()
   AISourceID?: string;
+
+  @ApiPropertyOptional({
+    description: 'Email of the user who created the comment. If not provided, will use the current authenticated user.',
+    example: 'user@example.com'
+  })
+  @IsOptional()
+  @IsString()
+  createdByEmail?: string;
 }
 
 // Update DTO extends Create DTO with all fields optional
@@ -154,17 +147,17 @@ export class CommentResponseDto {
   })
   annotations: string[];
 
-  @ApiProperty({
-    description: 'Email of the user who created the comment',
-    example: 'user@example.com'
-  })
-  createdByEmail: string;
-
   @ApiPropertyOptional({
     description: 'ID of the AI source if this comment was generated from an AI',
     example: 'AIC-2024-001'
   })
   AISourceID?: string;
+
+  @ApiProperty({
+    description: 'Email of the user who created the comment',
+    example: 'user@example.com'
+  })
+  createdByEmail: string;
 
   @ApiProperty({
     description: 'Comment creation date',
