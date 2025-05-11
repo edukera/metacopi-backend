@@ -83,6 +83,14 @@ export class CreateCommentDto {
   @IsOptional()
   @IsString()
   createdByEmail?: string;
+
+  @ApiPropertyOptional({
+    description: 'ID of the AI source if this comment was generated from an AI',
+    example: 'AIC-2024-001'
+  })
+  @IsOptional()
+  @IsString()
+  AISourceID?: string;
 }
 
 // Update DTO extends Create DTO with all fields optional
@@ -149,6 +157,12 @@ export class CommentResponseDto {
     example: 'user@example.com'
   })
   createdByEmail: string;
+
+  @ApiPropertyOptional({
+    description: 'ID of the AI source if this comment was generated from an AI',
+    example: 'AIC-2024-001'
+  })
+  AISourceID?: string;
 
   @ApiProperty({
     description: 'Comment creation date',

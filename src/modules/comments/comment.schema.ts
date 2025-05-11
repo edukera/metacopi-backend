@@ -92,6 +92,13 @@ export class Comment {
   @Prop({ type: String, required: true })
   createdByEmail: string;
 
+  @ApiPropertyOptional({
+    description: 'ID of the AI source if this comment was generated from an AI',
+    example: 'AIC-2024-001'
+  })
+  @Prop({ type: String, required: false })
+  AISourceID?: string;
+
   // Timestamps are added automatically by { timestamps: true }
   @ApiProperty({
     description: 'Comment creation date',

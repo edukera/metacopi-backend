@@ -37,6 +37,7 @@ export class CommentService {
     commentDto.text = comment.text;
     commentDto.annotations = comment.annotations || [];
     commentDto.createdByEmail = comment.createdByEmail;
+    commentDto.AISourceID = comment.AISourceID;
     commentDto.createdAt = (comment as any).createdAt;
     commentDto.updatedAt = (comment as any).updatedAt;
     return commentDto;
