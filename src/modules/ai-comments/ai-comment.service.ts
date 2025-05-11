@@ -32,7 +32,7 @@ export class AICommentService {
     aiCommentDto.pageY = aiComment.pageY;
     aiCommentDto.type = aiComment.type || 'note';
     aiCommentDto.color = aiComment.color || '#FFD700';
-    aiCommentDto.markdown = aiComment.isMarkdown || false;
+    aiCommentDto.markdown = aiComment.markdown || 'note';
     aiCommentDto.text = aiComment.text;
     aiCommentDto.annotations = aiComment.annotations || [];
     aiCommentDto.status = aiComment.status || AICommentStatus.PENDING;

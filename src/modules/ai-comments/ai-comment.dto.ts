@@ -57,14 +57,13 @@ export class CreateAICommentDto {
   @IsString()
   color?: string;
 
-  @ApiPropertyOptional({
-    description: 'Whether the AI comment text contains markdown formatting',
-    example: false,
-    default: false
+  @ApiProperty({
+    description: 'Raw Markdown content, if different from plain text or if specific Markdown features are used',
+    example: 'This section needs **more detailed** explanation. See [doc](...)',
+    default: 'note'
   })
-  @IsOptional()
-  @IsBoolean()
-  markdown?: boolean;
+  @IsString()
+  markdown: string;
 
   @ApiProperty({
     description: 'Text content of the AI comment',
@@ -73,25 +72,30 @@ export class CreateAICommentDto {
   @IsString()
   text: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Array of annotation references or IDs related to this AI comment',
     example: ['60d21b4667d0d8992e610c85', '60d21b4667d0d8992e610c86'],
     type: [String]
   })
-  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  annotations?: string[];
+  annotations: string[];
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Status of the AI comment (validated, rejected, pending)',
     example: 'pending',
     default: 'pending',
     enum: AICommentStatus
   })
-  @IsOptional()
   @IsEnum(AICommentStatus)
-  status?: AICommentStatus = AICommentStatus.PENDING;
+  status: AICommentStatus = AICommentStatus.PENDING;
+
+  @ApiProperty({
+    description: 'Vertical position of the AI comment on the page, if applicable',
+    example: 120.5
+  })
+  @IsNumber()
+  pageY: number;
 
   @ApiPropertyOptional({
     description: 'Email of the user who created the AI comment. If not provided, will use the current authenticated user.',
@@ -143,10 +147,10 @@ export class AICommentResponseDto {
   color: string;
 
   @ApiProperty({
-    description: 'Whether the AI comment text contains markdown formatting',
-    example: false
+    description: 'Raw Markdown content of the AI comment',
+    example: 'This section needs **more detailed** explanation. See [doc](...)'
   })
-  markdown: boolean;
+  markdown: string;
 
   @ApiProperty({
     description: 'Text content of the AI comment',

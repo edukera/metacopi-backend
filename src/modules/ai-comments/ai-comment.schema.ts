@@ -32,7 +32,7 @@ export class AIComment {
   @Prop({ type: String, required: true })
   pageId: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Type of AI comment (e.g., highlight, note, annotation)',
     example: 'highlight',
     default: 'note'
@@ -40,7 +40,7 @@ export class AIComment {
   @Prop({ type: String, default: 'note' })
   type: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Color of the AI comment (hex code or named color)',
     example: '#FF5733',
     default: '#FFD700'
@@ -48,20 +48,12 @@ export class AIComment {
   @Prop({ type: String, default: '#FFD700' })
   color: string;
 
-  @ApiPropertyOptional({
-    description: 'Whether the main text content should be rendered as markdown',
-    example: true,
-    default: false
-  })
-  @Prop({ type: Boolean, default: false })
-  isMarkdown: boolean;
-
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Raw Markdown content, if different from plain text or if specific Markdown features are used',
     example: 'This section needs **more detailed** explanation. See [doc](...)'
   })
-  @Prop({ type: String, required: false })
-  markdownSource?: string;
+  @Prop({ type: String, default: 'note' })
+  markdown: string;
 
   @ApiProperty({
     description: 'Text content of the AI comment',
@@ -70,7 +62,7 @@ export class AIComment {
   @Prop({ type: String, required: true })
   text: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Array of logical AI annotation IDs (not Mongo IDs) related to this AI comment',
     example: ['AIANN-2024-001', 'AIANN-2024-002'],
     type: [String]
@@ -87,12 +79,12 @@ export class AIComment {
   @Prop({ type: String, enum: Object.values(AICommentStatus), default: AICommentStatus.PENDING })
   status: AICommentStatus;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Vertical position of the AI comment on the page, if applicable',
     example: 120.5
   })
   @Prop({ type: Number, required: false })
-  pageY?: number;
+  pageY: number;
 
   @ApiProperty({
     description: 'Email of the user who created the AI comment',

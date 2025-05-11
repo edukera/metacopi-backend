@@ -106,6 +106,7 @@ export interface CommentSeedData {
 }
 
 export interface AICommentSeedData {
+  id: string;
   submissionId: string;
   correctionId: string;
   authorEmail: string;
@@ -116,6 +117,8 @@ export interface AICommentSeedData {
   markdown?: string;
   pageY?: number;
   annotations?: number[];
+  createdByEmail?: string;
+  status: string;
 }
 
 export interface AIAnnotationSeedData {
@@ -384,24 +387,24 @@ export class DataSeedService {
     
     for (const membershipData of memberships) {
       try {
-        // Find the user ID
-        const userId = this.userIdMap.get(membershipData.userEmail);
-        if (!userId) {
+        // Vérifie que l'utilisateur existe
+        const userExists = this.userIdMap.has(membershipData.userEmail);
+        if (!userExists) {
           this.logger.warn(`User ${membershipData.userEmail} does not exist. Cannot create membership.`);
           continue;
         }
         
-        // Find the class ID
-        const classId = this.classIdMap.get(membershipData.classId);
-        if (!classId) {
+        // Vérifie que la classe existe
+        const classExists = this.classIdMap.has(membershipData.classId);
+        if (!classExists) {
           this.logger.warn(`Class ${membershipData.classId} does not exist. Cannot create membership.`);
           continue;
         }
         
-        // Check if the membership already exists
+        // Vérifie si l'adhésion existe déjà en utilisant l'index sur email et classId
         const existingMembership = await this.membershipModel.findOne({
-          userId: new Types.ObjectId(userId),
-          classId: new Types.ObjectId(classId),
+          email: membershipData.userEmail,
+          classId: membershipData.classId,
         });
         
         if (existingMembership) {
@@ -409,7 +412,7 @@ export class DataSeedService {
           continue;
         }
         
-        // Create the new membership
+        // Crée la nouvelle adhésion avec seulement les champs reconnus par le schéma
         await this.membershipModel.create({
           email: membershipData.userEmail,
           classId: membershipData.classId,
