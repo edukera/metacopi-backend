@@ -11,6 +11,14 @@ export class CreateAIAnnotationDto {
   correctionId: string;
 
   @ApiProperty({
+    description: 'ID of the page this AI annotation belongs to',
+    example: 'p1'
+  })
+  @IsString()
+  @IsNotEmpty()
+  pageId: string;
+
+  @ApiProperty({
     description: 'Valeur de l\'annotation générée par l\'IA (JSON sérialisé)',
     example: '{"type":"text","content":"Bonne approche IA","position":{"x":120,"y":250}}'
   })
@@ -72,7 +80,13 @@ export class AIAnnotationResponseDto {
   correctionId: string;
 
   @ApiProperty({
-    description: 'Valeur de l\'annotation générée par l\'IA (JSON sérialisé)',
+    description: 'ID of the page this AI annotation belongs to',
+    example: 'p1'
+  })
+  pageId: string;
+
+  @ApiProperty({
+    description: 'Valeur de l\'annotation IA (JSON sérialisé)',
     example: '{"type":"text","content":"Bonne approche IA","position":{"x":120,"y":250}}'
   })
   value: string;

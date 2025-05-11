@@ -11,6 +11,14 @@ export class CreateAnnotationDto {
   correctionId: string;
 
   @ApiProperty({
+    description: 'ID of the page this annotation belongs to',
+    example: 'p1'
+  })
+  @IsString()
+  @IsNotEmpty()
+  pageId: string;
+
+  @ApiProperty({
     description: 'Valeur de l\'annotation (JSON sérialisé)',
     example: '{"type":"text","content":"Bonne approche","position":{"x":120,"y":250}}'
   })
@@ -46,6 +54,14 @@ export class UpdateAnnotationDto {
   @IsNotEmpty()
   @Validate(IsValidJson)
   value?: string;
+
+  @ApiPropertyOptional({
+    description: 'ID of the page this annotation belongs to',
+    example: 'p1'
+  })
+  @IsOptional()
+  @IsString()
+  pageId?: string;
 }
 
 export class AnnotationResponseDto {
@@ -60,6 +76,12 @@ export class AnnotationResponseDto {
     example: 'CORR-2024-001'
   })
   correctionId: string;
+
+  @ApiProperty({
+    description: 'ID of the page this annotation belongs to',
+    example: 'p1'
+  })
+  pageId: string;
 
   @ApiProperty({
     description: 'Valeur de l\'annotation (JSON sérialisé)',

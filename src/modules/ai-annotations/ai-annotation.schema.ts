@@ -24,6 +24,14 @@ export class AIAnnotation {
   correctionId: string;
 
   @ApiProperty({
+    description: 'ID of the page this AI annotation belongs to',
+    example: 'p1',
+    required: true
+  })
+  @Prop({ type: String, required: true })
+  pageId: string;
+
+  @ApiProperty({
     description: 'Valeur de l\'annotation générée par l\'IA (JSON sérialisé)',
     example: '{"type":"text","content":"Bonne approche IA","position":{"x":120,"y":250}}',
     required: true

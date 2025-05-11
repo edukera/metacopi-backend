@@ -87,6 +87,8 @@ export interface CorrectionSeedData {
 export interface AnnotationSeedData {
   id: number | string;
   correctionId: number | string;
+  pageId: string;
+  createdByEmail: string;
   [key: string]: any;
 }
 
@@ -121,6 +123,8 @@ export interface AICommentSeedData {
 export interface AIAnnotationSeedData {
   id: number | string;
   correctionId: number | string;
+  pageId: string;
+  createdByEmail: string;
   [key: string]: any;
 }
 
@@ -537,12 +541,13 @@ export class DataSeedService {
           continue;
         }
         // On extrait les champs à la racine et on sérialise le reste dans 'value'
-        const { id, correctionId, createdByEmail, ...rest } = annotationData;
+        const { id, correctionId, createdByEmail, pageId, ...rest } = annotationData;
         const value = JSON.stringify(rest);
         const newAnnotation = await this.annotationModel.create({
           id: String(id),
           correctionId,
           createdByEmail,
+          pageId,
           value,
         });
         this.annotationIdMap.set(String(id), newAnnotation._id.toString());
@@ -570,12 +575,13 @@ export class DataSeedService {
           continue;
         }
         // On extrait les champs à la racine et on sérialise le reste dans 'value'
-        const { id, correctionId, createdByEmail, ...rest } = aiAnnotationData;
+        const { id, correctionId, createdByEmail, pageId, ...rest } = aiAnnotationData;
         const value = JSON.stringify(rest);
         const newAIAnnotation = await this.aiAnnotationModel.create({
           id: String(id),
           correctionId,
           createdByEmail,
+          pageId,
           value,
         });
         this.aiAnnotationIdMap.set(String(id), newAIAnnotation._id.toString());

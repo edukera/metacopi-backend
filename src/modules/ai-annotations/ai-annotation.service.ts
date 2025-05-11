@@ -22,6 +22,7 @@ export class AIAnnotationService {
     const aiAnnotationDto = new AIAnnotationResponseDto();
     aiAnnotationDto.id = aiAnnotation.id;
     aiAnnotationDto.correctionId = aiAnnotation.correctionId;
+    aiAnnotationDto.pageId = aiAnnotation.pageId;
     aiAnnotationDto.value = aiAnnotation.value;
     aiAnnotationDto.createdByEmail = aiAnnotation.createdByEmail;
     aiAnnotationDto.createdAt = (aiAnnotation as any).createdAt;

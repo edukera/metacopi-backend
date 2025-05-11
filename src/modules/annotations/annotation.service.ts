@@ -21,6 +21,7 @@ export class AnnotationService {
     const annotationDto = new AnnotationResponseDto();
     annotationDto.id = annotation.id;
     annotationDto.correctionId = annotation.correctionId;
+    annotationDto.pageId = annotation.pageId;
     annotationDto.value = annotation.value;
     annotationDto.createdByEmail = annotation.createdByEmail;
     annotationDto.createdAt = (annotation as any).createdAt;

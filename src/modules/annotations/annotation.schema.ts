@@ -24,6 +24,14 @@ export class Annotation {
   correctionId: string;
 
   @ApiProperty({
+    description: 'ID of the page this annotation belongs to',
+    example: 'p1',
+    required: true
+  })
+  @Prop({ type: String, required: true })
+  pageId: string;
+
+  @ApiProperty({
     description: 'Valeur de l\'annotation (JSON sérialisé)',
     example: '{"type":"text","content":"Bonne approche","position":{"x":120,"y":250}}',
     required: true

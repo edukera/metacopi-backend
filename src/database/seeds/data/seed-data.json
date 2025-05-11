@@ -291,6 +291,7 @@
   "annotations": [
     {
       "id": "annot_1",
+      "pageId": "p1",
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
       "color": "yellow",
@@ -333,6 +334,7 @@
   "ai-annotations": [
     {
       "id": "annot_ai_1",
+      "pageId": "p1",
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
       "color": "red",
@@ -343,6 +345,7 @@
     },
     {
       "id": "annot_ai_2",
+      "pageId": "p1",
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
       "color": "orange",

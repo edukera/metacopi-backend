@@ -13,6 +13,7 @@ describe('AnnotationController', () => {
     id: 'annotation-id-123',
     correctionId: 'correction-id-123',
     key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+    pageId: 'p1',
     value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
     commentIds: [],
     createdAt: new Date(),
@@ -50,6 +51,7 @@ describe('AnnotationController', () => {
       const createAnnotationDto: CreateAnnotationDto = {
         id: 'annotation-id-123',
         correctionId: 'correction-id-123',
+        pageId: 'p1',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
       };
 
@@ -64,6 +66,7 @@ describe('AnnotationController', () => {
       const createAnnotationDto: CreateAnnotationDto = {
         id: 'annotation-id-123',
         correctionId: 'different-correction-id',
+        pageId: 'p1',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
       };
 
@@ -92,6 +95,7 @@ describe('AnnotationController', () => {
       const mockAnnotationWithDifferentCorrectionId: AnnotationResponseDto = {
         id: 'annotation-id-123',
         correctionId: 'different-correction-id',
+        pageId: 'p1',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -124,6 +128,7 @@ describe('AnnotationController', () => {
         correctionId: {
           toString: () => 'different-correction-id'
         } as any,
+        pageId: 'p1',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -157,6 +162,7 @@ describe('AnnotationController', () => {
         correctionId: {
           toString: () => 'different-correction-id'
         } as any,
+        pageId: 'p1',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
         createdAt: new Date(),
         updatedAt: new Date(),

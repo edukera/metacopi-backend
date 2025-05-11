@@ -17,6 +17,7 @@ describe('AnnotationService', () => {
     _id: 'annotation-id-123',
     correctionId: 'correction-id-123',
     key: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+    pageId: 'p1',
     value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
     commentIds: [],
   };
@@ -132,6 +133,7 @@ describe('AnnotationService', () => {
       const createAnnotationDto: CreateAnnotationDto = {
         id: 'annotation-id-123',
         correctionId: 'correction-id-123',
+        pageId: 'p1',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
         createdByEmail: 'teacher@metacopi.com',
       };
@@ -148,6 +150,7 @@ describe('AnnotationService', () => {
       const createAnnotationDto: CreateAnnotationDto = {
         id: 'annotation-id-123',
         correctionId: 'non-existent-id',
+        pageId: 'p1',
         value: '{"type":"text","content":"Test annotation","position":{"x":100,"y":200}}',
         createdByEmail: 'teacher@metacopi.com',
       };
@@ -159,6 +162,7 @@ describe('AnnotationService', () => {
       const createAnnotationDto: CreateAnnotationDto = {
         id: 'annotation-id-123',
         correctionId: 'correction-id-123',
+        pageId: 'p1',
         value: 'not a valid json',
         createdByEmail: 'teacher@metacopi.com',
       };
