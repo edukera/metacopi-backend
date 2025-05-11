@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { AICommentStatus } from './ai-comment.dto';
 
 @Schema({
   timestamps: true,
@@ -76,6 +77,15 @@ export class AIComment {
   })
   @Prop({ type: [String], default: [] })
   annotations: string[];
+
+  @ApiProperty({
+    description: 'Status of the AI comment (validated, rejected, pending)',
+    example: 'pending',
+    default: 'pending',
+    enum: AICommentStatus
+  })
+  @Prop({ type: String, enum: Object.values(AICommentStatus), default: AICommentStatus.PENDING })
+  status: AICommentStatus;
 
   @ApiPropertyOptional({
     description: 'Vertical position of the AI comment on the page, if applicable',

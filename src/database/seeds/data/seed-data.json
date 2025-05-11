@@ -314,7 +314,8 @@
       "isMarkdown": true,
       "pageY": 100,
       "annotations": ["annot_ai_1"],
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     },
     {
       "id": "c_ai_2",
@@ -328,7 +329,8 @@
       "isMarkdown": true,
       "pageY": 3000,
       "annotations": ["annot_ai_2"],
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     }
   ],
   "ai-annotations": [

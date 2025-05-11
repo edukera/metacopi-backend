@@ -1,3 +1,5 @@
+import { AICommentStatus } from './ai-comment.dto';
+
 export interface AIComment {
   id: string;
   correctionId: string;
@@ -7,6 +9,7 @@ export interface AIComment {
   markdown: boolean;
   text: string;
   annotations: string[];
+  status: AICommentStatus;
   createdByEmail: string;
   createdAt: Date;
   updatedAt: Date;
@@ -20,6 +23,7 @@ export interface AICommentCreateParams {
   markdown?: boolean;
   text: string;
   annotations?: string[];
+  status: AICommentStatus;
   createdByEmail: string;
 }
 
@@ -30,4 +34,5 @@ export interface AICommentUpdateParams {
   markdown?: boolean;
   text?: string;
   annotations?: string[];
+  status?: AICommentStatus;
 } 

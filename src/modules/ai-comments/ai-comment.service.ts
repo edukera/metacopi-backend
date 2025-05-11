@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { REQUEST } from '@nestjs/core';
 import { AIComment } from './ai-comment.schema';
-import { CreateAICommentDto, UpdateAICommentDto, AICommentResponseDto } from './ai-comment.dto';
+import { CreateAICommentDto, UpdateAICommentDto, AICommentResponseDto, AICommentStatus } from './ai-comment.dto';
 import { CorrectionService } from '../corrections/correction.service';
 import { SubmissionService } from '../submissions/submission.service';
 import { TaskService } from '../tasks/task.service';
@@ -35,6 +35,7 @@ export class AICommentService {
     aiCommentDto.markdown = aiComment.isMarkdown || false;
     aiCommentDto.text = aiComment.text;
     aiCommentDto.annotations = aiComment.annotations || [];
+    aiCommentDto.status = aiComment.status || AICommentStatus.PENDING;
     aiCommentDto.createdByEmail = aiComment.createdByEmail;
     aiCommentDto.createdAt = (aiComment as any).createdAt;
     aiCommentDto.updatedAt = (aiComment as any).updatedAt;
@@ -55,7 +56,14 @@ export class AICommentService {
     if (!createAICommentDto.createdByEmail) {
       createAICommentDto.createdByEmail = this.request.user.email;
     }
+    
+    // S'assurer que le statut est défini, par défaut 'pending'
+    if (createAICommentDto.status === undefined) {
+      createAICommentDto.status = AICommentStatus.PENDING;
+    }
+    
     const newAIComment = new this.aiCommentModel(createAICommentDto);
+    this.logger.log(`Creating AI comment with ID ${createAICommentDto.id} and status ${createAICommentDto.status}`);
     const savedAIComment = await newAIComment.save();
     return this.toResponseDto(savedAIComment);
   }

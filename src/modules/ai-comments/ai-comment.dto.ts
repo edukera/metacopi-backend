@@ -5,9 +5,16 @@ import {
   IsNumber, 
   IsBoolean, 
   IsArray,
-  Min
+  Min,
+  IsEnum
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+
+export enum AICommentStatus {
+  VALIDATED = 'validated',
+  REJECTED = 'rejected',
+  PENDING = 'pending'
+}
 
 export class CreateAICommentDto {
   @ApiProperty({
@@ -77,6 +84,16 @@ export class CreateAICommentDto {
   annotations?: string[];
 
   @ApiPropertyOptional({
+    description: 'Status of the AI comment (validated, rejected, pending)',
+    example: 'pending',
+    default: 'pending',
+    enum: AICommentStatus
+  })
+  @IsOptional()
+  @IsEnum(AICommentStatus)
+  status?: AICommentStatus = AICommentStatus.PENDING;
+
+  @ApiPropertyOptional({
     description: 'Email of the user who created the AI comment. If not provided, will use the current authenticated user.',
     example: 'user@example.com'
   })
@@ -143,6 +160,13 @@ export class AICommentResponseDto {
     type: [String]
   })
   annotations: string[];
+
+  @ApiProperty({
+    description: 'Status of the AI comment (validated, rejected, pending)',
+    example: 'pending',
+    enum: AICommentStatus
+  })
+  status: AICommentStatus;
 
   @ApiProperty({
     description: 'Email of the user who created the AI comment',
