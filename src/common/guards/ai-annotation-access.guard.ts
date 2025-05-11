@@ -3,20 +3,20 @@ import { MembershipService } from '../../modules/memberships/membership.service'
 import { TaskService } from '../../modules/tasks/task.service';
 import { SubmissionService } from '../../modules/submissions/submission.service';
 import { CorrectionService } from '../../modules/corrections/correction.service';
-import { AICommentService } from '../../modules/ai-comments/ai-comment.service';
+import { AIAnnotationService } from '../../modules/ai-annotations/ai-annotation.service';
 import { UserRole } from '../../modules/users/user.schema';
 import { MembershipRole } from '../../modules/memberships/membership.schema';
 
 @Injectable()
-export class AICommentAccessGuard implements CanActivate {
-  private readonly logger = new Logger(AICommentAccessGuard.name);
+export class AIAnnotationAccessGuard implements CanActivate {
+  private readonly logger = new Logger(AIAnnotationAccessGuard.name);
 
   constructor(
     private readonly membershipService: MembershipService,
     private readonly taskService: TaskService,
     private readonly submissionService: SubmissionService,
     private readonly correctionService: CorrectionService,
-    private readonly aiCommentService: AICommentService,
+    private readonly aiAnnotationService: AIAnnotationService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -38,31 +38,31 @@ export class AICommentAccessGuard implements CanActivate {
     
     // Extraire les paramètres pertinents
     const correctionId = request.params.correctionId; // ID logique de la correction dans l'URL
-    const aiCommentId = request.params.aiCommentId; // ID logique du commentaire AI dans l'URL
+    const aiAnnotationId = request.params.aiAnnotationId; // ID logique de l'annotation AI dans l'URL
     
-    this.logger.debug(`Access check: userEmail=${userEmail}, method=${method}, correctionId=${correctionId}, aiCommentId=${aiCommentId}`);
+    this.logger.debug(`Access check: userEmail=${userEmail}, method=${method}, correctionId=${correctionId}, aiAnnotationId=${aiAnnotationId}`);
     
-    // Cas 1: Accès à un commentaire AI spécifique par ID logique
-    if (aiCommentId) {
-      // Si nous avons besoin de récupérer le commentaire AI pour d'autres vérifications
-      const aiComment = await this.aiCommentService.findOne(aiCommentId);
+    // Cas 1: Accès à une annotation AI spécifique par ID logique
+    if (aiAnnotationId) {
+      // Si nous avons besoin de récupérer l'annotation AI pour d'autres vérifications
+      const aiAnnotation = await this.aiAnnotationService.findById(aiAnnotationId);
       
-      // Si l'utilisateur est l'auteur du commentaire AI
-      if (aiComment.createdByEmail === userEmail) {
+      // Si l'utilisateur est l'auteur de l'annotation AI (sauf si c'est un système IA)
+      if (aiAnnotation.createdByEmail === userEmail && !aiAnnotation.createdByEmail.includes('ai-system')) {
         return true;
       }
       
       // Sinon, vérifier l'accès à la correction associée
-      return this.checkCorrectionAccess(userEmail, aiComment.correctionId, method);
+      return this.checkCorrectionAccess(userEmail, aiAnnotation.correctionId, method);
     }
     
-    // Cas 2: Accès à tous les commentaires AI d'une correction
+    // Cas 2: Accès à toutes les annotations AI d'une correction
     if (correctionId) {
       return this.checkCorrectionAccess(userEmail, correctionId, method);
     }
     
     // Si aucun identifiant n'est fourni, refuser l'accès
-    throw new ForbiddenException('Missing correction or AI comment identifier');
+    throw new ForbiddenException('Missing correction or AI annotation identifier');
   }
   
   // Vérifie l'accès à une correction spécifique
@@ -89,6 +89,6 @@ export class AICommentAccessGuard implements CanActivate {
       return true;
     }
     
-    throw new ForbiddenException('You do not have permission to access AI comments for this correction');
+    throw new ForbiddenException('You do not have permission to access AI annotations for this correction');
   }
 } 

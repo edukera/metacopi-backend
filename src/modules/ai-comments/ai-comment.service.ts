@@ -10,6 +10,11 @@ import { TaskService } from '../tasks/task.service';
 import { MembershipService } from '../memberships/membership.service';
 import { MembershipRole } from '../memberships/membership.schema';
 
+// Interface pour la création d'un commentaire IA avec le correctionId requis
+interface CreateAICommentWithCorrectionIdDto extends CreateAICommentDto {
+  correctionId: string;
+}
+
 @Injectable()
 export class AICommentService {
   private readonly logger = new Logger(AICommentService.name);
@@ -49,21 +54,21 @@ export class AICommentService {
 
   /**
    * Create a new AI comment
-   * @param createAICommentDto Data for creating the AI comment
+   * @param commentData Data for creating the AI comment, including correctionId
    * @returns Newly created AI comment
    */
-  async create(createAICommentDto: CreateAICommentDto): Promise<AICommentResponseDto> {
-    if (!createAICommentDto.createdByEmail) {
-      createAICommentDto.createdByEmail = this.request.user.email;
+  async create(commentData: CreateAICommentWithCorrectionIdDto): Promise<AICommentResponseDto> {
+    if (!commentData.createdByEmail) {
+      commentData.createdByEmail = this.request.user.email;
     }
     
     // S'assurer que le statut est défini, par défaut 'pending'
-    if (createAICommentDto.status === undefined) {
-      createAICommentDto.status = AICommentStatus.PENDING;
+    if (commentData.status === undefined) {
+      commentData.status = AICommentStatus.PENDING;
     }
     
-    const newAIComment = new this.aiCommentModel(createAICommentDto);
-    this.logger.log(`Creating AI comment with ID ${createAICommentDto.id} and status ${createAICommentDto.status}`);
+    const newAIComment = new this.aiCommentModel(commentData);
+    this.logger.log(`Creating AI comment with ID ${commentData.id} and status ${commentData.status}`);
     const savedAIComment = await newAIComment.save();
     return this.toResponseDto(savedAIComment);
   }
@@ -78,25 +83,21 @@ export class AICommentService {
   }
 
   /**
-   * Find an AI comment by ID
-   * @param id AI Comment ID
+   * Find an AI comment by logical ID
+   * @param id AI Comment logical ID
    * @returns AI Comment if found
    */
   async findOne(id: string): Promise<AICommentResponseDto> {
-    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
-    let aiComment = await this.aiCommentModel.findOne({ id }).exec();
+    const aiComment = await this.aiCommentModel.findOne({ id }).exec();
     if (!aiComment) {
-      aiComment = await this.aiCommentModel.findById(id).exec();
-    }
-    if (!aiComment) {
-      throw new NotFoundException(`AI Comment with logical ID or MongoDB ID '${id}' not found`);
+      throw new NotFoundException(`AI Comment with ID '${id}' not found`);
     }
     return this.toResponseDto(aiComment);
   }
 
   /**
    * Find AI comments for a specific correction
-   * @param correctionId Correction ID
+   * @param correctionId Correction logical ID
    * @returns Array of AI comments for the correction
    */
   async findByCorrection(correctionId: string): Promise<AICommentResponseDto[]> {
@@ -105,7 +106,7 @@ export class AICommentService {
       await this.correctionService.findOne(correctionId);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new NotFoundException(`Correction with ID ${correctionId} not found`);
+        throw new ForbiddenException(`Correction with ID ${correctionId} not found or access denied`);
       }
       throw error;
     }
@@ -116,7 +117,7 @@ export class AICommentService {
 
   /**
    * Update an AI comment
-   * @param id AI Comment ID
+   * @param id AI Comment logical ID
    * @param updateAICommentDto Data for updating the AI comment
    * @returns Updated AI comment
    */
@@ -129,7 +130,7 @@ export class AICommentService {
     
     // Les vérifications d'accès sont maintenant gérées par le guard
     const updatedAIComment = await this.aiCommentModel
-      .findByIdAndUpdate(id, updateAICommentDto, { new: true })
+      .findOneAndUpdate({ id }, updateAICommentDto, { new: true })
       .exec();
       
     if (!updatedAIComment) {
@@ -141,8 +142,7 @@ export class AICommentService {
 
   /**
    * Remove an AI comment
-   * @param id AI Comment ID
-   * @returns Removed AI comment
+   * @param id AI Comment logical ID
    */
   async remove(id: string): Promise<void> {
     // Vérifier que le commentaire AI existe
@@ -150,7 +150,7 @@ export class AICommentService {
     
     // Les vérifications d'accès sont maintenant gérées par le guard
     const deletedAIComment = await this.aiCommentModel
-      .findByIdAndDelete(id)
+      .findOneAndDelete({ id })
       .exec();
       
     if (!deletedAIComment) {
@@ -160,7 +160,7 @@ export class AICommentService {
 
   /**
    * Remove all AI comments for a correction
-   * @param correctionId Correction ID
+   * @param correctionId Correction logical ID
    */
   async removeByCorrection(correctionId: string): Promise<void> {
     // Les vérifications d'accès sont maintenant gérées par le guard
@@ -169,24 +169,24 @@ export class AICommentService {
 
   /**
    * Check if a user has teacher access to a correction
-   * @param userId User ID
-   * @param correctionId Correction ID
+   * @param userEmail User Email
+   * @param correctionId Correction logical ID
    * @returns Boolean indicating if the user has teacher access
    */
-  async checkTeacherAccess(userId: string, correctionId: string): Promise<boolean> {
+  async checkTeacherAccess(userEmail: string, correctionId: string): Promise<boolean> {
     try {
       // Get the correction
       const correction = await this.correctionService.findOne(correctionId);
       
       // Si l'utilisateur est l'enseignant qui a créé la correction, il a accès
-      if (correction.correctedByEmail === userId) {
+      if (correction.correctedByEmail === userEmail) {
         return true;
       }
       
       // Vérifier si l'utilisateur est enseignant dans la classe associée
       const submission = await this.submissionService.findOne(correction.submissionId);
       const task = await this.taskService.findOne(submission.taskId);
-      const isTeacher = await this.membershipService.checkMembershipRole(userId, task.classId, MembershipRole.TEACHER);
+      const isTeacher = await this.membershipService.checkMembershipRole(userEmail, task.classId, MembershipRole.TEACHER);
       
       return isTeacher;
     } catch (error) {
@@ -199,11 +199,11 @@ export class AICommentService {
 
   /**
    * Check if a user has student access to a correction
-   * @param userId User ID
-   * @param correctionId Correction ID
+   * @param userEmail User Email
+   * @param correctionId Correction logical ID
    * @returns Boolean indicating if the user has student access
    */
-  async checkStudentAccess(userId: string, correctionId: string): Promise<boolean> {
+  async checkStudentAccess(userEmail: string, correctionId: string): Promise<boolean> {
     try {
       // Get the correction
       const correction = await this.correctionService.findOne(correctionId);
@@ -211,7 +211,7 @@ export class AICommentService {
       // Vérifier si l'utilisateur est l'étudiant propriétaire de la soumission
       const submission = await this.submissionService.findOne(correction.submissionId);
       
-      return submission.studentEmail === userId;
+      return submission.studentEmail === userEmail;
     } catch (error) {
       if (error instanceof NotFoundException) {
         return false;
@@ -221,8 +221,8 @@ export class AICommentService {
   }
 
   // Pour l'utilisation interne uniquement - récupère l'entité AIComment sans la convertir en DTO
-  private async findAICommentEntity(id: string): Promise<AIComment> {
-    const aiComment = await this.aiCommentModel.findById(id).exec();
+  private async findAICommentEntity(id: string): Promise<AIComment & { _id: any }> {
+    const aiComment = await this.aiCommentModel.findOne({ id }).exec();
     if (!aiComment) {
       throw new NotFoundException(`AI Comment with ID ${id} not found`);
     }

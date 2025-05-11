@@ -8,7 +8,8 @@ export class CreateAIAnnotationDto {
     example: 'CORR-2024-001'
   })
   @IsString()
-  correctionId: string;
+  @IsOptional()
+  correctionId?: string;
 
   @ApiProperty({
     description: 'ID of the page this AI annotation belongs to',

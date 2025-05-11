@@ -30,7 +30,8 @@ export class CreateAICommentDto {
     example: 'CORR-2024-001'
   })
   @IsString()
-  correctionId: string;
+  @IsOptional()
+  correctionId?: string;
 
   @ApiProperty({
     description: 'ID of the page in the submission where the AI comment is placed',

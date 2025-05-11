@@ -45,7 +45,7 @@ export class AIAnnotationService {
     // Vérifier que la correction existe
     const correction = await this.correctionService.findOne(createAIAnnotationDto.correctionId);
     if (!correction) {
-      throw new NotFoundException(`Correction with ID ${createAIAnnotationDto.correctionId} not found`);
+      throw new ForbiddenException(`Correction with ID ${createAIAnnotationDto.correctionId} not found or access denied`);
     }
 
     // Si createdByEmail n'est pas fourni, utiliser l'utilisateur courant ou "ai-system"
@@ -68,7 +68,7 @@ export class AIAnnotationService {
 
   /**
    * Trouve toutes les annotations IA liées à une correction
-   * @param correctionId L'ID de la correction
+   * @param correctionId L'ID logique de la correction
    * @returns Liste des annotations IA
    */
   async findByCorrection(correctionId: string): Promise<AIAnnotationResponseDto[]> {
@@ -77,31 +77,25 @@ export class AIAnnotationService {
   }
 
   /**
-   * Trouve une annotation IA par son ID
-   * @param id L'ID de l'annotation IA
+   * Trouve une annotation IA par son ID logique
+   * @param id L'ID logique de l'annotation IA
    * @returns L'annotation IA trouvée
    */
   async findById(id: string): Promise<AIAnnotationResponseDto> {
-    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
-    let aiAnnotation = await this.aiAnnotationModel.findOne({ id }).exec();
+    const aiAnnotation = await this.aiAnnotationModel.findOne({ id }).exec();
     if (!aiAnnotation) {
-      aiAnnotation = await this.aiAnnotationModel.findById(id).exec();
-    }
-    if (!aiAnnotation) {
-      throw new NotFoundException(`AI Annotation with logical ID or MongoDB ID '${id}' not found`);
+      throw new NotFoundException(`AI Annotation with ID '${id}' not found`);
     }
     return this.toResponseDto(aiAnnotation);
   }
 
   /**
    * Met à jour une annotation IA
-   * @param id L'ID de l'annotation IA à mettre à jour
+   * @param id L'ID logique de l'annotation IA à mettre à jour
    * @param updateAIAnnotationDto Les données de mise à jour
    * @returns L'annotation IA mise à jour
    */
   async update(id: string, updateAIAnnotationDto: UpdateAIAnnotationDto): Promise<AIAnnotationResponseDto> {
-    await this.findAIAnnotationEntity(id);
-
     // Valider que value est du JSON valide si présent
     if (updateAIAnnotationDto.value) {
       try {
@@ -111,22 +105,25 @@ export class AIAnnotationService {
       }
     }
 
-    const updatedAIAnnotation = await this.aiAnnotationModel.findByIdAndUpdate(
-      id,
+    const updatedAIAnnotation = await this.aiAnnotationModel.findOneAndUpdate(
+      { id },
       { $set: updateAIAnnotationDto },
       { new: true },
     ).exec();
+
+    if (!updatedAIAnnotation) {
+      throw new NotFoundException(`AI Annotation with ID ${id} not found`);
+    }
 
     return this.toResponseDto(updatedAIAnnotation);
   }
 
   /**
    * Supprime une annotation IA
-   * @param id L'ID de l'annotation IA à supprimer
+   * @param id L'ID logique de l'annotation IA à supprimer
    */
   async remove(id: string): Promise<void> {
-    await this.findAIAnnotationEntity(id);
-    const deletedAIAnnotation = await this.aiAnnotationModel.findByIdAndDelete(id).exec();
+    const deletedAIAnnotation = await this.aiAnnotationModel.findOneAndDelete({ id }).exec();
     if (!deletedAIAnnotation) {
       throw new NotFoundException(`AI Annotation with ID ${id} not found`);
     }
@@ -134,7 +131,7 @@ export class AIAnnotationService {
 
   // Pour l'utilisation interne uniquement - récupère l'entité AIAnnotation sans la convertir en DTO
   private async findAIAnnotationEntity(id: string): Promise<AIAnnotation> {
-    const aiAnnotation = await this.aiAnnotationModel.findById(id).exec();
+    const aiAnnotation = await this.aiAnnotationModel.findOne({ id }).exec();
     if (!aiAnnotation) {
       throw new NotFoundException(`AI Annotation with ID ${id} not found`);
     }
