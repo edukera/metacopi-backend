@@ -33,7 +33,7 @@ export class CommentService {
     commentDto.pageY = comment.pageY;
     commentDto.type = comment.type || 'note';
     commentDto.color = comment.color || '#FFD700';
-    commentDto.markdown = comment.isMarkdown || false;
+    commentDto.markdown = comment.markdown;
     commentDto.text = comment.text;
     commentDto.annotations = comment.annotations || [];
     commentDto.createdByEmail = comment.createdByEmail;

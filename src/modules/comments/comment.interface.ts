@@ -10,6 +10,7 @@ export interface Comment {
   createdByEmail: string;
   createdAt: Date;
   updatedAt: Date;
+  AISourceID?: string;
 }
 
 export interface CommentCreateParams {

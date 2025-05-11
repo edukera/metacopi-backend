@@ -100,10 +100,9 @@ export interface CommentSeedData {
   type: string;
   color: string;
   text: string;
-  markdownSource?: string;
-  isMarkdown: boolean;
-  pageY?: number;
-  annotations?: number[];
+  markdown: string;
+  pageY: number;
+  annotations: number[];
 }
 
 export interface AICommentSeedData {
@@ -114,8 +113,7 @@ export interface AICommentSeedData {
   type: string;
   color: string;
   text: string;
-  markdownSource?: string;
-  isMarkdown: boolean;
+  markdown?: string;
   pageY?: number;
   annotations?: number[];
 }

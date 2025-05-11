@@ -32,32 +32,21 @@ export class CreateCommentDto {
   @IsString()
   pageId: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Type of comment (e.g., highlight, note, annotation)',
     example: 'highlight',
     default: 'note'
   })
-  @IsOptional()
   @IsString()
-  type?: string;
+  type: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Color of the comment (hex code or named color)',
     example: '#FF5733',
     default: '#FFD700'
   })
-  @IsOptional()
   @IsString()
-  color?: string;
-
-  @ApiPropertyOptional({
-    description: 'Whether the comment text contains markdown formatting',
-    example: false,
-    default: false
-  })
-  @IsOptional()
-  @IsBoolean()
-  markdown?: boolean;
+  color: string;
 
   @ApiProperty({
     description: 'Text content of the comment',
@@ -66,15 +55,28 @@ export class CreateCommentDto {
   @IsString()
   text: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
+    description: 'Raw Markdown content, if different from plain text or if specific Markdown features are used',
+    example: 'This section needs **more detailed** explanation. See [doc](...)'
+  })
+  @IsString()
+  markdown: string;
+
+  @ApiProperty({
+    description: 'Vertical position of the comment on the page, if applicable',
+    example: 120.5
+  })
+  @IsNumber()
+  pageY: number;
+
+  @ApiProperty({
     description: 'Array of logical annotation IDs (not Mongo IDs) related to this comment',
     example: ['ANNOT-2024-001', 'ANNOT-2024-002'],
     type: [String]
   })
-  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  annotations?: string[];
+  annotations: string[];
 
   @ApiPropertyOptional({
     description: 'Email of the user who created the comment. If not provided, will use the current authenticated user.',
@@ -134,10 +136,10 @@ export class CommentResponseDto {
   color: string;
 
   @ApiProperty({
-    description: 'Whether the comment text contains markdown formatting',
-    example: false
+    description: 'Raw Markdown content, if different from plain text or if specific Markdown features are used',
+    example: 'This section needs **more detailed** explanation. See [doc](...)'
   })
-  markdown: boolean;
+  markdown: string;
 
   @ApiProperty({
     description: 'Text content of the comment',
