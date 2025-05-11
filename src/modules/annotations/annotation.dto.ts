@@ -4,13 +4,6 @@ import { IsValidJson } from './validators/is-valid-json.validator';
 
 export class CreateAnnotationDto {
   @ApiProperty({
-    description: 'Logical business ID of the correction associated with this annotation',
-    example: 'CORR-2024-001'
-  })
-  @IsString()
-  correctionId: string;
-
-  @ApiProperty({
     description: 'ID of the page this annotation belongs to',
     example: 'p1'
   })
@@ -27,14 +20,6 @@ export class CreateAnnotationDto {
   @Validate(IsValidJson)
   value: string;
 
-  @ApiPropertyOptional({
-    description: 'Email of the user who created the annotation. If not provided, will use the current authenticated user.',
-    example: 'user@example.com'
-  })
-  @IsOptional()
-  @IsString()
-  createdByEmail?: string;
-
   @ApiProperty({
     description: 'Logical business identifier for the annotation (must be unique)',
     example: 'ANN-2024-001',
@@ -42,6 +27,23 @@ export class CreateAnnotationDto {
   })
   @IsString()
   id: string;
+}
+
+export class CreateAnnotationWithCorrectionIdDto extends CreateAnnotationDto {
+  @ApiProperty({
+    description: 'Logical business ID of the correction associated with this annotation',
+    example: 'CORR-2024-001'
+  })
+  @IsString()
+  correctionId: string;
+
+  @ApiPropertyOptional({
+    description: 'Email of the user who created the annotation. If not provided, will use the current authenticated user.',
+    example: 'user@example.com'
+  })
+  @IsOptional()
+  @IsString()
+  createdByEmail?: string;
 }
 
 export class UpdateAnnotationDto {

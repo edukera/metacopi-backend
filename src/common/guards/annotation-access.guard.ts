@@ -3,6 +3,7 @@ import { MembershipService } from '../../modules/memberships/membership.service'
 import { TaskService } from '../../modules/tasks/task.service';
 import { SubmissionService } from '../../modules/submissions/submission.service';
 import { CorrectionService } from '../../modules/corrections/correction.service';
+import { AnnotationService } from '../../modules/annotations/annotation.service';
 import { UserRole } from '../../modules/users/user.schema';
 import { MembershipRole } from '../../modules/memberships/membership.schema';
 
@@ -15,6 +16,7 @@ export class AnnotationAccessGuard implements CanActivate {
     private readonly taskService: TaskService,
     private readonly submissionService: SubmissionService,
     private readonly correctionService: CorrectionService,
+    private readonly annotationService: AnnotationService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -35,21 +37,37 @@ export class AnnotationAccessGuard implements CanActivate {
     }
     
     // Extraire les paramètres pertinents
-    const correctionId = request.params.correctionId; // ID de la correction dans l'URL
+    const correctionId = request.params.correctionId; // ID logique de la correction dans l'URL
+    const annotationId = request.params.annotationId; // ID logique de l'annotation dans l'URL
     
-    this.logger.debug(`Access check: userEmail=${userEmail}, method=${method}, correctionId=${correctionId}`);
+    this.logger.debug(`Access check: userEmail=${userEmail}, method=${method}, correctionId=${correctionId}, annotationId=${annotationId}`);
     
-    // Vérifier l'accès à la correction associée aux annotations
+    // Cas 1: Accès à une annotation spécifique par ID logique
+    if (annotationId) {
+      // Si nous avons besoin de récupérer l'annotation pour d'autres vérifications
+      const annotation = await this.annotationService.findById(annotationId);
+      
+      // Si l'utilisateur est l'auteur de l'annotation
+      if (annotation.createdByEmail === userEmail) {
+        return true;
+      }
+      
+      // Sinon, vérifier l'accès à la correction associée
+      return this.checkCorrectionAccess(userEmail, annotation.correctionId, method);
+    }
+    
+    // Cas 2: Accès à toutes les annotations d'une correction
     if (correctionId) {
       return this.checkCorrectionAccess(userEmail, correctionId, method);
     }
     
     // Si aucun identifiant n'est fourni, refuser l'accès
-    throw new ForbiddenException('Missing correction identifier');
+    throw new ForbiddenException('Missing correction or annotation identifier');
   }
   
   // Vérifie l'accès à une correction spécifique
   private async checkCorrectionAccess(userEmail: string, correctionId: string, method: string): Promise<boolean> {
+    // Rechercher la correction par ID logique
     const correction = await this.correctionService.findOne(correctionId);
     
     // 1. Si l'utilisateur est l'auteur de la correction
