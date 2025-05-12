@@ -291,11 +291,14 @@
       "pageId": "p1",
       "type": "warning",
       "color": "#008000",
-      "text": "Bon travail !",
-      "markdown": "Bon travail !",
-      "pageY": 3637.10,
-      "annotations": ["a1ffb016-7477-4a11-816e-eeaee2c0b80c"],
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "markdown": "✅ Bon travail !",
+      "text": "✅ Bon travail !",
+      "annotations": [
+        "a1ffb016-7477-4a11-816e-eeaee2c0b80c"
+      ],
+      "pageY": 3637.1,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     },
     {
       "id": "a2ed232b-d32f-4eee-9b85-df106c7b84bc",
@@ -303,11 +306,14 @@
       "pageId": "p2",
       "type": "warning",
       "color": "#008000",
-      "text": "Bon travail !",
-      "markdown": "Bon travail !",
-      "pageY": 1042.34,
-      "annotations": ["b7246ef0-f95a-44e5-8e33-0dcc0e341666"],
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "markdown": "✅ Bon travail !",
+      "text": "✅ Bon travail !",
+      "annotations": [
+        "b7246ef0-f95a-44e5-8e33-0dcc0e341666"
+      ],
+      "pageY": 920.3639808153476,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     },
     {
       "id": "770214bf-269d-4292-91ca-c7405d2544ff",
@@ -315,11 +321,14 @@
       "pageId": "p2",
       "type": "warning",
       "color": "#FF0000",
-      "text": "pas nécessairement ! x pourrait être négatif ...",
-      "markdown": "pas nécessairement ! x pourrait être négatif ...",
-      "pageY": 3958.68,
-      "annotations": ["94883fbc-fde6-4db9-bda1-6443480a1ad7"],
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "markdown": "❌ pas nécessairement ! x pourrait être négatif ...",
+      "text": "❌ pas nécessairement ! x pourrait être négatif ...",
+      "annotations": [
+        "94883fbc-fde6-4db9-bda1-6443480a1ad7"
+      ],
+      "pageY": 3927.747678882252,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     },
     {
       "id": "e2ed71c0-ef7f-4556-9c76-f3f9e75752f9",
@@ -327,11 +336,14 @@
       "pageId": "p3",
       "type": "warning",
       "color": "#1E3A8A",
-      "text": "<=> y = 1/y <=> y^2=1 <=> y=1 ou y=-1\nIl faut ensuite reprendre ces valeurs dans l'autre équation",
-      "markdown": "<=> y = 1/y <=> y^2=1 <=> y=1 ou y=-1\nIl faut ensuite reprendre ces valeurs dans l'autre équation",
+      "markdown": "ℹ️ <=> y = 1/y <=> y^2=1 <=> y=1 ou y=-1\nIl faut ensuite reprendre ces valeurs dans l'autre équation",
+      "text": "ℹ️ <=> y = 1/y <=> y^2=1 <=> y=1 ou y=-1\nIl faut ensuite reprendre ces valeurs dans l'autre équation",
+      "annotations": [
+        "cf7c4b8c-2b2b-4a45-8445-faa2ed59de01"
+      ],
       "pageY": 1580.14,
-      "annotations": ["cf7c4b8c-2b2b-4a45-8445-faa2ed59de01"],
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     },
     {
       "id": "02d36622-60cd-4346-9b4d-831ce5462a24",
@@ -339,11 +351,14 @@
       "pageId": "p3",
       "type": "warning",
       "color": "#008000",
-      "text": "bien",
-      "markdown": "bien",
+      "markdown": "✅ bien",
+      "text": "✅ bien",
+      "annotations": [
+        "76efa95d-fd0d-410b-a219-8d6a5e7ae8f8"
+      ],
       "pageY": 3387.61,
-      "annotations": ["76efa95d-fd0d-410b-a219-8d6a5e7ae8f8"],
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     },
     {
       "id": "571a48a8-fe73-4a3c-a718-f534f7e97a56",
@@ -351,11 +366,59 @@
       "pageId": "p4",
       "type": "warning",
       "color": "#ffa500",
-      "text": "car ces nombres sont positifs",
-      "markdown": "car ces nombres sont positifs",
+      "markdown": "⚠️ car ces nombres sont positifs",
+      "text": "⚠️ car ces nombres sont positifs",
+      "annotations": [
+        "7e4e3884-09e5-4a8b-b1b0-7116658e1b35"
+      ],
       "pageY": 1663.31,
-      "annotations": ["7e4e3884-09e5-4a8b-b1b0-7116658e1b35"],
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
+      "id": "62fec5fc-b41e-4449-a5d3-aaeacadeaf2a",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p1",
+      "type": "warning",
+      "color": "#ffa500",
+      "markdown": "⚠️ deux fois la même chose ?",
+      "text": "⚠️ deux fois la même chose ?",
+      "annotations": [
+        "5c7afa9b-a232-469a-93c1-ac553482cda7"
+      ],
+      "pageY": 2608.1265546285185,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
+      "id": "9a2c1191-b8aa-4548-adbe-bbe7f2460c68",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "type": "warning",
+      "color": "#008000",
+      "markdown": "✅ Bon travail !",
+      "text": "✅ Bon travail !",
+      "annotations": [
+        "d3138712-b3ca-4bda-b5d9-65bbff7032f3"
+      ],
+      "pageY": 2855.347721822542,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
+      "id": "978e0df6-edfd-49ec-b019-4d29b67f0c3b",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "type": "warning",
+      "color": "#ffa500",
+      "markdown": "⚠️ car ces nombres sont positifs",
+      "text": "⚠️ car ces nombres sont positifs",
+      "annotations": [
+        "8bd77ba5-7fef-4a65-977e-d2086ab3427f"
+      ],
+      "pageY": 2522.685851318945,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     }
   ],
   "annotations": [
@@ -372,95 +435,218 @@
     },
     {
       "id": "a1ffb016-7477-4a11-816e-eeaee2c0b80c",
-      "pageId": "p1",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p1",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
       "type": "zone",
-      "position": { "x": 1055.31, "y": 3637.10 },
+      "position": {
+        "x": 1055.31,
+        "y": 3637.1
+      },
       "color": "#008000",
       "width": 1009.88,
-      "height": 216.23,
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "height": 216.23
     },
     {
       "id": "7dfab222-c10b-47d4-abaa-272398d8982c",
-      "pageId": "p1",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p1",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
       "type": "line",
       "points": [
-        { "x": 1404.89, "y": 3365.43 },
-        { "x": 1737.81, "y": 3271.18 }
+        {
+          "x": 1404.89,
+          "y": 3365.43
+        },
+        {
+          "x": 1737.81,
+          "y": 3271.18
+        }
       ],
       "color": "#008000",
-      "strokeWidth": 4,
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "strokeWidth": 4
     },
     {
       "id": "b7246ef0-f95a-44e5-8e33-0dcc0e341666",
-      "pageId": "p2",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p2",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
       "type": "zone",
-      "position": { "x": 1854.34, "y": 1042.34 },
+      "position": {
+        "x": 1976.4135219977495,
+        "y": 920.3639808153476
+      },
       "color": "#008000",
       "width": 749.09,
-      "height": 205.14,
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "height": 205.14
     },
     {
       "id": "94883fbc-fde6-4db9-bda1-6443480a1ad7",
-      "pageId": "p2",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p2",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
       "type": "zone",
-      "position": { "x": 1260.62, "y": 3958.68 },
+      "position": {
+        "x": 1550.860956260517,
+        "y": 3927.747678882252
+      },
       "color": "#FF0000",
-      "width": 205.31,
-      "height": 232.86,
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "width": 1639.0412004418206,
+      "height": 372.3457453529764
     },
     {
       "id": "cf7c4b8c-2b2b-4a45-8445-faa2ed59de01",
-      "pageId": "p3",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p3",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
       "type": "zone",
-      "position": { "x": 1635.29, "y": 1580.14 },
+      "position": {
+        "x": 1635.29,
+        "y": 1580.14
+      },
       "color": "#1E3A8A",
       "width": 688.05,
-      "height": 238.41,
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "height": 238.41
     },
     {
       "id": "76efa95d-fd0d-410b-a219-8d6a5e7ae8f8",
-      "pageId": "p3",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p3",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
       "type": "zone",
-      "position": { "x": 858.46, "y": 3387.61 },
+      "position": {
+        "x": 858.46,
+        "y": 3387.61
+      },
       "color": "#008000",
       "width": 1847.75,
-      "height": 293.85,
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "height": 293.85
     },
     {
       "id": "df84c4fa-87c2-453f-a029-1b4854da0d12",
-      "pageId": "p3",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p3",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
       "type": "line",
       "points": [
-        { "x": 1973.77, "y": 3293.35 },
-        { "x": 2273.40, "y": 3132.57 }
+        {
+          "x": 1973.77,
+          "y": 3293.35
+        },
+        {
+          "x": 2273.4,
+          "y": 3132.57
+        }
       ],
       "color": "#008000",
-      "strokeWidth": 3,
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "strokeWidth": 3
     },
     {
       "id": "7e4e3884-09e5-4a8b-b1b0-7116658e1b35",
-      "pageId": "p4",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
       "type": "zone",
-      "position": { "x": 697.54, "y": 1663.31 },
+      "position": {
+        "x": 697.54,
+        "y": 1663.31
+      },
       "color": "#ffa500",
       "width": 1930.98,
-      "height": 510.08,
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "height": 510.08
+    },
+    {
+      "id": "5c7afa9b-a232-469a-93c1-ac553482cda7",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p1",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
+      "type": "zone",
+      "position": {
+        "x": 853.6120418750417,
+        "y": 2608.1265546285185
+      },
+      "color": "#ffa500",
+      "width": 712.0176273460062,
+      "height": 477.51580053710677
+    },
+    {
+      "id": "d3138712-b3ca-4bda-b5d9-65bbff7032f3",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
+      "type": "zone",
+      "position": {
+        "x": 1696.3277660844947,
+        "y": 2855.347721822542
+      },
+      "color": "#008000",
+      "width": 638.1115922609633,
+      "height": 327.1175059952038
+    },
+    {
+      "id": "8bd77ba5-7fef-4a65-977e-d2086ab3427f",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
+      "type": "zone",
+      "position": {
+        "x": 1640.839801540063,
+        "y": 2522.685851318945
+      },
+      "color": "#ffa500",
+      "width": 1231.8328128863814,
+      "height": 327.1175059952038
+    },
+    {
+      "id": "83d48888-12fd-4da5-9f47-8cb44eae2c05",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p2",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
+      "type": "line",
+      "points": [
+        {
+          "x": 1296.8144213645871,
+          "y": 3953.131894484413
+        },
+        {
+          "x": 1435.534332725666,
+          "y": 4102.829736211032
+        }
+      ],
+      "color": "#FF0000",
+      "strokeWidth": 2
+    },
+    {
+      "id": "42799600-de57-4446-a835-0c490fe15325",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p2",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
+      "type": "line",
+      "points": [
+        {
+          "x": 1319.0096071823598,
+          "y": 4086.1966426858517
+        },
+        {
+          "x": 1424.4367398167797,
+          "y": 3964.2206235011995
+        }
+      ],
+      "color": "#FF0000",
+      "strokeWidth": 2
     }
   ],
   "ai-comments": [
@@ -491,6 +677,38 @@
       "annotations": ["annot_ai_2"],
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
+    },
+    {
+      "id": "7020c621-a444-4a6f-ae94-b41492237560",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "authorEmail": "jean.dupont@monlycee.net",
+      "pageId": "p2",
+      "type": "warning",
+      "color": "#ffa500",
+      "text": "✅ L'équivalence que tu écris est correcte :  \n\nx^3 + x y^2 + x = 0 \\quad \\Leftrightarrow \\quad x = 0  \n\nEn effet, on peut factoriser :  \n\nx^3 + x y^2 + x = x(x^2 + y^2 + 1)  \n\net puisque x^2 + y^2 + 1 > 0 pour tous x, y \\in \\mathbb{R}, le produit est nul si et seulement si x = 0.\n\n⚠️ En revanche, la justification \"somme de nombres positifs donc ils doivent être nuls\" est incorrecte ici, car les termes de ton expression (comme x^3 ou x) peuvent être négatifs si x < 0.\n\n➡️ Pense à vérifier les signes des termes ou à factoriser lorsque tu veux conclure sur une équation nulle.",
+      "markdown": "✅ **L'équivalence que tu écris est correcte** :\n\n$x^3 + x y^2 + x = 0 \\quad \\Leftrightarrow \\quad x = 0$\n\nEn effet, on peut factoriser :\n\n$x^3 + x y^2 + x = x(x^2 + y^2 + 1)$\n\net puisque $x^2 + y^2 + 1 > 0$ pour tous $x, y \\in \\mathbb{R}$, le produit est nul **si et seulement si** $x = 0$.\n\n⚠️ En revanche, **la justification \"somme de nombres positifs donc ils doivent être nuls\" est incorrecte** ici, car les termes de ton expression (comme $x^3$ ou $x$) **peuvent être négatifs** si $x < 0$.\n\n➡️ **Pense à vérifier les signes des termes** ou à factoriser lorsque tu veux conclure sur une équation nulle.",
+      "annotations": [
+        "b9a1e5f9-71d5-4947-b19d-610f86a9d92b"
+      ],
+      "pageY": 3892.1438848920866,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
+      "id": "c3568f45-cc77-487e-8c3d-8b3ff4bd8a48",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "authorEmail": "jean.dupont@monlycee.net",
+      "pageId": "p4",
+      "type": "warning",
+      "color": "#FF0000",
+      "text": "❌ Attention : il faut préciser que z est différent de 0 car l'expression 1 / z n'est pas définie si z = 0.",
+      "markdown": "❌ Attention : il faut préciser que z est différent de 0 car l'expression 1 / z n'est pas définie si z = 0.",
+      "annotations": [
+        "6ab0f1b9-9e30-4838-bf27-f3cf22c56cbb"
+      ],
+      "pageY": 2167.8465227817746,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     }
   ],
   "ai-annotations": [
@@ -515,6 +733,30 @@
       "position": { "x": 300, "y": 300 },
       "width": 100,
       "height": 100,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
+      "id": "b9a1e5f9-71d5-4947-b19d-610f86a9d92b",
+      "pageId": "p2",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "type":"zone",
+      "position":{"x":1912.7308278077778,"y":3892.1438848920866},
+      "color":"#ffa500",
+      "width":1342.8087419752449,
+      "height":460.1822541966426,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
+      "id": "6ab0f1b9-9e30-4838-bf27-f3cf22c56cbb",
+      "pageId": "p4",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "type":"zone",
+      "position":{"x":658.7028291036236,"y":2167.8465227817746},
+      "color":"#FF0000",
+      "width":1381.650317156347,
+      "height":232.86330935251817,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     }
