@@ -39,7 +39,7 @@ export class AuditLogInterceptor implements NestInterceptor {
 
     const request = context.switchToHttp().getRequest<Request>();
     // Use the user ID stored in JWT by NestJS
-    const userId = request.user ? (request.user as any).sub : null;
+    const userId = request.user ? (request.user as Record<string, any>).sub : null;
 
     // Determining the targetId:
     // 1. Use the one provided in metadata (if present)

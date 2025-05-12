@@ -20,7 +20,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const { method, path, body, query, params, ip, headers } = request;
     const requestId = uuidv4();
     const userAgent = headers['user-agent'] || 'unknown';
-    const userId = request.user?.['id'] || 'anonymous';
+    const userId = request.user ? request.user['id'] : 'anonymous';
 
     // Add a unique identifier to the request
     request['requestId'] = requestId;

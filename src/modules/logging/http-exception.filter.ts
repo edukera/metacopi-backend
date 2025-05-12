@@ -26,7 +26,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const requestId = request['requestId'] || 'unknown';
-    const userId = request.user?.['id'] || 'anonymous';
+    const userId = request.user ? request.user['id'] : 'anonymous';
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'An internal error has occurred';

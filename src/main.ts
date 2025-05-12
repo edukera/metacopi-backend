@@ -1,17 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const logger = new Logger('Main');
+  const isProduction = process.env.NODE_ENV === 'production';
 
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug'],
   });
-  const configService = app.get(ConfigService);
-  const port = configService.get<number>('port');
   
   // Ajouter la validation globale
   app.useGlobalPipes(new ValidationPipe({
@@ -53,9 +51,14 @@ async function bootstrap() {
 
   // CORS
   app.enableCors();
-  
-  await app.listen(port);
-  logger.log(`Application is running on: http://localhost:${port}`);
-  logger.log(`API documentation available at: http://localhost:${port}/api-docs`);
+
+  const port = parseInt(process.env.PORT || '3002', 10);
+  const host = isProduction ? '0.0.0.0' : 'localhost';
+
+  await app.listen(port, host);
+  logger.log(`Application is running on: http://${host}:${port}`);
+  if (!isProduction) {
+    logger.log(`API documentation available at: http://${host}:${port}/api-docs`);
+  }
 }
 bootstrap(); 
