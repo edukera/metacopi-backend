@@ -2,10 +2,11 @@ import { Injectable, NotFoundException, BadRequestException, UnauthorizedExcepti
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Class } from './class.schema';
-import { CreateClassDto, UpdateClassDto, ClassResponseDto } from './class.dto';
+import { CreateClassDto, UpdateClassDto, ClassResponseDto, ClassUserResponseDto } from './class.dto';
 import { MembershipService } from '../memberships/membership.service';
 import { MembershipRole } from '../memberships/membership.schema';
 import { REQUEST } from '@nestjs/core';
+import { UserService } from '../users/user.service';
 
 @Injectable()
 export class ClassService {
@@ -14,10 +15,11 @@ export class ClassService {
   constructor(
     @InjectModel(Class.name) private classModel: Model<Class>,
     private membershipService: MembershipService,
+    private userService: UserService,
     @Inject(REQUEST) private request,
   ) {}
 
-  // Convertir un objet Class en ClassResponseDto
+  // Convert a Class object to ClassResponseDto
   private toResponseDto(classEntity: Class): ClassResponseDto {
     const classDto = new ClassResponseDto();
     classDto.id = classEntity.id;
@@ -34,7 +36,7 @@ export class ClassService {
     return classDto;
   }
 
-  // Convertir une liste d'objets Class en liste de ClassResponseDto
+  // Convert a list of Class objects to a list of ClassResponseDto
   private toResponseDtoList(classes: Class[]): ClassResponseDto[] {
     return classes.map(classEntity => this.toResponseDto(classEntity));
   }
@@ -73,7 +75,7 @@ export class ClassService {
       // For normal users, get the classes they are associated with
       const memberships = await this.membershipService.findByUserEmail(email);
       const classIds = memberships.map(m => m.classId);
-      // Utiliser le champ logique id (string) pour la jointure
+      // Use the logical ID field (string) for the join
       classes = await this.classModel.find({ id: { $in: classIds }, archived }).exec();
     }
 
@@ -81,7 +83,7 @@ export class ClassService {
   }
 
   async findOne(id: string): Promise<ClassResponseDto> {
-    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    // First search by logical ID, then by MongoDB _id if not found
     let classEntity = await this.classModel.findOne({ id }).exec();
     if (!classEntity && Types.ObjectId.isValid(id)) {
       classEntity = await this.classModel.findById(id).exec();
@@ -101,7 +103,7 @@ export class ClassService {
   }
 
   async update(id: string, updateClassDto: UpdateClassDto): Promise<ClassResponseDto> {
-    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    // First search by logical ID, then by MongoDB _id if not found
     let classEntity = await this.classModel.findOne({ id }).exec();
     if (!classEntity && Types.ObjectId.isValid(id)) {
       classEntity = await this.classModel.findById(id).exec();
@@ -114,7 +116,7 @@ export class ClassService {
   }
 
   async remove(id: string): Promise<void> {
-    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    // First search by logical ID, then by MongoDB _id if not found
     let classEntity = await this.classModel.findOne({ id }).exec();
     if (!classEntity && Types.ObjectId.isValid(id)) {
       classEntity = await this.classModel.findById(id).exec();
@@ -126,12 +128,12 @@ export class ClassService {
     if (!result) {
       throw new NotFoundException(`Class with ID ${id} not found`);
     }
-    // Delete all memberships associated with this class
-    await this.membershipService.deleteByClass(classEntity._id.toString());
+    // Delete all memberships associated with this class - use logical ID
+    await this.membershipService.deleteByClass(classEntity.id);
   }
 
   async archive(id: string): Promise<ClassResponseDto> {
-    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    // First search by logical ID, then by MongoDB _id if not found
     let classEntity = await this.classModel.findOne({ id }).exec();
     if (!classEntity && Types.ObjectId.isValid(id)) {
       classEntity = await this.classModel.findById(id).exec();
@@ -145,7 +147,7 @@ export class ClassService {
   }
 
   async regenerateCode(id: string): Promise<{ code: string }> {
-    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    // First search by logical ID, then by MongoDB _id if not found
     let classEntity = await this.classModel.findOne({ id }).exec();
     if (!classEntity && Types.ObjectId.isValid(id)) {
       classEntity = await this.classModel.findById(id).exec();
@@ -162,7 +164,7 @@ export class ClassService {
 
   async joinClass(id: string, code: string): Promise<void> {
     const email = this.request.user.email;
-    // Recherche d'abord par id logique, puis par _id MongoDB si non trouvé
+    // First search by logical ID, then by MongoDB _id if not found
     let classEntity = await this.classModel.findOne({ id }).exec();
     if (!classEntity && Types.ObjectId.isValid(id)) {
       classEntity = await this.classModel.findById(id).exec();
@@ -176,16 +178,68 @@ export class ClassService {
     if (classEntity.archived) {
       throw new BadRequestException('This class is archived and no longer accepts new members');
     }
-    // Check if the user is already a member of this class
-    const existingMembership = await this.membershipService.findByUserAndClass(email, classEntity._id.toString());
+    // Check if the user is already a member of this class - use logical ID
+    const existingMembership = await this.membershipService.findByUserAndClass(email, classEntity.id);
     if (existingMembership) {
       throw new BadRequestException('You are already a member of this class');
     }
-    // Create membership with the student role by default
+    // Create membership with the student role by default - use logical ID
     await this.membershipService.create({
       email,
-      classId: classEntity._id.toString(),
+      classId: classEntity.id,
       role: MembershipRole.STUDENT,
     });
+  }
+
+  async getUsersByClassId(id: string, email?: string): Promise<ClassUserResponseDto[]> {
+    this.logger.log(`Getting users for class ID: ${id}${email ? `, filtered by email: ${email}` : ''}`);
+    
+    // Check if class exists
+    let classEntity = await this.classModel.findOne({ id }).exec();
+    if (!classEntity && Types.ObjectId.isValid(id)) {
+      classEntity = await this.classModel.findById(id).exec();
+    }
+    if (!classEntity) {
+      throw new NotFoundException(`Class with logical ID or MongoDB ID '${id}' not found`);
+    }
+
+    // Get all memberships for this class - use the logical ID instead of MongoDB ID
+    let memberships = await this.membershipService.findByClass(classEntity.id);
+    
+    // Filter memberships by email if provided
+    if (email) {
+      memberships = memberships.filter(membership => 
+        membership.email.toLowerCase().includes(email.toLowerCase())
+      );
+    }
+    
+    // Map memberships to ClassUserResponseDto
+    const userResponses: ClassUserResponseDto[] = [];
+    
+    for (const membership of memberships) {
+      try {
+        // Get complete user information using UserService
+        const user = await this.userService.findByEmail(membership.email);
+        
+        const userResponse = new ClassUserResponseDto();
+        
+        // User info
+        userResponse.email = user.email;
+        userResponse.firstName = user.firstName;
+        userResponse.lastName = user.lastName;
+        userResponse.avatarUrl = user.avatarUrl;
+        
+        // Membership info
+        userResponse.role = membership.role;
+        userResponse.joinedAt = membership.joinedAt;
+        
+        userResponses.push(userResponse);
+      } catch (error) {
+        this.logger.error(`Error getting user data for ${membership.email}: ${error.message}`, error.stack);
+        // Continue with the next user
+      }
+    }
+    
+    return userResponses;
   }
 } 

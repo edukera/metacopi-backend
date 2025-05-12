@@ -190,4 +190,43 @@ export class ClassResponseDto {
     example: '2023-01-01T12:00:00Z'
   })
   updatedAt: Date;
+}
+
+export class ClassUserResponseDto {
+  @ApiProperty({
+    description: "User email",
+    example: "user@example.com"
+  })
+  email: string;
+
+  @ApiProperty({
+    description: "User first name",
+    example: "John"
+  })
+  firstName: string;
+
+  @ApiProperty({
+    description: "User last name",
+    example: "Doe"
+  })
+  lastName: string;
+
+  @ApiPropertyOptional({
+    description: "User avatar URL",
+    example: "https://example.com/avatar.jpg"
+  })
+  avatarUrl?: string;
+
+  @ApiProperty({
+    description: "User role in the class",
+    example: "teacher",
+    enum: ['teacher', 'student']
+  })
+  role: string;
+
+  @ApiProperty({
+    description: "Membership creation date",
+    example: "2023-01-01T12:00:00Z"
+  })
+  joinedAt: Date;
 } 

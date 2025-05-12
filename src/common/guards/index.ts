@@ -9,3 +9,4 @@ export * from './annotation-access.guard';
 export * from './membership-access.guard';
 export * from './class-access.guard';
 export * from './ai-comment-access.guard';
+export * from './user-access.guard';

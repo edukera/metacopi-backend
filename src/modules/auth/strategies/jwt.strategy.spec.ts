@@ -35,7 +35,7 @@ describe('JwtStrategy', () => {
   };
 
   const mockUserService = {
-    findById: jest.fn(),
+    findByEmail: jest.fn(),
   };
 
   const mockConfigService = {
@@ -77,13 +77,13 @@ describe('JwtStrategy', () => {
         email: 'test@example.com',
         role: 'user',
       };
-      mockUserService.findById.mockResolvedValue(mockUser);
+      mockUserService.findByEmail.mockResolvedValue(mockUser);
       
       // Act
       const result = await jwtStrategy.validate(payload);
       
       // Assert
-      expect(userService.findById).toHaveBeenCalledWith('user-id-1');
+      expect(userService.findByEmail).toHaveBeenCalledWith('test@example.com');
       expect(result).toEqual(mockUserWithoutPassword);
     });
 
@@ -91,16 +91,16 @@ describe('JwtStrategy', () => {
       // Arrange
       const payload: TokenPayload = {
         sub: 'non-existent-id',
-        email: 'test@example.com',
+        email: 'nonexistent@example.com',
         role: 'user',
       };
-      mockUserService.findById.mockResolvedValue(null);
+      mockUserService.findByEmail.mockResolvedValue(null);
       
       // Act & Assert
       await expect(jwtStrategy.validate(payload))
         .rejects.toThrow(UnauthorizedException);
       
-      expect(userService.findById).toHaveBeenCalledWith('non-existent-id');
+      expect(userService.findByEmail).toHaveBeenCalledWith('nonexistent@example.com');
     });
   });
 }); 

@@ -59,8 +59,31 @@ export class MongoUserRepository implements UserRepository {
     return updatedUser ? this.mapToUser(updatedUser) : null;
   }
 
+  async updateByEmail(email: string, updateUserDto: UpdateUserDto): Promise<User | null> {
+    this.logger.debug(`Updating user by email: ${email}`);
+    const updatedData: any = { ...updateUserDto };
+    
+    if (updateUserDto.password) {
+      updatedData.password = await bcrypt.hash(updateUserDto.password, 10);
+    }
+    
+    const updatedUser = await this.userModel
+      .findOneAndUpdate({ email }, updatedData, { new: true })
+      .exec();
+    
+    this.logger.debug(`User with email ${email} updated: ${!!updatedUser}`);
+    return updatedUser ? this.mapToUser(updatedUser) : null;
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.userModel.deleteOne({ _id: id }).exec();
+    return result.deletedCount > 0;
+  }
+
+  async deleteByEmail(email: string): Promise<boolean> {
+    this.logger.debug(`Deleting user by email: ${email}`);
+    const result = await this.userModel.deleteOne({ email }).exec();
+    this.logger.debug(`User with email ${email} deleted: ${result.deletedCount > 0}`);
     return result.deletedCount > 0;
   }
 

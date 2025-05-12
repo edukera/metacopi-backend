@@ -8,6 +8,9 @@ const credentials = {
   password: 'Teacher123!'
 };
 
+const classId = 'MATH_1ere_03'
+const testEmail = 'alice.gribouille@monlycee.net';
+
 // URL de base de l'API (à ajuster selon votre environnement)
 const API_BASE_URL = 'http://localhost:3002'; 
 
@@ -33,26 +36,12 @@ async function main() {
       }
     };
     
-    // 2. Récupérer les classes de l'enseignant
-    console.log('Récupération des classes...');
-    const classesResponse = await axios.get(`${API_BASE_URL}/classes`, authHeaders);
+    console.log(`\nUtilisation directe du classId: ${classId}`);
     
-    if (!classesResponse.data || !classesResponse.data.length) {
-      throw new Error('Aucune classe trouvée');
-    }
+    // 1. Test sans filtre - récupérer tous les utilisateurs
+    console.log(`\n=== TEST 1: Récupération de tous les utilisateurs de la classe avec ID: ${classId} ===`);
     
-    const firstClass = classesResponse.data[0];
-    const classId = firstClass._id || firstClass.id;
-    
-    if (!classId) {
-      throw new Error('Impossible de trouver l\'ID de la classe');
-    }
-    
-    console.log(`\nClasse sélectionnée: "${firstClass.name}" (ID: ${classId})`);
-    
-    // 3. Récupérer les utilisateurs de la classe
-    console.log(`\nRécupération des utilisateurs de la classe ${firstClass.name}...`);
-    const usersResponse = await axios.get(`${API_BASE_URL}/users/class/${classId}`, authHeaders);
+    const usersResponse = await axios.get(`${API_BASE_URL}/classes/${classId}/users`, authHeaders);
     
     // Afficher les utilisateurs récupérés
     console.log('Utilisateurs récupérés avec succès:');
@@ -61,10 +50,10 @@ async function main() {
     // Afficher un résumé
     if (usersResponse.data && usersResponse.data.length) {
       const users = usersResponse.data;
-      const teachers = users.filter(user => user.membershipRole === 'teacher');
-      const students = users.filter(user => user.membershipRole === 'student');
+      const teachers = users.filter(user => user.role === 'teacher');
+      const students = users.filter(user => user.role === 'student');
       
-      console.log(`\nRésumé: ${teachers.length} enseignant(s) et ${students.length} élève(s) dans la classe "${firstClass.name}"`);
+      console.log(`\nRésumé: ${teachers.length} enseignant(s) et ${students.length} élève(s) dans la classe "${classId}"`);
       
       // Afficher les noms des utilisateurs avec leur rôle
       console.log('\nListe des utilisateurs:');
@@ -72,18 +61,55 @@ async function main() {
       if (teachers.length > 0) {
         console.log('\nEnseignants:');
         teachers.forEach((teacher, index) => {
-          console.log(`${index + 1}. ${teacher.firstName} ${teacher.lastName} (${teacher.email})`);
+          console.log(`${index + 1}. ${`${teacher.firstName} ${teacher.lastName}`} (${teacher.email})`);
         });
       }
       
       if (students.length > 0) {
         console.log('\nÉlèves:');
         students.forEach((student, index) => {
-          console.log(`${index + 1}. ${student.firstName} ${student.lastName} (${student.email})`);
+          console.log(`${index + 1}. ${`${student.firstName} ${student.lastName}`} (${student.email})`);
         });
       }
     } else {
       console.log('\nAucun utilisateur trouvé dans cette classe.');
+    }
+    
+    // 2. Test avec filtre par email
+    console.log(`\n\n=== TEST 2: Récupération des utilisateurs de la classe avec filtre email: ${testEmail} ===`);
+    
+    const filteredUsersResponse = await axios.get(`${API_BASE_URL}/classes/${classId}/users?email=${encodeURIComponent(testEmail)}`, authHeaders);
+    
+    // Afficher les utilisateurs filtrés récupérés
+    console.log('Utilisateurs filtrés récupérés avec succès:');
+    console.log(JSON.stringify(filteredUsersResponse.data, null, 2));
+    
+    // Afficher un résumé pour les résultats filtrés
+    if (filteredUsersResponse.data && filteredUsersResponse.data.length) {
+      const filteredUsers = filteredUsersResponse.data;
+      const filteredTeachers = filteredUsers.filter(user => user.role === 'teacher');
+      const filteredStudents = filteredUsers.filter(user => user.role === 'student');
+      
+      console.log(`\nRésumé filtré: ${filteredTeachers.length} enseignant(s) et ${filteredStudents.length} élève(s) pour l'email "${testEmail}"`);
+      
+      // Afficher les noms des utilisateurs filtrés avec leur rôle
+      console.log('\nListe des utilisateurs filtrés:');
+      
+      if (filteredTeachers.length > 0) {
+        console.log('\nEnseignants:');
+        filteredTeachers.forEach((teacher, index) => {
+          console.log(`${index + 1}. ${`${teacher.firstName} ${teacher.lastName}`} (${teacher.email})`);
+        });
+      }
+      
+      if (filteredStudents.length > 0) {
+        console.log('\nÉlèves:');
+        filteredStudents.forEach((student, index) => {
+          console.log(`${index + 1}. ${`${student.firstName} ${student.lastName}`} (${student.email})`);
+        });
+      }
+    } else {
+      console.log(`\nAucun utilisateur trouvé avec l'email "${testEmail}" dans cette classe.`);
     }
     
   } catch (error) {

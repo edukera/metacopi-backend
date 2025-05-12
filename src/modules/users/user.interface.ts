@@ -37,5 +37,7 @@ export interface UserRepository {
   findAll(): Promise<User[]>;
   create(createUserDto: CreateUserDto): Promise<User>;
   update(id: string, updateUserDto: UpdateUserDto): Promise<User | null>;
+  updateByEmail(email: string, updateUserDto: UpdateUserDto): Promise<User | null>;
   delete(id: string): Promise<boolean>;
+  deleteByEmail(email: string): Promise<boolean>;
 } 

@@ -2,24 +2,6 @@ import { Injectable, NotFoundException, ConflictException, Logger } from '@nestj
 import { MongoUserRepository } from './user.repository';
 import { User, CreateUserDto, UpdateUserDto } from './user.interface';
 import * as bcrypt from 'bcrypt';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Membership, MembershipRole } from '../memberships/membership.schema';
-
-// Interface pour représenter un utilisateur avec son rôle dans une classe
-export interface UserWithRole extends User {
-  membershipRole?: MembershipRole;
-}
-
-// Interface pour représenter un utilisateur avec des informations limitées et son rôle
-export interface LimitedUserWithRole {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  avatarUrl: string;
-  membershipRole?: MembershipRole;
-}
 
 @Injectable()
 export class UserService {
@@ -27,74 +9,18 @@ export class UserService {
   
   constructor(
     private readonly userRepository: MongoUserRepository,
-    @InjectModel(Membership.name) private readonly membershipModel: Model<Membership>,
   ) {}
 
   async findAll(): Promise<User[]> {
     return this.userRepository.findAll();
   }
 
-  async findById(id: string): Promise<User> {
-    const user = await this.userRepository.findById(id);
+  async findByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findByEmail(email);
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`User with email ${email} not found`);
     }
     return user;
-  }
-
-  async findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findByEmail(email);
-  }
-
-  /**
-   * Récupère tous les utilisateurs d'une classe spécifique avec leur rôle
-   * @param classId ID de la classe
-   * @returns Liste des utilisateurs appartenant à cette classe avec leur rôle
-   */
-  async findByClassId(classId: string): Promise<LimitedUserWithRole[]> {
-    this.logger.debug(`Finding users for class: ${classId}`);
-    try {
-      // Récupérer toutes les adhésions pour cette classe (classId est maintenant une string logique)
-      const memberships = await this.membershipModel.find({
-        classId: classId,
-        isActive: true
-      }).exec();
-      if (!memberships || memberships.length === 0) {
-        this.logger.debug(`No memberships found for class ${classId}`);
-        return [];
-      }
-      this.logger.debug(`Found ${memberships.length} memberships for class ${classId}`);
-      // Créer un Map des memberships pour un accès facile par email
-      const membershipMap = new Map();
-      memberships.forEach(membership => {
-        membershipMap.set(membership.email, membership);
-      });
-      // Extraire les emails utilisateurs des adhésions
-      const userEmails = memberships.map(membership => membership.email);
-      // Récupérer tous les utilisateurs correspondants et ajouter leur rôle
-      const usersWithRoles: LimitedUserWithRole[] = [];
-      for (const email of userEmails) {
-        const user = await this.userRepository.findByEmail(email);
-        if (user) {
-          const membership = membershipMap.get(email);
-          // Ne retourner que les informations limitées pour chaque utilisateur
-          const userWithRole: LimitedUserWithRole = {
-            id: user.id,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            avatarUrl: user.avatarUrl,
-            membershipRole: membership ? membership.role : undefined
-          };
-          usersWithRoles.push(userWithRole);
-        }
-      }
-      this.logger.debug(`Found ${usersWithRoles.length} users for class ${classId}`);
-      return usersWithRoles;
-    } catch (error) {
-      this.logger.error(`Error finding users for class ${classId}: ${error.message}`, error.stack);
-      return [];
-    }
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -107,18 +33,18 @@ export class UserService {
     return this.userRepository.create(createUserDto);
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.userRepository.update(id, updateUserDto);
+  async update(email: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.updateByEmail(email, updateUserDto);
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`User with email ${email} not found`);
     }
     return user;
   }
 
-  async delete(id: string): Promise<boolean> {
-    const result = await this.userRepository.delete(id);
+  async delete(email: string): Promise<boolean> {
+    const result = await this.userRepository.deleteByEmail(email);
     if (!result) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`User with email ${email} not found`);
     }
     return true;
   }

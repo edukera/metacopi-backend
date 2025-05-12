@@ -56,20 +56,19 @@ async function main() {
     console.log(`\nID de la première classe: ${classId}`);
     
     // 3.1 Récupérer les adhésions (membres) de cette classe
-    // Utilisation de la nouvelle route /users/class/{classId}
     console.log(`\nRécupération des membres de la classe "${firstClass.name}" (ID: ${classId})...`);
     
     try {
-      // Utiliser la nouvelle route /users/class/{classId}
-      const usersResponse = await axios.get(`${API_BASE_URL}/users/class/${classId}`, authHeaders);
+      // Utiliser la route /classes/{classId}/users
+      const usersResponse = await axios.get(`${API_BASE_URL}/classes/${classId}/users`, authHeaders);
       
       // Afficher les données brutes retournées par la route
-      console.log(`Données brutes retournées par /users/class/${classId}:`);
+      console.log(`Données brutes retournées par /classes/${classId}/users:`);
       console.log(JSON.stringify(usersResponse.data, null, 2));
       
       // Compter le nombre d'élèves et d'enseignants dans la classe
-      const students = usersResponse.data.filter(user => user.membershipRole === 'student');
-      const teachers = usersResponse.data.filter(user => user.membershipRole === 'teacher');
+      const students = usersResponse.data.filter(user => user.role === 'student');
+      const teachers = usersResponse.data.filter(user => user.role === 'teacher');
       
       console.log(`\nRésumé des membres: ${students.length} élève(s) et ${teachers.length} enseignant(s) dans la classe "${firstClass.name}"`);
     } catch (membershipError) {

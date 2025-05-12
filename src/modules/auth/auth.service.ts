@@ -8,8 +8,8 @@ import { TokenPayload, AuthTokens, LoginDto } from './dto/auth.dto';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  // Simple list of logged out user IDs
-  private invalidatedUserIds: Set<string> = new Set();
+  // Simple list of logged out user emails
+  private invalidatedUserEmails: Set<string> = new Set();
 
   constructor(
     private userService: UserService,
@@ -47,9 +47,9 @@ export class AuthService {
       }
       
       // If user was in the logged out list, remove them
-      if (this.invalidatedUserIds.has(user.id)) {
-        this.invalidatedUserIds.delete(user.id);
-        this.logger.debug(`User ${user.id} reconnected, removing from invalidated list`);
+      if (this.invalidatedUserEmails.has(user.email)) {
+        this.invalidatedUserEmails.delete(user.email);
+        this.logger.debug(`User ${user.email} reconnected, removing from invalidated list`);
       }
       
       return this.generateTokens(user);
@@ -57,9 +57,9 @@ export class AuthService {
     
     // If user was in the logged out list, remove them
     const user = loginDto as any;
-    if (this.invalidatedUserIds.has(user.id)) {
-      this.invalidatedUserIds.delete(user.id);
-      this.logger.debug(`User ${user.id} reconnected, removing from invalidated list`);
+    if (this.invalidatedUserEmails.has(user.email)) {
+      this.invalidatedUserEmails.delete(user.email);
+      this.logger.debug(`User ${user.email} reconnected, removing from invalidated list`);
     }
     
     // If it's already a validated user, directly generate tokens
@@ -77,12 +77,12 @@ export class AuthService {
       );
       
       // Check if user is logged out
-      if (this.invalidatedUserIds.has(payload.sub)) {
+      if (this.invalidatedUserEmails.has(payload.email)) {
         throw new UnauthorizedException('User has been logged out');
       }
       
       // Get the corresponding user
-      const user = await this.userService.findById(payload.sub);
+      const user = await this.userService.findByEmail(payload.email);
       
       if (!user) {
         throw new UnauthorizedException('Invalid refresh token');
@@ -96,15 +96,15 @@ export class AuthService {
   }
 
   /**
-   * Logs out a user by adding their ID to the list of logged out users.
+   * Logs out a user by adding their email to the list of logged out users.
    * For a more robust implementation in production, use Redis or another caching solution.
    * 
-   * @param userId ID of the user to log out
+   * @param email Email of the user to log out
    */
-  async invalidateUserTokens(userId: string): Promise<void> {
-    this.logger.debug(`Invalidating tokens for user: ${userId}`);
-    this.invalidatedUserIds.add(userId);
-    this.logger.debug(`User ${userId} added to invalidated list`);
+  async invalidateUserTokens(email: string): Promise<void> {
+    this.logger.debug(`Invalidating tokens for user: ${email}`);
+    this.invalidatedUserEmails.add(email);
+    this.logger.debug(`User ${email} added to invalidated list`);
   }
 
   private generateTokens(user: Omit<User, 'password'>): AuthTokens {

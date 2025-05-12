@@ -4,7 +4,7 @@ import { UserRole } from '../user.schema';
 
 export class CreateUserDto {
   @ApiProperty({
-    description: 'User\'s unique email',
+    description: 'User\'s unique email (main identifier)',
     example: 'user@example.com'
   })
   @IsEmail()
@@ -66,12 +66,6 @@ export class UpdateUserDto extends PartialType(
 export class UserResponseDto {
   @ApiProperty({
     description: 'User\'s unique identifier',
-    example: '605a1cb9d4d5d73598045618'
-  })
-  id: string;
-
-  @ApiProperty({
-    description: 'User\'s email',
     example: 'user@example.com'
   })
   email: string;

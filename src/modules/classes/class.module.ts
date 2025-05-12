@@ -5,6 +5,7 @@ import { ClassService } from './class.service';
 import { ClassController } from './class.controller';
 import { MembershipModule } from '../memberships/membership.module';
 import { Membership, MembershipSchema } from '../memberships/membership.schema';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { Membership, MembershipSchema } from '../memberships/membership.schema';
       { name: Membership.name, schema: MembershipSchema },
     ]),
     MembershipModule,
+    UsersModule,
   ],
   controllers: [ClassController],
   providers: [ClassService],
