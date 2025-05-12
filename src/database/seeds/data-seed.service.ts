@@ -95,9 +95,9 @@ export interface AnnotationSeedData {
 }
 
 export interface CommentSeedData {
+  createdByEmail: string;
   submissionId: string;
   correctionId: string;
-  authorEmail: string;
   pageId: string;
   type: string;
   color: string;
@@ -178,8 +178,8 @@ export class DataSeedService {
       
       // Check if the file exists
       if (!fs.existsSync(seedFilePath)) {
-        this.logger.warn(`Seed file does not exist: ${seedFilePath}`);
-        this.logger.warn(`Use the example file as a reference: ${exampleFilePath}`);
+        this.logger.error(`Seed file does not exist: ${seedFilePath}`);
+        this.logger.error(`Use the example file as a reference: ${exampleFilePath}`);
         return;
       }
 
@@ -296,7 +296,7 @@ export class DataSeedService {
         // Vérifier que le créateur existe
         const createdById = this.userIdMap.get(classData.createdBy);
         if (!createdById) {
-          this.logger.warn(`User ${classData.createdBy} does not exist. Cannot create class ${classData.id}.`);
+          this.logger.error(`User ${classData.createdBy} does not exist. Cannot create class ${classData.id}.`);
           continue;
         }
         // Création de la classe avec l'email du créateur
@@ -340,13 +340,13 @@ export class DataSeedService {
           if (foundClass) classId = foundClass[0];
         }
         if (!classId) {
-          this.logger.warn(`Class for task ${taskData.id || taskData.title} not found. Cannot create task.`);
+          this.logger.error(`Class for task ${taskData.id || taskData.title} not found. Cannot create task.`);
           continue;
         }
         // Créateur par email
         const createdById = this.userIdMap.get(taskData.createdBy);
         if (!createdById) {
-          this.logger.warn(`User ${taskData.createdBy} does not exist. Cannot create task ${taskData.id || taskData.title}.`);
+          this.logger.error(`User ${taskData.createdBy} does not exist. Cannot create task ${taskData.id || taskData.title}.`);
           continue;
         }
         // Recherche par id logique
@@ -393,14 +393,14 @@ export class DataSeedService {
         // Vérifie que l'utilisateur existe
         const userExists = this.userIdMap.has(membershipData.userEmail);
         if (!userExists) {
-          this.logger.warn(`User ${membershipData.userEmail} does not exist. Cannot create membership.`);
+          this.logger.error(`User ${membershipData.userEmail} does not exist. Cannot create membership.`);
           continue;
         }
         
         // Vérifie que la classe existe
         const classExists = this.classIdMap.has(membershipData.classId);
         if (!classExists) {
-          this.logger.warn(`Class ${membershipData.classId} does not exist. Cannot create membership.`);
+          this.logger.error(`Class ${membershipData.classId} does not exist. Cannot create membership.`);
           continue;
         }
         
@@ -446,13 +446,13 @@ export class DataSeedService {
         // Trouver l'étudiant par email
         const studentId = this.userIdMap.get(subData.userEmail);
         if (!studentId) {
-          this.logger.warn(`User (student) ${subData.userEmail} does not exist. Cannot create submission ${subData.id}.`);
+          this.logger.error(`User (student) ${subData.userEmail} does not exist. Cannot create submission ${subData.id}.`);
           continue;
         }
         // Trouver la tâche par id logique
         const taskMongoId = this.taskIdMap.get(subData.taskId);
         if (!taskMongoId) {
-          this.logger.warn(`Task ${subData.taskId} does not exist. Cannot create submission ${subData.id}.`);
+          this.logger.error(`Task ${subData.taskId} does not exist. Cannot create submission ${subData.id}.`);
           continue;
         }
         // Recherche par id logique
@@ -493,13 +493,13 @@ export class DataSeedService {
         // Trouver la soumission par id logique
         const submissionMongoId = this.submissionIdMap.get(corrData.submissionId);
         if (!submissionMongoId) {
-          this.logger.warn(`Submission ${corrData.submissionId} does not exist. Cannot create correction ${corrData.id}.`);
+          this.logger.error(`Submission ${corrData.submissionId} does not exist. Cannot create correction ${corrData.id}.`);
           continue;
         }
         // Trouver le correcteur par email
         const correctorId = this.userIdMap.get(corrData.correctorEmail);
         if (!correctorId) {
-          this.logger.warn(`User (corrector) ${corrData.correctorEmail} does not exist. Cannot create correction ${corrData.id}.`);
+          this.logger.error(`User (corrector) ${corrData.correctorEmail} does not exist. Cannot create correction ${corrData.id}.`);
           continue;
         }
         // Recherche par id logique
@@ -541,7 +541,7 @@ export class DataSeedService {
         // On suppose que correctionId est déjà l'id logique
         const correctionMongoId = this.correctionIdMap.get(annotationData.correctionId as string);
         if (!correctionMongoId) {
-          this.logger.warn(`Correction ${annotationData.correctionId} does not exist. Cannot create annotation ${annotationData.id}.`);
+          this.logger.error(`Correction ${annotationData.correctionId} does not exist. Cannot create annotation ${annotationData.id}.`);
           continue;
         }
         // On extrait les champs à la racine et on sérialise le reste dans 'value'
@@ -575,7 +575,7 @@ export class DataSeedService {
         // On suppose que correctionId est déjà l'id logique
         const correctionMongoId = this.correctionIdMap.get(aiAnnotationData.correctionId as string);
         if (!correctionMongoId) {
-          this.logger.warn(`Correction ${aiAnnotationData.correctionId} does not exist. Cannot create AI annotation ${aiAnnotationData.id}.`);
+          this.logger.error(`Correction ${aiAnnotationData.correctionId} does not exist. Cannot create AI annotation ${aiAnnotationData.id}.`);
           continue;
         }
         // On extrait les champs à la racine et on sérialise le reste dans 'value'
@@ -610,27 +610,27 @@ export class DataSeedService {
         // Trouver la correction par id logique
         const correctionMongoId = this.correctionIdMap.get(commentData.correctionId);
         if (!correctionMongoId) {
-          this.logger.warn(`Correction ${commentData.correctionId} does not exist. Cannot create comment.`);
+          this.logger.error(`Correction ${commentData.correctionId} does not exist. Cannot create comment.`);
           continue;
         }
         // Trouver l'auteur
-        const authorId = this.userIdMap.get(commentData.authorEmail);
+        const authorId = this.userIdMap.get(commentData.createdByEmail);
         if (!authorId) {
-          this.logger.warn(`User (author) ${commentData.authorEmail} not found. Cannot create comment.`);
+          this.logger.error(`User (author) ${commentData.createdByEmail} not found. Cannot create comment.`);
           continue;
         }
         // Stocker directement les ids logiques d'annotations
         const newComment = await this.commentModel.create({
           ...commentData,
           correctionId: commentData.correctionId,
-          createdByEmail: commentData.authorEmail,
+          createdByEmail: commentData.createdByEmail,
           annotations: commentData.annotations || [],
           pageId: commentData.pageId,
         });
         createdCount++;
-        this.logger.log(`Comment successfully created on page ${commentData.pageId} for correction ${commentData.correctionId} by ${commentData.authorEmail}`);
+        this.logger.log(`Comment successfully created on page ${commentData.pageId} for correction ${commentData.correctionId} by ${commentData.createdByEmail}`);
       } catch (error) {
-        this.logger.error(`Error while creating comment by ${commentData.authorEmail} on page ${commentData.pageId} for correction:`, error);
+        this.logger.error(`Error while creating comment by ${commentData.createdByEmail} on page ${commentData.pageId} for correction:`, error);
       }
     }
     this.logger.log(`Comments seeding completed. ${createdCount} comments created.`);
@@ -647,13 +647,13 @@ export class DataSeedService {
         // Trouver la correction par id logique
         const correctionMongoId = this.correctionIdMap.get(aiCommentData.correctionId);
         if (!correctionMongoId) {
-          this.logger.warn(`Correction ${aiCommentData.correctionId} does not exist. Cannot create AI comment.`);
+          this.logger.error(`Correction ${aiCommentData.correctionId} does not exist. Cannot create AI comment.`);
           continue;
         }
         // Trouver l'auteur
-        const authorId = this.userIdMap.get(aiCommentData.authorEmail);
+        const authorId = this.userIdMap.get(aiCommentData.createdByEmail);
         if (!authorId) {
-          this.logger.warn(`User (author) ${aiCommentData.authorEmail} not found. Cannot create AI comment.`);
+          this.logger.error(`User (author) ${aiCommentData.createdByEmail} not found. Cannot create AI comment.`);
           continue;
         }
         // Stocker directement les ids logiques d'annotations
