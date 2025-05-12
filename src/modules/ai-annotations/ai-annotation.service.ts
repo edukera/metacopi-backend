@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { REQUEST } from '@nestjs/core';
 import { AIAnnotation } from './ai-annotation.schema';
-import { CreateAIAnnotationDto, UpdateAIAnnotationDto, AIAnnotationResponseDto } from './ai-annotation.dto';
+import { CreateAIAnnotationDto, UpdateAIAnnotationDto, AIAnnotationResponseDto, AIAnnotationStatus } from './ai-annotation.dto';
 import { CorrectionService } from '../corrections/correction.service';
 
 @Injectable()
@@ -28,6 +28,7 @@ export class AIAnnotationService {
     aiAnnotationDto.createdAt = (aiAnnotation as any).createdAt;
     aiAnnotationDto.updatedAt = (aiAnnotation as any).updatedAt;
     aiAnnotationDto.annotations = (aiAnnotation as any).annotations || [];
+    aiAnnotationDto.status = aiAnnotation.status || AIAnnotationStatus.PENDING;
     return aiAnnotationDto;
   }
 
@@ -51,6 +52,11 @@ export class AIAnnotationService {
     // Si createdByEmail n'est pas fourni, utiliser l'utilisateur courant ou "ai-system"
     if (!createAIAnnotationDto.createdByEmail) {
       createAIAnnotationDto.createdByEmail = this.request.user?.email || 'ai-system';
+    }
+
+    // Si le status n'est pas fourni, utiliser PENDING par défaut
+    if (!createAIAnnotationDto.status) {
+      createAIAnnotationDto.status = AIAnnotationStatus.PENDING;
     }
 
     try {

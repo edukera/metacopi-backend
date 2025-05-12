@@ -17,6 +17,8 @@ import { Comment, CommentDocument } from '../../modules/comments/comment.schema'
 import { AIComment, AICommentDocument } from '../../modules/ai-comments/ai-comment.schema';
 import { Annotation, AnnotationDocument } from '../../modules/annotations/annotation.schema';
 import { AIAnnotation, AIAnnotationDocument } from '../../modules/ai-annotations/ai-annotation.schema';
+import { AIAnnotationStatus } from '../../modules/ai-annotations/ai-annotation.dto';
+import { AICommentStatus } from '../../modules/ai-comments/ai-comment.dto';
 
 // Interfaces to define the JSON structure
 export interface UserSeedData {
@@ -118,7 +120,7 @@ export interface AICommentSeedData {
   pageY?: number;
   annotations?: number[];
   createdByEmail?: string;
-  status: string;
+  status: AICommentStatus;
 }
 
 export interface AIAnnotationSeedData {
@@ -126,6 +128,7 @@ export interface AIAnnotationSeedData {
   correctionId: number | string;
   pageId: string;
   createdByEmail: string;
+  status?: AIAnnotationStatus;
   [key: string]: any;
 }
 
@@ -576,7 +579,7 @@ export class DataSeedService {
           continue;
         }
         // On extrait les champs à la racine et on sérialise le reste dans 'value'
-        const { id, correctionId, createdByEmail, pageId, ...rest } = aiAnnotationData;
+        const { id, correctionId, createdByEmail, pageId, status, ...rest } = aiAnnotationData;
         const value = JSON.stringify(rest);
         const newAIAnnotation = await this.aiAnnotationModel.create({
           id: String(id),
@@ -584,6 +587,7 @@ export class DataSeedService {
           createdByEmail,
           pageId,
           value,
+          status: status || AIAnnotationStatus.PENDING
         });
         this.aiAnnotationIdMap.set(String(id), newAIAnnotation._id.toString());
         createdCount++;

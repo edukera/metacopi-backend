@@ -58,7 +58,7 @@ export class Comment {
     description: 'Text content of the comment',
     example: 'This section needs more detailed explanation.'
   })
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: false })
   text: string;
 
   @ApiProperty({

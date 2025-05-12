@@ -1,6 +1,12 @@
-import { IsArray, IsMongoId, IsNotEmpty, IsOptional, IsString, IsUUID, Validate } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsOptional, IsString, IsUUID, Validate, IsEnum } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsValidJson } from '../annotations/validators/is-valid-json.validator';
+
+export enum AIAnnotationStatus {
+  VALIDATED = 'validated',
+  REJECTED = 'rejected',
+  PENDING = 'pending'
+}
 
 export class CreateAIAnnotationDto {
   @ApiProperty({
@@ -53,6 +59,16 @@ export class CreateAIAnnotationDto {
   @IsArray()
   @IsString({ each: true })
   annotations?: string[];
+  
+  @ApiPropertyOptional({
+    description: 'Status of the AI annotation (validated, rejected, pending)',
+    example: 'pending',
+    default: 'pending',
+    enum: AIAnnotationStatus
+  })
+  @IsOptional()
+  @IsEnum(AIAnnotationStatus)
+  status?: AIAnnotationStatus;
 }
 
 export class UpdateAIAnnotationDto {
@@ -65,6 +81,15 @@ export class UpdateAIAnnotationDto {
   @IsNotEmpty()
   @Validate(IsValidJson)
   value?: string;
+  
+  @ApiPropertyOptional({
+    description: 'Status of the AI annotation (validated, rejected, pending)',
+    example: 'validated',
+    enum: AIAnnotationStatus
+  })
+  @IsOptional()
+  @IsEnum(AIAnnotationStatus)
+  status?: AIAnnotationStatus;
 }
 
 export class AIAnnotationResponseDto {
@@ -116,4 +141,11 @@ export class AIAnnotationResponseDto {
     type: [String]
   })
   annotations?: string[];
+  
+  @ApiProperty({
+    description: 'Status of the AI annotation (validated, rejected, pending)',
+    example: 'pending',
+    enum: AIAnnotationStatus
+  })
+  status: AIAnnotationStatus;
 } 

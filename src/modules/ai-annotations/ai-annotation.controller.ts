@@ -9,17 +9,19 @@ import {
   HttpCode, 
   HttpStatus, 
   UseGuards,
-  ForbiddenException
+  ForbiddenException,
+  Query
 } from '@nestjs/common';
 import { AIAnnotationService } from './ai-annotation.service';
-import { CreateAIAnnotationDto, UpdateAIAnnotationDto, AIAnnotationResponseDto } from './ai-annotation.dto';
+import { CreateAIAnnotationDto, UpdateAIAnnotationDto, AIAnnotationResponseDto, AIAnnotationStatus } from './ai-annotation.dto';
 import { 
   ApiTags, 
   ApiOperation, 
   ApiResponse, 
   ApiParam, 
   ApiBody,
-  ApiBearerAuth 
+  ApiBearerAuth,
+  ApiQuery 
 } from '@nestjs/swagger';
 import { AuthenticatedUser } from '../../common/decorators';
 import { AIAnnotationAccessGuard } from '../../common/guards/ai-annotation-access.guard';
@@ -35,6 +37,12 @@ export class AIAnnotationController {
   @Get()
   @ApiOperation({ summary: 'Get all AI annotations for a correction' })
   @ApiParam({ name: 'correctionId', description: 'Logical business ID of the correction', example: 'CORR-2024-001' })
+  @ApiQuery({ 
+    name: 'status', 
+    required: false, 
+    enum: AIAnnotationStatus, 
+    description: 'Filter by AI annotation status' 
+  })
   @ApiResponse({ status: 200, description: 'List of AI annotations for the correction', type: [AIAnnotationResponseDto] })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions or correction not found' })
   async findAll(@Param('correctionId') correctionId: string): Promise<AIAnnotationResponseDto[]> {

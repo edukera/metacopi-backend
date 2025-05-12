@@ -293,7 +293,7 @@
       "pageId": "p1",
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
-      "color": "yellow",
+      "color": "#008000",
       "position": { "x": 100, "y": 500 },
       "width": 100,
       "height": 100,
@@ -336,22 +336,24 @@
       "pageId": "p1",
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
-      "color": "red",
+      "color": "#FF0000",
       "position": { "x": 100, "y": 100 },
       "width": 100,
       "height": 100,
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     },
     {
       "id": "annot_ai_2",
       "pageId": "p1",
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
-      "color": "orange",
+      "color": "#FFA500",
       "position": { "x": 300, "y": 300 },
       "width": 100,
       "height": 100,
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     }
   ]
 }
