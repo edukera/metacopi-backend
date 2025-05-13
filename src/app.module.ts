@@ -23,6 +23,7 @@ import { AuditLogInterceptor } from './common/interceptors';
 import { AnnotationModule } from './modules/annotations/annotation.module';
 import { AICommentModule } from './modules/ai-comments/ai-comment.module';
 import { AIAnnotationModule } from './modules/ai-annotations/ai-annotation.module';
+import { DbModule } from './db/db.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { AIAnnotationModule } from './modules/ai-annotations/ai-annotation.modul
     ValidatorsModule,
     AnnotationModule,
     AIAnnotationModule,
+    DbModule,
   ],
   controllers: [AppController],
   providers: [
