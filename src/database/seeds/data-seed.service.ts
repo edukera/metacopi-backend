@@ -111,7 +111,6 @@ export interface AICommentSeedData {
   id: string;
   submissionId: string;
   correctionId: string;
-  authorEmail: string;
   pageId: string;
   type: string;
   color: string;
@@ -660,14 +659,14 @@ export class DataSeedService {
         const newAIComment = await this.aiCommentModel.create({
           ...aiCommentData,
           correctionId: aiCommentData.correctionId,
-          createdByEmail: aiCommentData.authorEmail,
+          createdByEmail: aiCommentData.createdByEmail,
           annotations: aiCommentData.annotations || [],
           pageId: aiCommentData.pageId,
         });
         createdCount++;
-        this.logger.log(`AI Comment successfully created on page ${aiCommentData.pageId} for correction ${aiCommentData.correctionId} by ${aiCommentData.authorEmail}`);
+        this.logger.log(`AI Comment successfully created on page ${aiCommentData.pageId} for correction ${aiCommentData.correctionId} by ${aiCommentData.createdByEmail}`);
       } catch (error) {
-        this.logger.error(`Error while creating AI comment by ${aiCommentData.authorEmail} on page ${aiCommentData.pageId} for correction:`, error);
+        this.logger.error(`Error while creating AI comment by ${aiCommentData.createdByEmail} on page ${aiCommentData.pageId} for correction:`, error);
       }
     }
     this.logger.log(`AI Comments seeding completed. ${createdCount} AI comments created.`);

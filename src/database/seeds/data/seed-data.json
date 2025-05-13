@@ -283,7 +283,8 @@
       "markdown": "Excellent travail sur cette démonstration !",
       "pageY": 200,
       "annotations": ["annot_1"],
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     },
     {
       "id": "808d33d0-943d-404b-898b-7e4b0d0e440a",
@@ -376,21 +377,6 @@
       "status": "pending"
     },
     {
-      "id": "62fec5fc-b41e-4449-a5d3-aaeacadeaf2a",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-      "pageId": "p1",
-      "type": "warning",
-      "color": "#ffa500",
-      "markdown": "⚠️ deux fois la même chose ?",
-      "text": "⚠️ deux fois la même chose ?",
-      "annotations": [
-        "5c7afa9b-a232-469a-93c1-ac553482cda7"
-      ],
-      "pageY": 2608.1265546285185,
-      "createdByEmail": "jean.dupont@monlycee.net",
-      "status": "pending"
-    },
-    {
       "id": "9a2c1191-b8aa-4548-adbe-bbe7f2460c68",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
@@ -431,7 +417,8 @@
       "position": { "x": 100, "y": 500 },
       "width": 100,
       "height": 100,
-      "createdByEmail": "jean.dupont@monlycee.net"
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
     },
     {
       "id": "a1ffb016-7477-4a11-816e-eeaee2c0b80c",
@@ -564,21 +551,6 @@
       "height": 510.08
     },
     {
-      "id": "5c7afa9b-a232-469a-93c1-ac553482cda7",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-      "pageId": "p1",
-      "createdByEmail": "jean.dupont@monlycee.net",
-      "status": "pending",
-      "type": "zone",
-      "position": {
-        "x": 853.6120418750417,
-        "y": 2608.1265546285185
-      },
-      "color": "#ffa500",
-      "width": 712.0176273460062,
-      "height": 477.51580053710677
-    },
-    {
       "id": "d3138712-b3ca-4bda-b5d9-65bbff7032f3",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
@@ -653,7 +625,6 @@
     {
       "id": "c_ai_1",
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
-      "authorEmail": "jean.dupont@monlycee.net",
       "pageId": "p1",
       "type": "error",
       "color": "red",
@@ -667,7 +638,6 @@
     {
       "id": "c_ai_2",
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
-      "authorEmail": "jean.dupont@monlycee.net",
       "pageId": "p1",
       "type": "warning",
       "color": "orange",
@@ -697,7 +667,6 @@
     {
       "id": "c3568f45-cc77-487e-8c3d-8b3ff4bd8a48",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-      "authorEmail": "jean.dupont@monlycee.net",
       "pageId": "p4",
       "type": "warning",
       "color": "#FF0000",
@@ -707,6 +676,66 @@
         "6ab0f1b9-9e30-4838-bf27-f3cf22c56cbb"
       ],
       "pageY": 2167.8465227817746,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
+      "id": "62fec5fc-b41e-4449-a5d3-aaeacadeaf2a",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p1",
+      "type": "warning",
+      "color": "#ffa500",
+      "markdown": "⚠️ Le résultat est correct, mais attention à ne pas sauter l’étape de mise au même dénominateur trop vite :  \n\npasser de $\\frac{2}{16} - \\frac{3}{8}$ à $\\frac{-2}{8}$ suppose une transformation préalable qu’il vaut mieux expliciter pour plus de rigueur.",
+      "text": "⚠️ Le résultat est correct, mais attention à ne pas sauter l’étape de mise au même dénominateur trop vite :  \n\npasser de \\frac{2}{16} - \\frac{3}{8} à \\frac{-2}{8} suppose une transformation préalable qu’il vaut mieux expliciter pour plus de rigueur.",
+      "annotations": [
+        "5c7afa9b-a232-469a-93c1-ac553482cda7"
+      ],
+      "pageY": 2608.1265546285185,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
+      "id": "cca1d8fe-5f27-4c42-a586-d5499934952f",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p3",
+      "type": "warning",
+      "color": "#ffa500",
+      "markdown": "⚠️ Le résultat est correct, mais attention : tu fais une équivalence qui suppose que $y \\ne 0$, car $\\frac{1}{y}$ n’est pas défini sinon.\n\nℹ️ Pour plus de rigueur, tu pourrais écrire :\n\n$y - \\frac{1}{y} = 0 \\Leftrightarrow y = \\frac{1}{y} \\Leftrightarrow y^2 = 1 \\Leftrightarrow y = \\pm 1$\nen précisant que $y \\ne 0$.",
+      "text": "⚠️ Le résultat est correct, mais attention : tu fais une équivalence qui suppose que y \\ne 0, car \\frac{1}{y} n’est pas défini sinon.\n\nℹ️ Pour plus de rigueur, tu pourrais écrire :\n\ny - \\frac{1}{y} = 0 \\Leftrightarrow y = \\frac{1}{y} \\Leftrightarrow y^2 = 1 \\Leftrightarrow y = \\pm 1\nen précisant que y \\ne 0.",
+      "annotations": [
+        "f83d4da5-8768-425d-96a2-003967058527"
+      ],
+      "pageY": 1828.1736058611546,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
+      "id": "b2e7e900-557b-4998-ae37-360273644f3d",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "type": "warning",
+      "color": "#ffa500",
+      "markdown": "⚠️ Attention, pour passer de l'égalité des carrés à l'égalité des racines carrées, il faut justifier que les deux membres sont positifs ou nuls. Ici c'est le cas car ce sont des modules, mais il faut le mentionner ou appliquer directement la règle 'La racine carrée d'un carré est égale à la valeur absolue du nombre'.",
+      "text": "⚠️ Attention, pour passer de l'égalité des carrés à l'égalité des racines carrées, il faut justifier que les deux membres sont positifs ou nuls. Ici c'est le cas car ce sont des modules, mais il faut le mentionner ou appliquer directement la règle 'La racine carrée d'un carré est égale à la valeur absolue du nombre'.",
+      "annotations": [
+        "ea0188d8-ab21-4af4-8cbc-2cebfcabceab"
+      ],
+      "pageY": 1646.676258992806,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
+      "id": "6d8e9ab2-8847-421e-bb7e-d3e323a2848e",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "type": "warning",
+      "color": "#ffa500",
+      "markdown": "⚠️ Pour passer de l'égalité des carrés à l'égalité des racines carrées, il faut justifier que les deux membres sont positifs ou nuls. Ici c'est le cas car ce sont des modules, mais il faut le mentionner ou appliquer directement la règle 'La racine carrée d'un carré est égale à la valeur absolue du nombre'.",
+      "text": "⚠️ Pour passer de l'égalité des carrés à l'égalité des racines carrées, il faut justifier que les deux membres sont positifs ou nuls. Ici c'est le cas car ce sont des modules, mais il faut le mentionner ou appliquer directement la règle 'La racine carrée d'un carré est égale à la valeur absolue du nombre'.",
+      "annotations": [
+        "a523bc3b-b374-4816-94eb-9465fa819f65"
+      ],
+      "pageY": 2533.7745803357316,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     }
@@ -759,6 +788,66 @@
       "height":232.86330935251817,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
+    },
+    {
+      "id": "5c7afa9b-a232-469a-93c1-ac553482cda7",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p1",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
+      "type": "zone",
+      "position": {
+        "x": 853.6120418750417,
+        "y": 2608.1265546285185
+      },
+      "color": "#ffa500",
+      "width": 712.0176273460062,
+      "height": 477.51580053710677
+    },
+    {
+      "id": "f83d4da5-8768-425d-96a2-003967058527",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p3",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
+      "type": "zone",
+      "position": {
+        "x": 1404.0908623207113,
+        "y": 1828.1736058611546
+      },
+      "color": "#ffa500",
+      "width": 1045.904417851142,
+      "height": 210.13661268235478
+    },
+    {
+      "id": "ea0188d8-ab21-4af4-8cbc-2cebfcabceab",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
+      "type": "zone",
+      "position": {
+        "x": 664.2516255580667,
+        "y": 1646.676258992806
+      },
+      "color": "#ffa500",
+      "width": 1992.0179271450947,
+      "height": 316.0287769784172
+    },
+    {
+      "id": "a523bc3b-b374-4816-94eb-9465fa819f65",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending",
+      "type": "zone",
+      "position": {
+        "x": 1613.0958192678472,
+        "y": 2533.7745803357316
+      },
+      "color": "#ffa500",
+      "width": 1159.6984589786207,
+      "height": 316.0287769784172
     }
   ]
 }
