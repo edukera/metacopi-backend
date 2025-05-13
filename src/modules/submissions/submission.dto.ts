@@ -63,6 +63,16 @@ export class CreateSubmissionDto {
   pages: SubmissionPageDto[];
 
   @ApiPropertyOptional({
+    description: 'Order of page IDs for display in the UI',
+    example: ['p1', 'p2', 'p3'],
+    type: [String]
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  pageOrder?: string[];
+
+  @ApiPropertyOptional({
     description: 'Initial status of the submission',
     example: SubmissionStatus.DRAFT,
     enum: SubmissionStatus,
@@ -90,6 +100,16 @@ export class UpdateSubmissionDto {
   @IsArray()
   @IsNotEmpty({ each: true })
   pages: SubmissionPageDto[];
+
+  @ApiPropertyOptional({
+    description: 'Order of page IDs for display in the UI',
+    example: ['p1', 'p2', 'p3'],
+    type: [String]
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  pageOrder?: string[];
 
   @ApiPropertyOptional({
     description: 'New status of the submission',
@@ -163,6 +183,13 @@ export class SubmissionResponseDto {
     required: true
   })
   pages: SubmissionPageDto[];
+
+  @ApiProperty({
+    description: 'Order of page IDs for display in the UI',
+    example: ['p1', 'p2', 'p3'],
+    type: [String]
+  })
+  pageOrder: string[];
 
   @ApiPropertyOptional({
     description: 'Date when the submission was submitted for correction',

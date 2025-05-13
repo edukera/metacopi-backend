@@ -159,6 +159,7 @@
           }
         }
       ],
+      "pageOrder": ["p1", "p2", "p3", "p4"],
       "status": "submitted",
       "submittedAt": "2025-04-12T22:50:23.000Z"
     },
@@ -246,6 +247,7 @@
           }
         }
       ],
+      "pageOrder": ["p1", "p2", "p3", "p4", "p5", "p6"],
       "status": "submitted",
       "submittedAt": "2025-05-15T12:57:35.000Z"
     }
@@ -654,8 +656,8 @@
       "pageId": "p1",
       "type": "warning",
       "color": "#ffa500",
-      "markdown": "⚠️ Le résultat est correct, mais attention à ne pas sauter l’étape de mise au même dénominateur trop vite :  \n\npasser de $\\frac{2}{16} - \\frac{3}{8}$ à $\\frac{-2}{8}$ suppose une transformation préalable qu’il vaut mieux expliciter pour plus de rigueur.",
-      "text": "⚠️ Le résultat est correct, mais attention à ne pas sauter l’étape de mise au même dénominateur trop vite :  \n\npasser de \\frac{2}{16} - \\frac{3}{8} à \\frac{-2}{8} suppose une transformation préalable qu’il vaut mieux expliciter pour plus de rigueur.",
+      "markdown": "⚠️ Le résultat est correct, mais attention à ne pas sauter l'étape de mise au même dénominateur trop vite :  \n\npasser de $\\frac{2}{16} - \\frac{3}{8}$ à $\\frac{-2}{8}$ suppose une transformation préalable qu'il vaut mieux expliciter pour plus de rigueur.",
+      "text": "⚠️ Le résultat est correct, mais attention à ne pas sauter l'étape de mise au même dénominateur trop vite :  \n\npasser de \\frac{2}{16} - \\frac{3}{8} à \\frac{-2}{8} suppose une transformation préalable qu'il vaut mieux expliciter pour plus de rigueur.",
       "annotations": [
         "5c7afa9b-a232-469a-93c1-ac553482cda7"
       ],
@@ -685,8 +687,8 @@
       "pageId": "p3",
       "type": "warning",
       "color": "#ffa500",
-      "markdown": "⚠️ Le résultat est correct, mais attention : tu fais une équivalence qui suppose que $y \\ne 0$, car $\\frac{1}{y}$ n’est pas défini sinon.\n\nℹ️ Pour plus de rigueur, tu pourrais écrire :\n\n$y - \\frac{1}{y} = 0 \\Leftrightarrow y = \\frac{1}{y} \\Leftrightarrow y^2 = 1 \\Leftrightarrow y = \\pm 1$\nen précisant que $y \\ne 0$.",
-      "text": "⚠️ Le résultat est correct, mais attention : tu fais une équivalence qui suppose que y \\ne 0, car \\frac{1}{y} n’est pas défini sinon.\n\nℹ️ Pour plus de rigueur, tu pourrais écrire :\n\ny - \\frac{1}{y} = 0 \\Leftrightarrow y = \\frac{1}{y} \\Leftrightarrow y^2 = 1 \\Leftrightarrow y = \\pm 1\nen précisant que y \\ne 0.",
+      "markdown": "⚠️ Le résultat est correct, mais attention : tu fais une équivalence qui suppose que $y \\ne 0$, car $\\frac{1}{y}$ n'est pas défini sinon.\n\nℹ️ Pour plus de rigueur, tu pourrais écrire :\n\n$y - \\frac{1}{y} = 0 \\Leftrightarrow y = \\frac{1}{y} \\Leftrightarrow y^2 = 1 \\Leftrightarrow y = \\pm 1$\nen précisant que $y \\ne 0$.",
+      "text": "⚠️ Le résultat est correct, mais attention : tu fais une équivalence qui suppose que y \\ne 0, car \\frac{1}{y} n'est pas défini sinon.\n\nℹ️ Pour plus de rigueur, tu pourrais écrire :\n\ny - \\frac{1}{y} = 0 \\Leftrightarrow y = \\frac{1}{y} \\Leftrightarrow y^2 = 1 \\Leftrightarrow y = \\pm 1\nen précisant que y \\ne 0.",
       "annotations": [
         "f83d4da5-8768-425d-96a2-003967058527"
       ],

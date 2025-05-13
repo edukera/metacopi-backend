@@ -37,6 +37,15 @@ export class SubmissionService {
     submissionDto.uploadedByEmail = submission.uploadedByEmail;
     submissionDto.status = submission.status;
     submissionDto.pages = submission.pages;
+    
+    // Gestion du pageOrder
+    if (submission.pageOrder && submission.pageOrder.length > 0) {
+      submissionDto.pageOrder = submission.pageOrder;
+    } else {
+      // Si pageOrder est vide, créer un ordre par défaut basé sur les IDs des pages
+      submissionDto.pageOrder = submission.pages.map(page => page.id);
+    }
+    
     submissionDto.submittedAt = submission.submittedAt;
     submissionDto.reviewedAt = submission.reviewedAt;
     submissionDto.createdAt = (submission as any).createdAt;
@@ -68,6 +77,11 @@ export class SubmissionService {
       throw new BadRequestException(
         'A submission already exists for this student and task',
       );
+    }
+
+    // Si pageOrder n'est pas fourni, le créer à partir des IDs des pages
+    if (!createSubmissionDto.pageOrder && createSubmissionDto.pages && createSubmissionDto.pages.length > 0) {
+      createSubmissionDto.pageOrder = createSubmissionDto.pages.map(page => page.id);
     }
 
     const newSubmission = new this.submissionModel({
@@ -132,6 +146,7 @@ export class SubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with logical ID or MongoDB ID '${id}' not found`);
     }
+    
     // Check if a status change to 'submitted' is requested
     if (updateSubmissionDto.status === SubmissionStatus.SUBMITTED && 
         submission.status !== SubmissionStatus.SUBMITTED) {
@@ -142,6 +157,12 @@ export class SubmissionService {
         submission.status !== SubmissionStatus.CORRECTED) {
       updateSubmissionDto.reviewedAt = new Date();
     }
+    
+    // Si pages est mis à jour mais pas pageOrder, mettre à jour pageOrder automatiquement
+    if (updateSubmissionDto.pages && updateSubmissionDto.pages.length > 0 && !updateSubmissionDto.pageOrder) {
+      updateSubmissionDto.pageOrder = updateSubmissionDto.pages.map(page => page.id);
+    }
+    
     const updatedSubmission = await this.submissionModel
       .findByIdAndUpdate(submission._id, updateSubmissionDto, { new: true })
       .exec();

@@ -71,6 +71,7 @@ export interface SubmissionSeedData {
   userEmail: string; // Email of the student
   taskId: string; // Identifiant logique de la tâche
   pages: any[]; // Tableau de pages (format {id, raw, processed})
+  pageOrder?: string[]; // Tableau d'IDs de pages pour conserver l'ordre
   status?: SubmissionStatusEnum;
   submittedAt?: Date;
 }
@@ -461,13 +462,22 @@ export class DataSeedService {
           this.submissionIdMap.set(subData.id, existingSubmission._id.toString());
           continue;
         }
-        // Création de la soumission avec id logique et pages
+        
+        // Si pageOrder n'est pas fourni, le générer à partir des IDs des pages
+        let pageOrder = subData.pageOrder;
+        if (!pageOrder && subData.pages && subData.pages.length > 0) {
+          pageOrder = subData.pages.map(page => page.id);
+          this.logger.log(`Generated pageOrder automatically for submission ${subData.id}`);
+        }
+        
+        // Création de la soumission avec id logique, pages et pageOrder
         const newSubmission = await this.submissionModel.create({
           id: subData.id,
           studentEmail: subData.userEmail,
           taskId: subData.taskId,
           uploadedByEmail: subData.userEmail,
           pages: subData.pages,
+          pageOrder: pageOrder,
           status: subData.status || SubmissionStatusEnum.DRAFT,
           submittedAt: subData.submittedAt,
         });

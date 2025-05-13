@@ -108,6 +108,14 @@ export class Submission {
   @Prop({ type: [SubmissionPage], required: true, default: [] })
   pages: SubmissionPage[];
 
+  @ApiProperty({
+    description: 'Order of page IDs for display in the UI',
+    example: ['p1', 'p2', 'p3'],
+    type: [String]
+  })
+  @Prop({ type: [String], default: [] })
+  pageOrder: string[];
+
   @ApiPropertyOptional({
     description: 'Date when the submission was submitted for correction',
     example: '2023-01-15T10:30:00Z'
