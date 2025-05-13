@@ -649,6 +649,21 @@
       "status": "pending"
     },
     {
+      "id": "62fec5fc-b41e-4449-a5d3-aaeacadeaf2a",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p1",
+      "type": "warning",
+      "color": "#ffa500",
+      "markdown": "⚠️ Le résultat est correct, mais attention à ne pas sauter l’étape de mise au même dénominateur trop vite :  \n\npasser de $\\frac{2}{16} - \\frac{3}{8}$ à $\\frac{-2}{8}$ suppose une transformation préalable qu’il vaut mieux expliciter pour plus de rigueur.",
+      "text": "⚠️ Le résultat est correct, mais attention à ne pas sauter l’étape de mise au même dénominateur trop vite :  \n\npasser de \\frac{2}{16} - \\frac{3}{8} à \\frac{-2}{8} suppose une transformation préalable qu’il vaut mieux expliciter pour plus de rigueur.",
+      "annotations": [
+        "5c7afa9b-a232-469a-93c1-ac553482cda7"
+      ],
+      "pageY": 2608.1265546285185,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
       "id": "7020c621-a444-4a6f-ae94-b41492237560",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
       "authorEmail": "jean.dupont@monlycee.net",
@@ -661,36 +676,6 @@
         "b9a1e5f9-71d5-4947-b19d-610f86a9d92b"
       ],
       "pageY": 3892.1438848920866,
-      "createdByEmail": "jean.dupont@monlycee.net",
-      "status": "pending"
-    },
-    {
-      "id": "c3568f45-cc77-487e-8c3d-8b3ff4bd8a48",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-      "pageId": "p4",
-      "type": "warning",
-      "color": "#FF0000",
-      "text": "❌ Attention : il faut préciser que z est différent de 0 car l'expression 1 / z n'est pas définie si z = 0.",
-      "markdown": "❌ Attention : il faut préciser que z est différent de 0 car l'expression 1 / z n'est pas définie si z = 0.",
-      "annotations": [
-        "6ab0f1b9-9e30-4838-bf27-f3cf22c56cbb"
-      ],
-      "pageY": 2167.8465227817746,
-      "createdByEmail": "jean.dupont@monlycee.net",
-      "status": "pending"
-    },
-    {
-      "id": "62fec5fc-b41e-4449-a5d3-aaeacadeaf2a",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-      "pageId": "p1",
-      "type": "warning",
-      "color": "#ffa500",
-      "markdown": "⚠️ Le résultat est correct, mais attention à ne pas sauter l’étape de mise au même dénominateur trop vite :  \n\npasser de $\\frac{2}{16} - \\frac{3}{8}$ à $\\frac{-2}{8}$ suppose une transformation préalable qu’il vaut mieux expliciter pour plus de rigueur.",
-      "text": "⚠️ Le résultat est correct, mais attention à ne pas sauter l’étape de mise au même dénominateur trop vite :  \n\npasser de \\frac{2}{16} - \\frac{3}{8} à \\frac{-2}{8} suppose une transformation préalable qu’il vaut mieux expliciter pour plus de rigueur.",
-      "annotations": [
-        "5c7afa9b-a232-469a-93c1-ac553482cda7"
-      ],
-      "pageY": 2608.1265546285185,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -721,6 +706,21 @@
         "ea0188d8-ab21-4af4-8cbc-2cebfcabceab"
       ],
       "pageY": 1646.676258992806,
+      "createdByEmail": "jean.dupont@monlycee.net",
+      "status": "pending"
+    },
+    {
+      "id": "c3568f45-cc77-487e-8c3d-8b3ff4bd8a48",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "type": "warning",
+      "color": "#FF0000",
+      "text": "❌ Attention : il faut préciser que z est différent de 0 car l'expression 1 / z n'est pas définie si z = 0.",
+      "markdown": "❌ Attention : il faut préciser que z est différent de 0 car l'expression 1 / z n'est pas définie si z = 0.",
+      "annotations": [
+        "6ab0f1b9-9e30-4838-bf27-f3cf22c56cbb"
+      ],
+      "pageY": 2167.8465227817746,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
