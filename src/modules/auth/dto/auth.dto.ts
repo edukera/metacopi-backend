@@ -1,5 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { CookieOptions, Response } from 'express';
 
 export class LoginDto {
   @ApiProperty({
@@ -93,4 +94,29 @@ export class AuthTokens {
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
   })
   refreshToken: string;
+}
+
+/**
+ * Interface for auth responses with cookie options
+ */
+export interface AuthResponseWithCookies {
+  /**
+   * The access token to be returned in the response body
+   */
+  accessToken: string;
+  
+  /**
+   * The refresh token to be set as a cookie
+   */
+  refreshToken: string;
+  
+  /**
+   * Cookie options for the refresh token
+   */
+  cookieOptions: CookieOptions;
+  
+  /**
+   * The name of the cookie to set
+   */
+  cookieName: string;
 } 

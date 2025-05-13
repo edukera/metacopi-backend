@@ -1,10 +1,12 @@
-import { Controller, Post, UseGuards, Body, Get, UsePipes, ValidationPipe, HttpCode, HttpStatus, BadRequestException, Logger } from '@nestjs/common';
+import { Controller, Post, UseGuards, Body, Get, UsePipes, ValidationPipe, HttpCode, HttpStatus, BadRequestException, Logger, Res, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, RefreshTokenDto, AuthTokens } from './dto/auth.dto';
 import { User } from '../users/user.interface';
 import { JwtAuthGuard, Public } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody, ApiCookieAuth } from '@nestjs/swagger';
+import { Response, Request } from 'express';
+import { AUTH_CONSTANTS } from './auth.constants';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -17,7 +19,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe())
-  @ApiOperation({ summary: 'User login', description: 'Authenticates a user and returns JWT tokens' })
+  @ApiOperation({ summary: 'User login', description: 'Authenticates a user and returns JWT access token, with refresh token in HttpOnly cookie' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({ 
     status: 201, 
@@ -26,7 +28,6 @@ export class AuthController {
       type: 'object',
       properties: {
         access_token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
-        refresh_token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
         user: { 
           type: 'object', 
           properties: {
@@ -41,9 +42,11 @@ export class AuthController {
     }
   })
   @ApiResponse({ status: 400, description: 'Invalid credentials' })
-  async login(@Body() loginDto: LoginDto): Promise<{
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) response: Response
+  ): Promise<{
     access_token: string;
-    refresh_token: string;
     user: Partial<User>;
   }> {
     this.logger.debug(`Login attempt for email: ${loginDto.email}`);
@@ -59,11 +62,21 @@ export class AuthController {
         });
       }
       
-      const tokens = await this.authService.login(loginDto);
+      // Get tokens with cookie configuration
+      const authResponse = await this.authService.loginWithCookies(loginDto);
       
+      // Set the refresh token as an HttpOnly cookie
+      response.cookie(
+        authResponse.cookieName,
+        authResponse.refreshToken,
+        authResponse.cookieOptions
+      );
+      
+      this.logger.debug(`Set refresh token cookie for user: ${loginDto.email}`);
+      
+      // Return only the access token in the response body
       return {
-        access_token: tokens.accessToken,
-        refresh_token: tokens.refreshToken,
+        access_token: authResponse.accessToken,
         user: user,
       };
     } catch (error) {
@@ -79,7 +92,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'User logout', description: 'Invalidates the connected user\'s tokens' })
+  @ApiOperation({ summary: 'User logout', description: 'Invalidates the connected user\'s tokens and clears cookies' })
   @ApiResponse({ 
     status: 200, 
     description: 'Logout successful',
@@ -91,11 +104,20 @@ export class AuthController {
     }
   })
   @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
-  async logout(@CurrentUser() user: User) {
+  async logout(
+    @CurrentUser() user: User,
+    @Res({ passthrough: true }) response: Response
+  ) {
     this.logger.debug(`Logout attempt for user id: ${user.id}`);
     
     try {
       await this.authService.invalidateUserTokens(user.id);
+      
+      // Clear the refresh token cookie
+      response.clearCookie(AUTH_CONSTANTS.COOKIE_NAMES.REFRESH_TOKEN);
+      
+      this.logger.debug(`Cleared refresh token cookie for user: ${user.id}`);
+      
       return { message: 'Logout successful' };
     } catch (error) {
       this.logger.error(`Logout error for user ${user.id}: ${error.message}`);
@@ -109,39 +131,54 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Refresh tokens', description: 'Generates new tokens from a refresh token' })
-  @ApiBody({ type: RefreshTokenDto })
+  @ApiOperation({ summary: 'Refresh tokens', description: 'Generates new tokens from the refresh token cookie' })
+  @ApiCookieAuth(AUTH_CONSTANTS.COOKIE_NAMES.REFRESH_TOKEN)
   @ApiResponse({ 
     status: 201, 
     description: 'Tokens refreshed successfully',
     schema: {
       type: 'object',
       properties: {
-        access_token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
-        refresh_token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' }
+        access_token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' }
       }
     }
   })
   @ApiResponse({ status: 400, description: 'Invalid or missing token' })
   @ApiResponse({ status: 401, description: 'Expired or invalid token' })
-  async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<{
-    access_token: string;
-    refresh_token: string;
-  }> {
-    // The API supports both camelCase (refreshToken) and snake_case (refresh_token) formats
-    // for maximum compatibility with different client implementations and the OAuth2 standard.
-    // If both are provided, refreshToken takes precedence due to the OR operator order.
-    const token = refreshTokenDto.refreshToken || refreshTokenDto.refresh_token;
+  async refresh(
+    @Req() request: Request, 
+    @Res({ passthrough: true }) response: Response,
+    @Body() refreshTokenDto?: RefreshTokenDto
+  ): Promise<{ access_token: string }> {
+    // First try to get the token from the cookie
+    let token = request.cookies?.[AUTH_CONSTANTS.COOKIE_NAMES.REFRESH_TOKEN];
+    
+    // If not in the cookie, fall back to the request body for backwards compatibility
+    if (!token && refreshTokenDto) {
+      token = refreshTokenDto.refreshToken || refreshTokenDto.refresh_token;
+    }
     
     if (!token) {
       throw new BadRequestException('A refresh token is required');
     }
     
-    const tokens = await this.authService.refreshToken(token);
+    this.logger.debug('Processing refresh token request');
     
+    // Get tokens with cookie configuration
+    const authResponse = await this.authService.refreshTokenWithCookies(token);
+    
+    // Set the new refresh token as an HttpOnly cookie
+    response.cookie(
+      authResponse.cookieName,
+      authResponse.refreshToken,
+      authResponse.cookieOptions
+    );
+    
+    this.logger.debug('Refresh token rotation completed');
+    
+    // Return only the access token in the response body
     return {
-      access_token: tokens.accessToken,
-      refresh_token: tokens.refreshToken,
+      access_token: authResponse.accessToken,
     };
   }
 

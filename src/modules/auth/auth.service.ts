@@ -3,7 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../users/user.service';
 import { User } from '../users/user.interface';
-import { TokenPayload, AuthTokens, LoginDto } from './dto/auth.dto';
+import { TokenPayload, AuthTokens, LoginDto, AuthResponseWithCookies } from './dto/auth.dto';
+import { AUTH_CONSTANTS } from './auth.constants';
+import { getRefreshTokenCookieConfig } from '../../common/middlewares/cookie-config';
 
 @Injectable()
 export class AuthService {
@@ -66,6 +68,22 @@ export class AuthService {
     return this.generateTokens(loginDto);
   }
 
+  /**
+   * Login with cookie-based refresh token
+   * @param loginDto Login credentials
+   * @returns Access token and refresh token with cookie configuration
+   */
+  async loginWithCookies(loginDto: LoginDto | Omit<User, 'password'>): Promise<AuthResponseWithCookies> {
+    const tokens = await this.login(loginDto);
+    
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      cookieName: AUTH_CONSTANTS.COOKIE_NAMES.REFRESH_TOKEN,
+      cookieOptions: getRefreshTokenCookieConfig(this.configService),
+    };
+  }
+
   async refreshToken(refreshToken: string): Promise<AuthTokens> {
     try {
       // Verify the refresh token
@@ -93,6 +111,22 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
+  }
+
+  /**
+   * Refresh token with cookie-based refresh token
+   * @param refreshToken The refresh token string
+   * @returns Access token and refresh token with cookie configuration
+   */
+  async refreshTokenWithCookies(refreshToken: string): Promise<AuthResponseWithCookies> {
+    const tokens = await this.refreshToken(refreshToken);
+    
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      cookieName: AUTH_CONSTANTS.COOKIE_NAMES.REFRESH_TOKEN,
+      cookieOptions: getRefreshTokenCookieConfig(this.configService),
+    };
   }
 
   /**

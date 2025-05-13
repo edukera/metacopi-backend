@@ -2,6 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
+import { ConfigService } from '@nestjs/config';
+import { getCorsOptions } from './common/middlewares/cookie-config';
+import { AUTH_CONSTANTS } from './modules/auth/auth.constants';
 
 async function bootstrap() {
   const logger = new Logger('Main');
@@ -10,6 +14,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug'],
   });
+  
+  const configService = app.get(ConfigService);
+  
+  // Configure cookie parser middleware
+  app.use(cookieParser(configService.get<string>('auth.jwtSecret') || 'metacopi_jwt_secret'));
+  logger.log('Cookie parser middleware configured');
   
   // Ajouter la validation globale
   app.useGlobalPipes(new ValidationPipe({
@@ -32,6 +42,15 @@ async function bootstrap() {
       },
       'JWT-auth'
     )
+    .addCookieAuth(
+      AUTH_CONSTANTS.COOKIE_NAMES.REFRESH_TOKEN,
+      {
+        type: 'apiKey',
+        in: 'cookie',
+        name: AUTH_CONSTANTS.COOKIE_NAMES.REFRESH_TOKEN,
+      },
+      AUTH_CONSTANTS.COOKIE_NAMES.REFRESH_TOKEN
+    )
     .addTag('users', 'User management')
     .addTag('auth', 'Authentication and authorization')
     .addTag('classes', 'Class management')
@@ -49,8 +68,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
 
-  // CORS
-  app.enableCors();
+  // Configure CORS with cookie credentials
+  const corsOptions = getCorsOptions(configService);
+  app.enableCors(corsOptions);
+  logger.log('CORS configured with cookie credentials support');
 
   const port = parseInt(process.env.PORT || '3002', 10);
   const host = isProduction ? '0.0.0.0' : 'localhost';
