@@ -274,7 +274,7 @@ export class SubmissionService {
     
     if (submission.pages && submission.pages.length > 0) {
       // Générer des URLs présignées pour chaque page (en utilisant le chemin de l'image raw)
-      const imagePaths = submission.pages.map(page => page.raw.image_path);
+      const imagePaths = submission.pages.map(page => page.processed.image_path);
       const urlsMap = await this.storageService.getPresignedDownloadUrls(imagePaths);
 
       // Conserver l'ordre des pages et créer les objets PageInfo

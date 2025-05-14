@@ -109,7 +109,9 @@ export class StorageService {
     
     for (const key of keys) {
       if (key) {
-        urlMap[key] = await this.getPresignedDownloadUrl(key, expiresIn);
+        const url = await this.getPresignedDownloadUrl(key, expiresIn);
+        console.log('url', url);
+        urlMap[key] = url;
       }
     }
     
