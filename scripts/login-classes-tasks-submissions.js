@@ -9,7 +9,7 @@ const credentials = {
 };
 
 // URL de base de l'API (à ajuster selon votre environnement)
-const API_BASE_URL = 'http://localhost:3002'; 
+const API_BASE_URL = 'http://localhost:3002/api'; 
 
 // Fonction principale
 async function main() {
@@ -115,6 +115,7 @@ async function main() {
         console.log(`\nRécupération des détails de la soumission avec les URLs des pages pour l'ID: ${submissionId}...`);
         try {
           const submissionDetailsResponse = await axios.get(`${API_BASE_URL}/submissions/${submissionId}`, authHeaders);
+          // console.debug('submissionDetailsResponse', submissionDetailsResponse.data);
           // Afficher les URLs des pages s'ils existent
           if (submissionDetailsResponse.data.pageUrls && submissionDetailsResponse.data.pageUrls.length > 0) {
             console.log(`\nURLs des pages de la soumission (${submissionDetailsResponse.data.pageUrls.length} pages):`);

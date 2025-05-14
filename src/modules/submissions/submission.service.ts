@@ -266,6 +266,7 @@ export class SubmissionService {
   }
 
   async findOneWithPageUrls(id: string): Promise<SubmissionResponseDto & { pageUrls: PageInfo[] }> {
+    const type : 'raw' | 'processed' = 'processed';
     const submission = await this.findSubmissionEntity(id);
     const submissionDto = this.toResponseDto(submission);
     
@@ -274,19 +275,19 @@ export class SubmissionService {
     
     if (submission.pages && submission.pages.length > 0) {
       // Générer des URLs présignées pour chaque page (en utilisant le chemin de l'image raw)
-      const imagePaths = submission.pages.map(page => page.processed.image_path);
+      const imagePaths = submission.pages.map(page => page[type].image_path);
       const urlsMap = await this.storageService.getPresignedDownloadUrls(imagePaths);
 
       // Conserver l'ordre des pages et créer les objets PageInfo
       submission.pages.forEach((page, index) => {
-        const imagePath = page.raw.image_path;
+        const imagePath = page.processed.image_path;
         if (urlsMap[imagePath]) {
           // Pour cet exemple, nous utilisons les vraies dimensions de la page
           pageUrls.push({
             id: page.id,
             url: urlsMap[imagePath],
-            width: page.raw.width,
-            height: page.raw.height,
+            width: page[type].width,
+            height: page[type].height,
           });
         }
       });
