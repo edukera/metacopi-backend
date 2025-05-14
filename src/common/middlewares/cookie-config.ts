@@ -59,14 +59,12 @@ export const getRefreshTokenCookieConfig = (configService: ConfigService): Cooki
  * @param configService The NestJS ConfigService
  */
 export const getCorsOptions = (configService: ConfigService) => {
-  const isProduction = configService.get<string>('environment') === 'production';
-  const frontendUrl = configService.get<string>('frontendUrl');
   const allowedOrigins = configService.get<string[]>('allowedOrigins');
   
-  logger.debug(`Configuring CORS with credentials and origins: ${isProduction ? JSON.stringify(allowedOrigins) : frontendUrl}`);
+  logger.debug(`Configuring CORS with credentials and origins: ${JSON.stringify(allowedOrigins)}`);
   
   return {
-    origin: isProduction ? allowedOrigins : frontendUrl,
+    origin: allowedOrigins,
     credentials: true, // Allow credentials (cookies) to be sent
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],

@@ -24,7 +24,7 @@ describe('HttpExceptionFilter', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn().mockImplementation((key: string) => {
-              if (key === 'NODE_ENV') return 'test';
+              if (key === 'NODE_ENV') return 'development';
               return null;
             }),
           },
