@@ -283,7 +283,7 @@
       "color": "green",
       "text": "Excellent travail sur cette démonstration !",
       "markdown": "Excellent travail sur cette démonstration !",
-      "pageY": 200,
+      "pageY": 0.04325259515570934,
       "annotations": ["annot_1"],
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
@@ -299,7 +299,7 @@
       "annotations": [
         "a1ffb016-7477-4a11-816e-eeaee2c0b80c"
       ],
-      "pageY": 3637.1,
+      "pageY": 0.7866349049956531,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -314,7 +314,7 @@
       "annotations": [
         "b7246ef0-f95a-44e5-8e33-0dcc0e341666"
       ],
-      "pageY": 920.3639808153476,
+      "pageY": 0.19902118746655225,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -329,7 +329,7 @@
       "annotations": [
         "94883fbc-fde6-4db9-bda1-6443480a1ad7"
       ],
-      "pageY": 3927.747678882252,
+      "pageY": 0.8493615655886572,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -344,7 +344,7 @@
       "annotations": [
         "cf7c4b8c-2b2b-4a45-8445-faa2ed59de01"
       ],
-      "pageY": 1580.14,
+      "pageY": 0.3417258217777898,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -359,7 +359,7 @@
       "annotations": [
         "76efa95d-fd0d-410b-a219-8d6a5e7ae8f8"
       ],
-      "pageY": 3387.61,
+      "pageY": 0.7326145976426902,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -374,7 +374,7 @@
       "annotations": [
         "7e4e3884-09e5-4a8b-b1b0-7116658e1b35"
       ],
-      "pageY": 1663.31,
+      "pageY": 0.35972101426685337,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -389,7 +389,7 @@
       "annotations": [
         "d3138712-b3ca-4bda-b5d9-65bbff7032f3"
       ],
-      "pageY": 2855.347721822542,
+      "pageY": 0.6174843035515355,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -404,7 +404,7 @@
       "annotations": [
         "8bd77ba5-7fef-4a65-977e-d2086ab3427f"
       ],
-      "pageY": 2522.685851318945,
+      "pageY": 0.5456066699868944,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     }
@@ -416,9 +416,9 @@
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
       "color": "#008000",
-      "position": { "x": 100, "y": 500 },
-      "width": 100,
-      "height": 100,
+      "position": { "x": 0.02883795848040658, "y": 0.10812283952205666 },
+      "width": 0.02883795848040658,
+      "height": 0.02162629757569853,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -430,12 +430,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 1055.31,
-        "y": 3637.1
+        "x": 0.3043282006631776,
+        "y": 0.7866349049956531
       },
       "color": "#008000",
-      "width": 1009.88,
-      "height": 216.23
+      "width": 0.2912284025663494,
+      "height": 0.04676687067473832
     },
     {
       "id": "7dfab222-c10b-47d4-abaa-272398d8982c",
@@ -446,12 +446,12 @@
       "type": "line",
       "points": [
         {
-          "x": 1404.89,
-          "y": 3365.43
+          "x": 0.40510670126296426,
+          "y": 0.7278439663495025
         },
         {
-          "x": 1737.81,
-          "y": 3271.18
+          "x": 0.5011276527970876,
+          "y": 0.7074783736246975
         }
       ],
       "color": "#008000",
@@ -465,12 +465,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 1976.4135219977495,
-        "y": 920.3639808153476
+        "x": 0.5699927967582323,
+        "y": 0.19902118746655225
       },
       "color": "#008000",
-      "width": 749.09,
-      "height": 205.14
+      "width": 0.21599193194348328,
+      "height": 0.04436852077422145
     },
     {
       "id": "94883fbc-fde6-4db9-bda1-6443480a1ad7",
@@ -480,12 +480,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 1550.860956260517,
-        "y": 3927.747678882252
+        "x": 0.44719462262256057,
+        "y": 0.8493615655886572
       },
       "color": "#FF0000",
-      "width": 1639.0412004418206,
-      "height": 372.3457453529764
+      "width": 0.4726735294117647,
+      "height": 0.0805461169786713
     },
     {
       "id": "cf7c4b8c-2b2b-4a45-8445-faa2ed59de01",
@@ -495,12 +495,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 1635.29,
-        "y": 1580.14
+        "x": 0.47154268455305936,
+        "y": 0.3417258217777898
       },
       "color": "#1E3A8A",
-      "width": 688.05,
-      "height": 238.41
+      "width": 0.1984863897059757,
+      "height": 0.051559905277032874
     },
     {
       "id": "76efa95d-fd0d-410b-a219-8d6a5e7ae8f8",
@@ -510,12 +510,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 858.46,
-        "y": 3387.61
+        "x": 0.24753778258074682,
+        "y": 0.7326145976426902
       },
       "color": "#008000",
-      "width": 1847.75,
-      "height": 293.85
+      "width": 0.5327997693482986,
+      "height": 0.06355103590830233
     },
     {
       "id": "df84c4fa-87c2-453f-a029-1b4854da0d12",
@@ -526,12 +526,12 @@
       "type": "line",
       "points": [
         {
-          "x": 1973.77,
-          "y": 3293.35
+          "x": 0.5691665800460785,
+          "y": 0.7122296302766002
         },
         {
-          "x": 2273.4,
-          "y": 3132.57
+          "x": 0.6555940600922434,
+          "y": 0.6774351642518599
         }
       ],
       "color": "#008000",
@@ -545,12 +545,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 697.54,
-        "y": 1663.31
+        "x": 0.20112745098039216,
+        "y": 0.35972101426685337
       },
       "color": "#ffa500",
-      "width": 1930.98,
-      "height": 510.08
+      "width": 0.557088235294119,
+      "height": 0.11031142084559903
     },
     {
       "id": "d3138712-b3ca-4bda-b5d9-65bbff7032f3",
@@ -560,12 +560,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 1696.3277660844947,
-        "y": 2855.347721822542
+        "x": 0.4891661651515267,
+        "y": 0.6174843035515355
       },
       "color": "#008000",
-      "width": 638.1115922609633,
-      "height": 327.1175059952038
+      "width": 0.1840287493684438,
+      "height": 0.0707433836271851
     },
     {
       "id": "8bd77ba5-7fef-4a65-977e-d2086ab3427f",
@@ -575,12 +575,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 1640.839801540063,
-        "y": 2522.685851318945
+        "x": 0.47313719144464245,
+        "y": 0.5456066699868944
       },
       "color": "#ffa500",
-      "width": 1231.8328128863814,
-      "height": 327.1175059952038
+      "width": 0.35519689242111345,
+      "height": 0.0707433836271851
     },
     {
       "id": "83d48888-12fd-4da5-9f47-8cb44eae2c05",
@@ -591,12 +591,12 @@
       "type": "line",
       "points": [
         {
-          "x": 1296.8144213645871,
-          "y": 3953.131894484413
+          "x": 0.3740236774353482,
+          "y": 0.8548944192657462
         },
         {
-          "x": 1435.534332725666,
-          "y": 4102.829736211032
+          "x": 0.4139661280465732,
+          "y": 0.8872037848639126
         }
       ],
       "color": "#FF0000",
@@ -611,12 +611,12 @@
       "type": "line",
       "points": [
         {
-          "x": 1319.0096071823598,
-          "y": 4086.1966426858517
+          "x": 0.38033911396609864,
+          "y": 0.8836866844742562
         },
         {
-          "x": 1424.4367398167797,
-          "y": 3964.2206235011995
+          "x": 0.41073178818851204,
+          "y": 0.8572892789793035
         }
       ],
       "color": "#FF0000",
@@ -632,7 +632,7 @@
       "color": "red",
       "text": "Votre calcul de dérivée est incorrect. La dérivée de f(x) = x^2 est f'(x) = 2x et non 2x^2. Revoyez les règles de dérivation.",
       "markdown": "Votre calcul de dérivée est incorrect. La dérivée de $f(x) = x^2$ est $f'(x) = 2x$ et non $2x^2$. Revoyez les règles de dérivation.",
-      "pageY": 100,
+      "pageY": 0.021625298011029844,
       "annotations": ["annot_ai_1"],
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
@@ -645,7 +645,7 @@
       "color": "orange",
       "text": "Attention à l'application de la relation de Chasles pour le calcul des produits scalaires. Rappelez-vous que pour trois vecteurs, on a - La linéarité du produit scalaire permet cette distribution - Assurez-vous de ne pas confondre avec le produit vectoriel qui ne suit pas cette règle de la même façon",
       "markdown": "Attention à l'application de la relation de Chasles pour le calcul des produits scalaires.\n\n- Rappelez-vous que pour trois vecteurs, on a - La linéarité du produit scalaire permet cette distribution\n- Assurez-vous de ne pas confondre avec le produit vectoriel qui ne suit pas cette règle de la même façon",
-      "pageY": 3000,
+      "pageY": 0.6487888191175606,
       "annotations": ["annot_ai_2"],
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
@@ -661,7 +661,7 @@
       "annotations": [
         "5c7afa9b-a232-469a-93c1-ac553482cda7"
       ],
-      "pageY": 2608.1265546285185,
+      "pageY": 0.5640628128211111,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -677,7 +677,7 @@
       "annotations": [
         "b9a1e5f9-71d5-4947-b19d-610f86a9d92b"
       ],
-      "pageY": 3892.1438848920866,
+      "pageY": 0.8417968316654382,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -692,7 +692,7 @@
       "annotations": [
         "f83d4da5-8768-425d-96a2-003967058527"
       ],
-      "pageY": 1828.1736058611546,
+      "pageY": 0.3953446929931996,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -707,7 +707,7 @@
       "annotations": [
         "ea0188d8-ab21-4af4-8cbc-2cebfcabceab"
       ],
-      "pageY": 1646.676258992806,
+      "pageY": 0.35611170399179196,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -722,7 +722,7 @@
       "annotations": [
         "6ab0f1b9-9e30-4838-bf27-f3cf22c56cbb"
       ],
-      "pageY": 2167.8465227817746,
+      "pageY": 0.46882138253952533,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -737,7 +737,7 @@
       "annotations": [
         "a523bc3b-b374-4816-94eb-9465fa819f65"
       ],
-      "pageY": 2533.7745803357316,
+      "pageY": 0.5479903812147538,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     }
@@ -749,9 +749,9 @@
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
       "color": "#FF0000",
-      "position": { "x": 100, "y": 100 },
-      "width": 100,
-      "height": 100,
+      "position": { "x": 0.02883795848040658, "y": 0.02162629757569853 },
+      "width": 0.02883795848040658,
+      "height": 0.02162629757569853,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -761,9 +761,9 @@
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
       "color": "#FFA500",
-      "position": { "x": 300, "y": 300 },
-      "width": 100,
-      "height": 100,
+      "position": { "x": 0.08650518165513264, "y": 0.06487888191175606 },
+      "width": 0.02883795848040658,
+      "height": 0.02162629757569853,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -772,10 +772,10 @@
       "pageId": "p2",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
       "type":"zone",
-      "position":{"x":1912.7308278077778,"y":3892.1438848920866},
+      "position":{"x":0.5515945150166892,"y":0.8417968316654382},
       "color":"#ffa500",
-      "width":1342.8087419752449,
-      "height":460.1822541966426,
+      "width":0.3871421401822794,
+      "height":0.09952681748186864,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -784,10 +784,10 @@
       "pageId": "p4",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
       "type":"zone",
-      "position":{"x":658.7028291036236,"y":2167.8465227817746},
-      "color":"#FF0000",
-      "width":1381.650317156347,
-      "height":232.86330935251817,
+      "position":{"x":0.18993450955354772,"y":0.46882138253952533},
+      "color": "#FF0000",
+      "width": 0.3984287245837917,
+      "height": 0.05035510994528724,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -799,12 +799,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 853.6120418750417,
-        "y": 2608.1265546285185
+        "x": 0.2461682867792218,
+        "y": 0.5640628128211111
       },
       "color": "#ffa500",
-      "width": 712.0176273460062,
-      "height": 477.51580053710677
+      "width": 0.2053394976645635,
+      "height": 0.10326061533326076
     },
     {
       "id": "f83d4da5-8768-425d-96a2-003967058527",
@@ -814,12 +814,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 1404.0908623207113,
-        "y": 1828.1736058611546
+        "x": 0.40486982015621145,
+        "y": 0.3953446929931996
       },
       "color": "#ffa500",
-      "width": 1045.904417851142,
-      "height": 210.13661268235478
+      "width": 0.3015870006203408,
+      "height": 0.04544033257428068
     },
     {
       "id": "ea0188d8-ab21-4af4-8cbc-2cebfcabceab",
@@ -829,12 +829,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 664.2516255580667,
-        "y": 1646.676258992806
+        "x": 0.19153584948673635,
+        "y": 0.35611170399179196
       },
       "color": "#ffa500",
-      "width": 1992.0179271450947,
-      "height": 316.0287769784172
+      "width": 0.574398290815656,
+      "height": 0.06833214465354886
     },
     {
       "id": "a523bc3b-b374-4816-94eb-9465fa819f65",
@@ -844,12 +844,12 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 1613.0958192678472,
-        "y": 2533.7745803357316
+        "x": 0.4651815970354722,
+        "y": 0.5479903812147538
       },
       "color": "#ffa500",
-      "width": 1159.6984589786207,
-      "height": 316.0287769784172
+      "width": 0.3343996134347234,
+      "height": 0.06833214465354886
     }
   ]
 }
