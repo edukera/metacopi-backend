@@ -113,5 +113,6 @@ async function bootstrap() {
   if (!isProduction) {
     logger.log(`API documentation available at: http://${host}:${port}/api/docs`);
   }
+  logger.log(`version: 0.0.1`);
 }
 bootstrap(); 
