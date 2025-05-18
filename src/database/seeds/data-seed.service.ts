@@ -553,19 +553,39 @@ export class DataSeedService {
           this.logger.error(`Correction ${annotationData.correctionId} does not exist. Cannot create annotation ${annotationData.id}.`);
           continue;
         }
-        // On extrait les champs à la racine et on sérialise le reste dans 'value'
-        const { id, correctionId, createdByEmail, pageId, ...rest } = annotationData;
-        const value = JSON.stringify(rest);
-        const newAnnotation = await this.annotationModel.create({
-          id: String(id),
-          correctionId,
-          createdByEmail,
-          pageId,
-          value,
-        });
-        this.annotationIdMap.set(String(id), newAnnotation._id.toString());
+
+        // Vérifier si value est déjà présent dans les données
+        let value: string;
+        if ('value' in annotationData && typeof annotationData.value === 'string') {
+          // Utiliser directement la valeur fournie
+          value = annotationData.value;
+          
+          // Extraire uniquement les champs nécessaires
+          const { id, correctionId, createdByEmail, pageId } = annotationData;
+          const newAnnotation = await this.annotationModel.create({
+            id: String(id),
+            correctionId,
+            createdByEmail,
+            pageId,
+            value,
+          });
+          this.annotationIdMap.set(String(id), newAnnotation._id.toString());
+        } else {
+          // Comportement précédent: extraire les champs à la racine et sérialiser le reste
+          const { id, correctionId, createdByEmail, pageId, ...rest } = annotationData;
+          value = JSON.stringify(rest);
+          const newAnnotation = await this.annotationModel.create({
+            id: String(id),
+            correctionId,
+            createdByEmail,
+            pageId,
+            value,
+          });
+          this.annotationIdMap.set(String(id), newAnnotation._id.toString());
+        }
+        
         createdCount++;
-        this.logger.log(`Annotation successfully created: ${id}`);
+        this.logger.log(`Annotation successfully created: ${annotationData.id}`);
       } catch (error) {
         this.logger.error(`Error while creating annotation with ID ${annotationData.id}:`, error);
       }
@@ -587,20 +607,41 @@ export class DataSeedService {
           this.logger.error(`Correction ${aiAnnotationData.correctionId} does not exist. Cannot create AI annotation ${aiAnnotationData.id}.`);
           continue;
         }
-        // On extrait les champs à la racine et on sérialise le reste dans 'value'
-        const { id, correctionId, createdByEmail, pageId, status, ...rest } = aiAnnotationData;
-        const value = JSON.stringify(rest);
-        const newAIAnnotation = await this.aiAnnotationModel.create({
-          id: String(id),
-          correctionId,
-          createdByEmail,
-          pageId,
-          value,
-          status: status || AIAnnotationStatus.PENDING
-        });
-        this.aiAnnotationIdMap.set(String(id), newAIAnnotation._id.toString());
+
+        // Vérifier si value est déjà présent dans les données
+        let value: string;
+        if ('value' in aiAnnotationData && typeof aiAnnotationData.value === 'string') {
+          // Utiliser directement la valeur fournie
+          value = aiAnnotationData.value;
+          
+          // Extraire uniquement les champs nécessaires
+          const { id, correctionId, createdByEmail, pageId, status } = aiAnnotationData;
+          const newAIAnnotation = await this.aiAnnotationModel.create({
+            id: String(id),
+            correctionId,
+            createdByEmail,
+            pageId,
+            value,
+            status: status || AIAnnotationStatus.PENDING
+          });
+          this.aiAnnotationIdMap.set(String(id), newAIAnnotation._id.toString());
+        } else {
+          // Comportement précédent: extraire les champs à la racine et sérialiser le reste
+          const { id, correctionId, createdByEmail, pageId, status, ...rest } = aiAnnotationData;
+          value = JSON.stringify(rest);
+          const newAIAnnotation = await this.aiAnnotationModel.create({
+            id: String(id),
+            correctionId,
+            createdByEmail,
+            pageId,
+            value,
+            status: status || AIAnnotationStatus.PENDING
+          });
+          this.aiAnnotationIdMap.set(String(id), newAIAnnotation._id.toString());
+        }
+        
         createdCount++;
-        this.logger.log(`AI Annotation successfully created: ${id}`);
+        this.logger.log(`AI Annotation successfully created: ${aiAnnotationData.id}`);
       } catch (error) {
         this.logger.error(`Error while creating AI annotation with ID ${aiAnnotationData.id}:`, error);
       }
