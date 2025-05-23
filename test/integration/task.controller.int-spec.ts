@@ -236,6 +236,7 @@ describe('TaskController (Isolated Integration)', () => {
       classId: testClass._id.toString(),
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
       status: TaskStatus.DRAFT,
+      utterance: 'Test utterance for integration test',
       createdByEmail: testTeacher.email,
     };
     

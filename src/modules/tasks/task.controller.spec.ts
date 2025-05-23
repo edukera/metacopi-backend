@@ -23,6 +23,7 @@ describe('TaskController', () => {
     dueDate: new Date(),
     status: TaskStatus.DRAFT,
     points: 0,
+    utterance: 'Test utterance',
     tags: [],
     metadata: {},
     settings: {},
@@ -42,6 +43,7 @@ describe('TaskController', () => {
       dueDate: new Date(),
       status: TaskStatus.PUBLISHED,
       points: 0,
+      utterance: 'Another test utterance',
       tags: [],
       metadata: {},
       settings: {},
@@ -185,6 +187,7 @@ describe('TaskController', () => {
         classId: mockClassId,
         createdByEmail: mockUserId,
         dueDate: new Date(),
+        utterance: 'Test utterance for new task',
       };
 
       const result = await controller.create(createTaskDto);

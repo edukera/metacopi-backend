@@ -48,6 +48,13 @@ export class CreateTaskDto {
   @IsNumber()
   points?: number;
 
+  @ApiProperty({
+    description: 'Task utterance content',
+    example: 'Complete the implementation of the user authentication system'
+  })
+  @IsString()
+  utterance: string;
+
   @ApiPropertyOptional({
     description: 'Tags associated with the task',
     example: ['programming', 'project', 'javascript']
@@ -120,6 +127,14 @@ export class UpdateTaskDto {
   points?: number;
 
   @ApiPropertyOptional({
+    description: 'Updated task utterance content',
+    example: 'Updated implementation requirements for the authentication system'
+  })
+  @IsOptional()
+  @IsString()
+  utterance?: string;
+
+  @ApiPropertyOptional({
     description: 'Updated tags associated with the task',
     example: ['programming', 'advanced', 'javascript', 'project']
   })
@@ -182,6 +197,12 @@ export class TaskResponseDto {
     example: 100
   })
   points: number;
+
+  @ApiProperty({
+    description: 'Task utterance content',
+    example: 'Complete the implementation of the user authentication system'
+  })
+  utterance: string;
 
   @ApiProperty({
     description: 'Tags associated with the task',

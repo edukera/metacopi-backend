@@ -53,6 +53,7 @@ export interface TaskSeedData {
   status?: TaskStatus;
   dueDate?: Date;
   points?: number;
+  utterance: string;
   tags?: string[];
   metadata?: Record<string, any>;
   settings?: Record<string, any>;
@@ -366,6 +367,7 @@ export class DataSeedService {
           status: taskData.status || TaskStatus.DRAFT,
           dueDate: taskData.dueDate,
           points: taskData.points || 0,
+          utterance: taskData.utterance,
           tags: taskData.tags || [],
           metadata: taskData.metadata || {},
           settings: taskData.settings || {},

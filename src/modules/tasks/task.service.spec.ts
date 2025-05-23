@@ -16,11 +16,13 @@ describe('TaskService', () => {
   let submissionService: any;
   
   const userId = new Types.ObjectId().toString();
+  const userEmail = 'test@example.com';
   const classId = new Types.ObjectId().toString();
   
   const mockRequest = {
     user: {
       sub: userId,
+      email: userEmail,
       role: 'user'
     }
   };
@@ -104,7 +106,7 @@ describe('TaskService', () => {
       const result = await service.create(createDto);
 
       // Assert
-      expect(membershipService.findByUserAndClass).toHaveBeenCalledWith(userId, classId);
+      expect(membershipService.findByUserAndClass).toHaveBeenCalledWith(userEmail, classId);
       expect(result).toBeDefined();
       expect(result.id).toBeDefined();
     });
@@ -118,7 +120,7 @@ describe('TaskService', () => {
 
       // Act & Assert
       await expect(service.create(createDto)).rejects.toThrow(BadRequestException);
-      expect(membershipService.findByUserAndClass).toHaveBeenCalledWith(userId, classId);
+      expect(membershipService.findByUserAndClass).toHaveBeenCalledWith(userEmail, classId);
     });
 
     it('should throw BadRequestException when user is not a member of the class', async () => {
@@ -129,7 +131,7 @@ describe('TaskService', () => {
 
       // Act & Assert
       await expect(service.create(createDto)).rejects.toThrow(BadRequestException);
-      expect(membershipService.findByUserAndClass).toHaveBeenCalledWith(userId, classId);
+      expect(membershipService.findByUserAndClass).toHaveBeenCalledWith(userEmail, classId);
     });
   });
 

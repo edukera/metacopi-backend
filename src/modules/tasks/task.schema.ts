@@ -41,6 +41,9 @@ export class Task extends Document {
   @Prop({ type: Number, min: 0, default: 0 })
   points: number;
   
+  @Prop({ required: true, trim: true })
+  utterance: string;
+  
   @Prop({ type: [String], default: [] })
   tags: string[];
   

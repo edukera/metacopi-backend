@@ -3,13 +3,15 @@ import { CreateTaskDto, UpdateTaskDto } from './task.dto';
 import { TaskStatus } from './task.schema';
 
 export interface Task extends Document {
+  readonly id: string;
   readonly title: string;
   readonly description: string;
   readonly classId: string;
-  readonly createdBy: string;
+  readonly createdByEmail: string;
   readonly status: TaskStatus;
   readonly dueDate: Date;
   readonly points: number;
+  readonly utterance: string;
   readonly tags: string[];
   readonly metadata: Record<string, any>;
   readonly settings: Record<string, any>;

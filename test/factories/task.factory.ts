@@ -6,13 +6,15 @@ import { Document } from 'mongoose';
 
 export interface TaskStub extends Omit<Task, keyof Document> {
   _id: string;
+  id: string;
   title: string;
   description: string;
   classId: string;
-  createdBy: string;
+  createdByEmail: string;
   status: TaskStatus;
   dueDate: Date;
   points: number;
+  utterance: string;
   tags: string[];
   metadata: Record<string, any>;
   settings: Record<string, any>;
@@ -33,6 +35,7 @@ export const createTaskDto = (override: Partial<CreateTaskDto> = {}): CreateTask
     status: TaskStatus.DRAFT,
     dueDate: faker.date.future(),
     points: faker.number.int({ min: 0, max: 100 }),
+    utterance: faker.lorem.sentence(),
     tags: [faker.lorem.word(), faker.lorem.word()],
     metadata: {},
     settings: {},
@@ -48,6 +51,7 @@ export const updateTaskDto = (override: Partial<UpdateTaskDto> = {}): UpdateTask
     status: TaskStatus.PUBLISHED,
     dueDate: faker.date.future(),
     points: faker.number.int({ min: 0, max: 100 }),
+    utterance: faker.lorem.sentence(),
     tags: [faker.lorem.word(), faker.lorem.word()],
     metadata: { updated: true },
     settings: { updated: true },
@@ -59,19 +63,20 @@ export const taskStub = (override: Partial<TaskStub> = {}): TaskStub => {
   const now = new Date();
   const stub: TaskStub = {
     _id: new Types.ObjectId().toString(),
+    id: faker.string.uuid(),
     title: faker.lorem.sentence(3),
     description: faker.lorem.paragraph(),
     classId: new Types.ObjectId().toString(),
-    createdBy: new Types.ObjectId().toString(),
+    createdByEmail: faker.internet.email(),
     status: TaskStatus.DRAFT,
     dueDate: faker.date.future(),
     points: faker.number.int({ min: 0, max: 100 }),
+    utterance: faker.lorem.sentence(),
     tags: [faker.lorem.word(), faker.lorem.word()],
     metadata: {},
     settings: {},
     createdAt: now,
     updatedAt: now,
-    createdByEmail: faker.internet.email(),
     save: jest.fn().mockImplementation(() => Promise.resolve(stub)),
     toObject: jest.fn().mockImplementation(() => stub),
     toJSON: jest.fn().mockImplementation(() => stub),

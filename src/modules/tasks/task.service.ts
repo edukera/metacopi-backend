@@ -27,6 +27,7 @@ export class TaskService {
     taskDto.status = task.status;
     taskDto.dueDate = task.dueDate;
     taskDto.points = task.points;
+    taskDto.utterance = task.utterance;
     taskDto.tags = task.tags;
     taskDto.metadata = task.metadata;
     taskDto.settings = task.settings;
