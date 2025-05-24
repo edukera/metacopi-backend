@@ -6,6 +6,7 @@ import { ClassController } from './class.controller';
 import { MembershipModule } from '../memberships/membership.module';
 import { Membership, MembershipSchema } from '../memberships/membership.schema';
 import { UsersModule } from '../users/users.module';
+import { TaskModule } from '../tasks/task.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UsersModule } from '../users/users.module';
     ]),
     MembershipModule,
     UsersModule,
+    TaskModule,
   ],
   controllers: [ClassController],
   providers: [ClassService],

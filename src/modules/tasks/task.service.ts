@@ -2,15 +2,19 @@ import { Injectable, NotFoundException, BadRequestException, Inject, forwardRef 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task, TaskStatus } from './task.schema';
-import { CreateTaskDto, UpdateTaskDto, TaskResponseDto } from './task.dto';
+import { CreateTaskDto, UpdateTaskDto, TaskResponseDto, TaskWithStatsResponseDto } from './task.dto';
 import { MembershipService } from '../memberships/membership.service';
 import { SubmissionService } from '../submissions/submission.service';
+import { Submission } from '../submissions/submission.schema';
+import { Correction } from '../corrections/correction.schema';
 import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectModel(Task.name) private taskModel: Model<Task>,
+    @InjectModel(Submission.name) private submissionModel: Model<Submission>,
+    @InjectModel(Correction.name) private correctionModel: Model<Correction>,
     private membershipService: MembershipService,
     @Inject(forwardRef(() => SubmissionService)) private submissionService: SubmissionService,
     @Inject(REQUEST) private request,
@@ -186,5 +190,70 @@ export class TaskService {
     }).exec();
     
     return this.toResponseDtoList(tasks);
+  }
+
+  // Nouvelle méthode pour récupérer les tâches avec statistiques
+  async findByClassWithStats(classId: string): Promise<TaskWithStatsResponseDto[]> {
+    // 1. Récupérer les tâches de la classe
+    const tasks = await this.taskModel.find({ classId }).exec();
+
+    if (tasks.length === 0) {
+      return [];
+    }
+
+    // 2. Utiliser l'agrégation MongoDB pour calculer les statistiques efficacement
+    const statsAggregation = await this.submissionModel.aggregate([
+      {
+        $match: {
+          taskId: { $in: tasks.map(task => task.id) }
+        }
+      },
+      {
+        $lookup: {
+          from: 'corrections', // nom de la collection corrections
+          localField: 'id', // submission.id
+          foreignField: 'submissionId', // correction.submissionId
+          as: 'correction'
+        }
+      },
+      {
+        $group: {
+          _id: '$taskId',
+          submissionCount: { $sum: 1 },
+          correctedCount: {
+            $sum: {
+              $cond: [
+                { $gt: [{ $size: '$correction' }, 0] },
+                1,
+                0
+              ]
+            }
+          }
+        }
+      }
+    ]);
+
+    // 3. Créer un map des statistiques pour un accès rapide
+    const statsMap = new Map();
+    statsAggregation.forEach(stat => {
+      statsMap.set(stat._id, {
+        submissionCount: stat.submissionCount,
+        correctedCount: stat.correctedCount
+      });
+    });
+
+    // 4. Combiner les tâches avec leurs statistiques
+    return tasks.map(task => {
+      const baseDto = this.toResponseDto(task);
+      const stats = statsMap.get(task.id) || {
+        submissionCount: 0,
+        correctedCount: 0
+      };
+
+      return {
+        ...baseDto,
+        ...stats
+      } as TaskWithStatsResponseDto;
+    });
   }
 } 

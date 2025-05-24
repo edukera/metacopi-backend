@@ -1,10 +1,18 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, Query, HttpCode, HttpStatus, Inject, UseGuards } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto, UpdateTaskDto, TaskResponseDto } from './task.dto';
 import { Task } from './task.schema';
 import { AuthenticatedUser } from '../../common/decorators';
 import { CheckPermission } from '../../common/guards/permission.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { REQUEST } from '@nestjs/core';
+import { Model, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { MembershipService } from '../memberships/membership.service';
+import { Membership } from '../memberships/membership.schema';
+import { ClassAccessGuard } from '../../common/guards/class-access.guard';
+import { JwtAuthGuard } from '../../common/guards';
+import { TaskWithStatsResponseDto } from '../tasks/task.dto';
 
 @ApiTags('tasks')
 @ApiBearerAuth('JWT-auth')
@@ -109,5 +117,25 @@ export class TaskController {
   @CheckPermission('Task', 'publish')
   async publish(@Param('id') id: string): Promise<TaskResponseDto> {
     return this.taskService.publish(id);
+  }
+
+  @Get(':classId/tasks/with-stats')
+  @AuthenticatedUser
+  @UseGuards(ClassAccessGuard)
+  @ApiOperation({ 
+    summary: 'Get tasks with statistics for a class',
+    description: 'Retrieves all tasks for a class with submission and correction statistics'
+  })
+  @ApiParam({ name: 'classId', description: 'Logical business ID or MongoDB _id of the class' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Tasks with statistics successfully retrieved',
+    type: [TaskWithStatsResponseDto]
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized - Missing or invalid token' })
+  @ApiResponse({ status: 403, description: 'Forbidden - You do not have access to this class' })
+  @ApiResponse({ status: 404, description: 'Class not found' })
+  async getTasksWithStats(@Param('classId') classId: string): Promise<TaskWithStatsResponseDto[]> {
+    return this.taskService.findByClassWithStats(classId);
   }
 } 

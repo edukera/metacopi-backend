@@ -233,4 +233,18 @@ export class TaskResponseDto {
     example: '2023-01-01T12:00:00Z'
   })
   updatedAt: Date;
+}
+
+export class TaskWithStatsResponseDto extends TaskResponseDto {
+  @ApiProperty({
+    description: 'Number of submissions for this task',
+    example: 12
+  })
+  submissionCount: number;
+
+  @ApiProperty({
+    description: 'Number of corrected submissions for this task',
+    example: 8
+  })
+  correctedCount: number;
 } 
