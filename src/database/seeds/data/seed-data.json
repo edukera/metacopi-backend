@@ -14,7 +14,7 @@
       "password": "Teacher123!",
       "firstName": "Jean",
       "lastName": "Dupont",
-      "avatarUrl": "./shadcn.jpg",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/124599?v=4",
       "role": "user",
       "emailVerified": true
     },
