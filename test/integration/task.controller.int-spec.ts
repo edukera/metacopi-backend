@@ -18,7 +18,7 @@ import { Correction, CorrectionSchema } from '../../src/modules/corrections/corr
 import { MembershipService } from '../../src/modules/memberships/membership.service';
 import { SubmissionService } from '../../src/modules/submissions/submission.service';
 import { CorrectionService } from '../../src/modules/corrections/correction.service';
-import { CreateTaskDto, UpdateTaskDto } from '../../src/modules/tasks/task.dto';
+import { CreateTaskDto, TaskResponseDto, UpdateTaskDto } from '../../src/modules/tasks/task.dto';
 
 // Increase timeout for all tests
 jest.setTimeout(60000);
@@ -252,7 +252,7 @@ describe('TaskController (Isolated Integration)', () => {
     // Verify it was saved to database
     const savedTask = await taskModel.findById(result.id);
     expect(savedTask).toBeDefined();
-    expect(savedTask.title).toBe(createTaskDto.title);
+    expect(savedTask?.title).toBe(createTaskDto.title);
     
     console.log('Test completed successfully');
   });
@@ -290,7 +290,7 @@ describe('TaskController (Isolated Integration)', () => {
     expect(tasks).toBeDefined();
     expect(Array.isArray(tasks)).toBe(true);
     expect(tasks.length).toBe(1);
-    expect(tasks[0].id.toString()).toBe(task1._id.toString());
+    expect(tasks[0].id.toString()).toBe(task1._id as unknown as string);
     expect(tasks[0].title).toBe('Task in Class 1');
     
     console.log('Test completed successfully');
@@ -307,10 +307,10 @@ describe('TaskController (Isolated Integration)', () => {
       createdBy: testTeacher._id,
     });
     
-    const result = await taskController.findOne(task._id.toString());
+    const result = await taskController.findOne(task._id as unknown as string);
     
     expect(result).toBeDefined();
-    expect(result.id.toString()).toBe(task._id.toString());
+    expect(result.id.toString()).toBe(task._id as unknown as  string);
     expect(result.title).toBe('Find This Task');
     
     console.log('Test completed successfully');
@@ -326,7 +326,7 @@ describe('TaskController (Isolated Integration)', () => {
       if (id === nonExistentId) {
         throw new NotFoundException(`Task with ID ${id} not found`);
       }
-      return null;
+      return null as unknown as TaskResponseDto;
     });
     
     await expect(taskController.findOne(nonExistentId))
