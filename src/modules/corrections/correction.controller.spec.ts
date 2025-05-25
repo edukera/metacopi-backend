@@ -72,6 +72,12 @@ describe('CorrectionController', () => {
       const corrections = mockCorrections.filter(c => c.correctedByEmail === teacherEmail);
       return Promise.resolve(corrections);
     }),
+    findByTask: jest.fn().mockImplementation((taskId: string) => {
+      // Simulate finding corrections for a task by filtering mockCorrections
+      // In reality, this would involve finding submissions for the task, then corrections for those submissions
+      const corrections = mockCorrections.filter(c => c.submissionId.includes(taskId) || taskId === 'task-123');
+      return Promise.resolve(corrections);
+    }),
     update: jest.fn().mockImplementation((id: string, dto: UpdateCorrectionDto) => {
       const correctionIndex = mockCorrections.findIndex(c => c._id.toString() === id);
       if (correctionIndex === -1) {
@@ -177,6 +183,15 @@ describe('CorrectionController', () => {
       const result = await controller.findByTeacher(mockTeacherEmail);
       expect(result).toEqual(expect.arrayContaining(mockCorrections));
       expect(service.findByTeacher).toHaveBeenCalledWith(mockTeacherEmail);
+    });
+  });
+
+  describe('findByTask', () => {
+    it('should return corrections for a specific task', async () => {
+      const mockTaskId = 'task-123';
+      const result = await controller.findByTask(mockTaskId);
+      expect(result).toEqual(expect.arrayContaining(mockCorrections));
+      expect(service.findByTask).toHaveBeenCalledWith(mockTaskId);
     });
   });
 

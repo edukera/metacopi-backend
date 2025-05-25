@@ -5,6 +5,7 @@ import { Correction, CorrectionStatus } from './correction.schema';
 import { REQUEST } from '@nestjs/core';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { CreateCorrectionDto, UpdateCorrectionDto } from './correction.dto';
+import { SubmissionService } from '../submissions/submission.service';
 import { Document } from 'mongoose';
 
 // Simple type for mocks that only need certain properties
@@ -29,6 +30,7 @@ const mockRequest = {
 describe('CorrectionService', () => {
   let service: CorrectionService;
   let mockCorrectionModel: any;
+  let mockSubmissionService: any;
 
   beforeEach(async () => {
     // Create a mock Mongoose Correction with constructor
@@ -70,6 +72,11 @@ describe('CorrectionService', () => {
     mockCorrectionModel.sort = jest.fn().mockReturnThis();
     mockCorrectionModel.exec = jest.fn();
 
+    // Mock SubmissionService
+    mockSubmissionService = {
+      findByTask: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CorrectionService,
@@ -80,6 +87,10 @@ describe('CorrectionService', () => {
         {
           provide: REQUEST,
           useValue: mockRequest,
+        },
+        {
+          provide: SubmissionService,
+          useValue: mockSubmissionService,
         },
       ],
     }).compile();
@@ -240,6 +251,44 @@ describe('CorrectionService', () => {
 
       expect(mockCorrectionModel.find).toHaveBeenCalledWith({ correctedById: 'teacher-id-123' });
       expect(result).toEqual(corrections);
+    });
+  });
+
+  describe('findByTask', () => {
+    it('should return corrections for a task', async () => {
+      const submissions = [
+        { id: 'submission-1', taskId: 'task-123' },
+        { id: 'submission-2', taskId: 'task-123' },
+      ];
+      
+      const corrections = [
+        { id: 'correction-1', submissionId: 'submission-1' },
+        { id: 'correction-2', submissionId: 'submission-2' },
+      ] as MockCorrection[];
+
+      mockSubmissionService.findByTask.mockResolvedValue(submissions);
+      
+      mockCorrectionModel.find.mockImplementationOnce(() => ({
+        exec: jest.fn().mockResolvedValue(corrections),
+      }));
+
+      const result = await service.findByTask('task-123');
+
+      expect(mockSubmissionService.findByTask).toHaveBeenCalledWith('task-123');
+      expect(mockCorrectionModel.find).toHaveBeenCalledWith({ 
+        submissionId: { $in: ['submission-1', 'submission-2'] } 
+      });
+      expect(result).toEqual(corrections);
+    });
+
+    it('should return empty array when no submissions found for task', async () => {
+      mockSubmissionService.findByTask.mockResolvedValue([]);
+
+      const result = await service.findByTask('task-without-submissions');
+
+      expect(mockSubmissionService.findByTask).toHaveBeenCalledWith('task-without-submissions');
+      expect(mockCorrectionModel.find).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
     });
   });
 

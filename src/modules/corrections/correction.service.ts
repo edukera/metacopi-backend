@@ -91,6 +91,26 @@ export class CorrectionService {
     return this.toResponseDtoList(corrections);
   }
 
+  async findByTask(taskId: string): Promise<CorrectionResponseDto[]> {
+    // Récupérer toutes les submissions pour cette tâche
+    const submissions = await this.submissionService.findByTask(taskId);
+    
+    // Extraire les IDs des submissions
+    const submissionIds = submissions.map(submission => submission.id);
+    
+    // Si aucune submission, retourner un tableau vide
+    if (submissionIds.length === 0) {
+      return [];
+    }
+    
+    // Récupérer toutes les corrections pour ces submissions
+    const corrections = await this.correctionModel.find({ 
+      submissionId: { $in: submissionIds } 
+    }).exec();
+    
+    return this.toResponseDtoList(corrections);
+  }
+
   async update(
     id: string,
     updateCorrectionDto: UpdateCorrectionDto,

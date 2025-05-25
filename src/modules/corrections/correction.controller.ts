@@ -72,6 +72,29 @@ export class CorrectionController {
     return this.correctionService.findByTeacher(teacherId);
   }
 
+  @Get('task/:taskId')
+  @UseGuards(JwtAuthGuard, CorrectionAccessGuard)
+  @SetPermission(Permission.READ_CORRECTIONS, 'read')
+  @ApiOperation({ 
+    summary: 'Get all corrections for a task',
+    description: 'Retrieves all corrections associated with a specific task by finding all submissions for that task and returning their corresponding corrections.'
+  })
+  @ApiParam({ 
+    name: 'taskId', 
+    description: 'Logical business ID of the task to get corrections for', 
+    example: 'TASK-2024-001' 
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Returns all corrections for the specified task. Returns an empty array if no submissions or corrections exist for the task.', 
+    type: [CorrectionResponseDto] 
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
+  async findByTask(@Param('taskId') taskId: string): Promise<CorrectionResponseDto[]> {
+    return this.correctionService.findByTask(taskId);
+  }
+
   @Patch(':id')
   @UseGuards(JwtAuthGuard, CorrectionAccessGuard)
   @SetPermission(Permission.UPDATE_CORRECTIONS, 'update')
