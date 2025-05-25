@@ -26,13 +26,13 @@ export class CorrectionController {
   }
 
   @Get()
-  @AdminOnly
+  @AuthenticatedUser
   @UseGuards(JwtAuthGuard, CorrectionAccessGuard)
   @SetPermission(Permission.READ_CORRECTIONS, 'list')
-  @ApiOperation({ summary: 'Get all corrections' })
-  @ApiResponse({ status: 200, description: 'Returns a list of all corrections.', type: [CorrectionResponseDto] })
+  @ApiOperation({ summary: 'Get all corrections accessible to the current user' })
+  @ApiResponse({ status: 200, description: 'Returns a list of corrections accessible to the current user.', type: [CorrectionResponseDto] })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 403, description: 'Forbidden - requires admin privileges.' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions.' })
   async findAll(): Promise<CorrectionResponseDto[]> {
     return this.correctionService.findAll();
   }

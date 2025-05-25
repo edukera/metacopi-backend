@@ -5,6 +5,7 @@ import { REQUEST } from '@nestjs/core';
 import { Correction, CorrectionStatus } from './correction.schema';
 import { CreateCorrectionDto, UpdateCorrectionDto, CorrectionResponseDto } from './correction.dto';
 import { SubmissionService } from '../submissions/submission.service';
+import { UserRole } from '../users/user.schema';
 
 @Injectable()
 export class CorrectionService {
@@ -58,7 +59,20 @@ export class CorrectionService {
   }
 
   async findAll(): Promise<CorrectionResponseDto[]> {
-    const corrections = await this.correctionModel.find().exec();
+    // Si l'utilisateur est admin, retourner toutes les corrections
+    if (this.request.user.role === UserRole.ADMIN) {
+      const corrections = await this.correctionModel.find().exec();
+      return this.toResponseDtoList(corrections);
+    }
+    
+    // Sinon, filtrer les corrections selon l'utilisateur connecté
+    const userEmail = this.request.user.email;
+    
+    // Récupérer les corrections où l'utilisateur est le correcteur
+    const corrections = await this.correctionModel.find({ 
+      correctedByEmail: userEmail 
+    }).exec();
+    
     return this.toResponseDtoList(corrections);
   }
 
