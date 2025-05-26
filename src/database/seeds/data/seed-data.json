@@ -23,7 +23,7 @@
       "password": "Student123!",
       "firstName": "Alice",
       "lastName": "Gribouille",
-      "avatarUrl": "./alice_gribouille.jpg",
+      "avatarUrl": "./maxime_durand.jpg",
       "role": "user",
       "emailVerified": true
     },
@@ -296,13 +296,6 @@
       "isActive": true
     },
     {
-      "userEmail": "alice.gribouille@monlycee.net",
-      "classId": "MATH_1ere_03",
-      "role": "student",
-      "status": "active",
-      "isActive": true
-    },
-    {
       "userEmail": "maxime.durand@monlycee.net",
       "classId": "MATH_1ere_03",
       "role": "student",
@@ -542,8 +535,8 @@
   ],
   "submissions": [
     {
-      "id": "sub_alice_gribouille_dm_7_2025_04_15",
-      "userEmail": "alice.gribouille@monlycee.net",
+      "id": "sub_maxime_durand_dm_7_2025_04_15",
+      "userEmail": "maxime.durand@monlycee.net",
       "taskId": "DM_7",
       "pages": [
         {
@@ -609,8 +602,8 @@
       "submittedAt": "2025-04-12T22:50:23.000Z"
     },
     {
-      "id": "sub_alice_gribouille_ds_8_2025_05_12",
-      "userEmail": "alice.gribouille@monlycee.net",
+      "id": "sub_maxime_durand_ds_8_2025_05_12",
+      "userEmail": "maxime.durand@monlycee.net",
       "taskId": "DS_8",
       "pages": [
         {
@@ -706,9 +699,9 @@
   ],
   "corrections": [
     {
-      "id": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-      "submissionId": "sub_alice_gribouille_dm_7_2025_04_15",
-      "studentEmail": "alice.gribouille@monlycee.net",
+      "id": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
+      "submissionId": "sub_maxime_durand_dm_7_2025_04_15",
+      "studentEmail": "maxime.durand@monlycee.net",
       "correctorEmail": "jean.dupont@monlycee.net",
       "grade": 18,
       "appreciation": "Excellent !",
@@ -716,9 +709,9 @@
       "correctedAt": "2025-04-22T02:36:12.000Z"
     },
     {
-      "id": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
-      "submissionId": "sub_alice_gribouille_ds_8_2025_05_12",
-      "studentEmail": "alice.gribouille@monlycee.net",
+      "id": "cor_maxime_durand_ds_8_2025_05_12_by_jean_dupont",
+      "submissionId": "sub_maxime_durand_ds_8_2025_05_12",
+      "studentEmail": "maxime.durand@monlycee.net",
       "correctorEmail": "jean.dupont@monlycee.net",
       "grade": 15,
       "appreciation": "Bon travail Alice ! Attention toutefois à la justification de la question 3.",
@@ -729,7 +722,7 @@
   "comments": [
     {
       "id": "c1",
-      "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_ds_8_2025_05_12_by_jean_dupont",
       "pageId": "p1",
       "type": "ok",
       "color": "green",
@@ -743,7 +736,7 @@
     },
     {
       "id": "770214bf-269d-4292-91ca-c7405d2544ff",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p2",
       "type": "warning",
       "color": "#FF0000",
@@ -757,7 +750,7 @@
     },
     {
       "id": "e2ed71c0-ef7f-4556-9c76-f3f9e75752f9",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p3",
       "type": "warning",
       "color": "#1E3A8A",
@@ -771,7 +764,7 @@
     },
     {
       "id": "571a48a8-fe73-4a3c-a718-f534f7e97a56",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
       "type": "warning",
       "color": "#ffa500",
@@ -785,7 +778,7 @@
     },
     {
       "id": "978e0df6-edfd-49ec-b019-4d29b67f0c3b",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
       "type": "warning",
       "color": "#ffa500",
@@ -799,7 +792,7 @@
     },
     {
       "id": "86ed1d57-ead6-4fc4-ac08-6ca02591a99b",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p3",
       "type": "warning",
       "color": "#008000",
@@ -815,98 +808,98 @@
   "annotations": [
     {
       "id": "annot_1",
-      "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_ds_8_2025_05_12_by_jean_dupont",
       "pageId": "p1",
       "value": "{\"type\":\"zone\",\"color\":\"#008000\",\"position\":{\"x\":0.02883795848040658,\"y\":0.10812283952205666},\"width\":0.02883795848040658,\"height\":0.02162629757569853,\"status\":\"pending\"}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "94883fbc-fde6-4db9-bda1-6443480a1ad7",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p2",
       "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.44719462262256054,\"y\":0.8493615655886572},\"color\":\"#FF0000\",\"width\":0.4726735294117647,\"height\":0.0805461169786713}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "cf7c4b8c-2b2b-4a45-8445-faa2ed59de01",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p3",
       "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.47154268455305937,\"y\":0.3417258217777898},\"color\":\"#1E3A8A\",\"width\":0.1984863897059757,\"height\":0.05155990527703287}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "7e4e3884-09e5-4a8b-b1b0-7116658e1b35",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
       "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.20112745098039217,\"y\":0.3597210142668534},\"color\":\"#ffa500\",\"width\":0.557088235294119,\"height\":0.11031142084559903}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "8bd77ba5-7fef-4a65-977e-d2086ab3427f",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
       "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.47313719144464245,\"y\":0.5456066699868944},\"color\":\"#ffa500\",\"width\":0.35519689242111346,\"height\":0.0707433836271851}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "0cc291ca-36f6-4605-9f0b-c5e40e151a7b",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p1",
       "value": "{\"id\":\"0cc291ca-36f6-4605-9f0b-c5e40e151a7b\",\"pageId\":\"p1\",\"type\":\"stamp\",\"position\":{\"x\":0.4703649742524486,\"y\":0.7146371463714638},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "fa4a8c16-3a3f-404c-9430-ee3c79024827",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p1",
       "value": "{\"id\":\"fa4a8c16-3a3f-404c-9430-ee3c79024827\",\"pageId\":\"p1\",\"type\":\"stamp\",\"position\":{\"x\":0.5966980129005882,\"y\":0.8277982779827798},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "b8723d89-9670-4507-bbda-63b699a9a653",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p2",
       "value": "{\"id\":\"b8723d89-9670-4507-bbda-63b699a9a653\",\"pageId\":\"p2\",\"type\":\"stamp\",\"position\":{\"x\":0.7935806705340527,\"y\":0.24723247232472328},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "49bf526d-c3f1-4157-b824-3ce7d12b382c",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p2",
       "value": "{\"id\":\"49bf526d-c3f1-4157-b824-3ce7d12b382c\",\"pageId\":\"p2\",\"type\":\"stamp\",\"position\":{\"x\":0.9527274854544363,\"y\":0.5854858548585486},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "3e448a56-21fb-4959-94bf-a36d2495c96d",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p2",
       "value": "{\"id\":\"3e448a56-21fb-4959-94bf-a36d2495c96d\",\"pageId\":\"p2\",\"type\":\"stamp\",\"position\":{\"x\":0.4096594881487971,\"y\":0.8634686346863469},\"iconName\":\"X\",\"color\":\"#FF0000\",\"scale\":50}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "11bf3102-4329-4cd8-8d6d-371e7a98c9f8",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p3",
       "value": "{\"id\":\"11bf3102-4329-4cd8-8d6d-371e7a98c9f8\",\"pageId\":\"p3\",\"type\":\"stamp\",\"position\":{\"x\":0.6049014569686493,\"y\":0.6998769987699878},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "9891c71d-ce3a-4d25-9206-74cc6e6f1c50",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p3",
       "value": "{\"id\":\"9891c71d-ce3a-4d25-9206-74cc6e6f1c50\",\"pageId\":\"p3\",\"type\":\"stamp\",\"position\":{\"x\":0.490053240015795,\"y\":0.7822878228782288},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "41193392-2331-4cfb-9dc4-9741ae3763d3",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
       "value": "{\"id\":\"41193392-2331-4cfb-9dc4-9741ae3763d3\",\"pageId\":\"p4\",\"type\":\"stamp\",\"position\":{\"x\":0.6688883206995252,\"y\":0.6974169741697418},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
       "createdByEmail": "jean.dupont@monlycee.net"
     },
     {
       "id": "1136e8f1-0d93-4c8f-ba98-9a5befe35e6b",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
       "value": "{\"id\":\"1136e8f1-0d93-4c8f-ba98-9a5befe35e6b\",\"pageId\":\"p4\",\"type\":\"stamp\",\"position\":{\"x\":0.5179449498472025,\"y\":0.4489544895448955},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
       "createdByEmail": "jean.dupont@monlycee.net"
@@ -915,7 +908,7 @@
   "ai-comments": [
     {
       "id": "c_ai_1",
-      "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_ds_8_2025_05_12_by_jean_dupont",
       "pageId": "p1",
       "type": "error",
       "color": "red",
@@ -930,7 +923,7 @@
     },
     {
       "id": "c_ai_2",
-      "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_ds_8_2025_05_12_by_jean_dupont",
       "pageId": "p1",
       "type": "warning",
       "color": "orange",
@@ -945,7 +938,7 @@
     },
     {
       "id": "62fec5fc-b41e-4449-a5d3-aaeacadeaf2a",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p1",
       "type": "warning",
       "color": "#ffa500",
@@ -960,7 +953,7 @@
     },
     {
       "id": "7020c621-a444-4a6f-ae94-b41492237560",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "authorEmail": "jean.dupont@monlycee.net",
       "pageId": "p2",
       "type": "warning",
@@ -976,7 +969,7 @@
     },
     {
       "id": "cca1d8fe-5f27-4c42-a586-d5499934952f",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p3",
       "type": "warning",
       "color": "#ffa500",
@@ -991,7 +984,7 @@
     },
     {
       "id": "b2e7e900-557b-4998-ae37-360273644f3d",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
       "type": "warning",
       "color": "#ffa500",
@@ -1006,7 +999,7 @@
     },
     {
       "id": "c3568f45-cc77-487e-8c3d-8b3ff4bd8a48",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
       "type": "warning",
       "color": "#FF0000",
@@ -1021,7 +1014,7 @@
     },
     {
       "id": "6d8e9ab2-8847-421e-bb7e-d3e323a2848e",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
       "type": "warning",
       "color": "#ffa500",
@@ -1039,7 +1032,7 @@
     {
       "id": "annot_ai_1",
       "pageId": "p1",
-      "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
       "color": "#FF0000",
       "position": {
@@ -1054,7 +1047,7 @@
     {
       "id": "annot_ai_2",
       "pageId": "p1",
-      "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
       "color": "#FFA500",
       "position": {
@@ -1069,7 +1062,7 @@
     {
       "id": "b9a1e5f9-71d5-4947-b19d-610f86a9d92b",
       "pageId": "p2",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "type": "zone",
       "position": {
         "x": 0.5515945150166892,
@@ -1084,7 +1077,7 @@
     {
       "id": "6ab0f1b9-9e30-4838-bf27-f3cf22c56cbb",
       "pageId": "p4",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "type": "zone",
       "position": {
         "x": 0.1899345095535477,
@@ -1098,7 +1091,7 @@
     },
     {
       "id": "5c7afa9b-a232-469a-93c1-ac553482cda7",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p1",
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending",
@@ -1113,7 +1106,7 @@
     },
     {
       "id": "f83d4da5-8768-425d-96a2-003967058527",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p3",
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending",
@@ -1128,7 +1121,7 @@
     },
     {
       "id": "ea0188d8-ab21-4af4-8cbc-2cebfcabceab",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending",
@@ -1143,7 +1136,7 @@
     },
     {
       "id": "a523bc3b-b374-4816-94eb-9465fa819f65",
-      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "correctionId": "cor_maxime_durand_dm_7_2025_04_15_by_jean_dupont",
       "pageId": "p4",
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending",
