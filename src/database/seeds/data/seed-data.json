@@ -26,6 +26,249 @@
       "avatarUrl": "./alice_gribouille.jpg",
       "role": "user",
       "emailVerified": true
+    },
+    {
+      "email": "maxime.durand@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Maxime",
+      "lastName": "Durand",
+      "avatarUrl": "avatars/maxime_durand.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "elodie.morel@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Élodie",
+      "lastName": "Morel",
+      "avatarUrl": "avatars/elodie_morel.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "sofia.martinez@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Sofia",
+      "lastName": "Martinez",
+      "avatarUrl": "avatars/sofia_martinez.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "lea.benali@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Léa",
+      "lastName": "Benali",
+      "avatarUrl": "avatars/lea_benali.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "nathan.tran@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Nathan",
+      "lastName": "Tran",
+      "avatarUrl": "avatars/nathan_tran.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "camille.ito@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Camille",
+      "lastName": "Ito",
+      "avatarUrl": "avatars/camille_ito.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "yuna.chen@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Yuna",
+      "lastName": "Chen",
+      "avatarUrl": "avatars/yuna_chen.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "thomas.marchand@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Thomas",
+      "lastName": "Marchand",
+      "avatarUrl": "avatars/thomas_marchand.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "julien.perrin@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Julien",
+      "lastName": "Perrin",
+      "avatarUrl": "avatars/julien_perrin.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "mina.tanaka@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Mina",
+      "lastName": "Tanaka",
+      "avatarUrl": "avatars/mina_tanaka.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "sabrina.lemoine@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Sabrina",
+      "lastName": "Lemoine",
+      "avatarUrl": "avatars/sabrina_lemoine.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "chloe.dumont@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Chloé",
+      "lastName": "Dumont",
+      "avatarUrl": "avatars/chloe_dumont.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "lucas.charrier@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Lucas",
+      "lastName": "Charrier",
+      "avatarUrl": "avatars/lucas_charrier.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "kevin.sow@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Kévin",
+      "lastName": "Sow",
+      "avatarUrl": "avatars/kevin_sow.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "yanis.diabate@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Yanis",
+      "lastName": "Diabaté",
+      "avatarUrl": "avatars/yanis_diabate.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "claire.barbier@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Claire",
+      "lastName": "Barbier",
+      "avatarUrl": "avatars/claire_barbier.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "maelle.pham@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Maëlle",
+      "lastName": "Pham",
+      "avatarUrl": "avatars/maelle_pham.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "arthur.delcourt@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Arthur",
+      "lastName": "Delcourt",
+      "avatarUrl": "avatars/arthur_delcourt.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "mathis.bouchard@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Mathis",
+      "lastName": "Bouchard",
+      "avatarUrl": "avatars/mathis_bouchard.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "oceane.lemoigne@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Océane",
+      "lastName": "Lemoigne",
+      "avatarUrl": "avatars/oceane_lemoigne.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "antoine.rousseau@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Antoine",
+      "lastName": "Rousseau",
+      "avatarUrl": "avatars/antoine_rousseau.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "lina.nguyen@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Lina",
+      "lastName": "Nguyen",
+      "avatarUrl": "avatars/lina_nguyen.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "bastien.lefevre@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Bastien",
+      "lastName": "Lefèvre",
+      "avatarUrl": "avatars/bastien_lefevre.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "anais.garnier@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Anaïs",
+      "lastName": "Garnier",
+      "avatarUrl": "avatars/anais_garnier.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "mathieu.renard@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Mathieu",
+      "lastName": "Renard",
+      "avatarUrl": "avatars/mathieu_renard.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "emilie.delmas@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Émilie",
+      "lastName": "Delmas",
+      "avatarUrl": "avatars/emilie_delmas.jpg",
+      "role": "user",
+      "emailVerified": true
+    },
+    {
+      "email": "axel.benoit@monlycee.net",
+      "password": "Student123!",
+      "firstName": "Axel",
+      "lastName": "Benoît",
+      "avatarUrl": "avatars/axel_benoit.jpg",
+      "role": "user",
+      "emailVerified": true
     }
   ],
   "classes": [
@@ -58,6 +301,195 @@
       "role": "student",
       "status": "active",
       "isActive": true
+    },
+    {
+      "userEmail": "maxime.durand@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "elodie.morel@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "sofia.martinez@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "lea.benali@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "nathan.tran@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "camille.ito@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "yuna.chen@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "thomas.marchand@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "julien.perrin@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "mina.tanaka@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "sabrina.lemoine@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "chloe.dumont@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "lucas.charrier@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "kevin.sow@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "yanis.diabate@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "claire.barbier@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "maelle.pham@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "arthur.delcourt@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "mathis.bouchard@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "oceane.lemoigne@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "antoine.rousseau@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "lina.nguyen@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "bastien.lefevre@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "anais.garnier@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "mathieu.renard@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "emilie.delmas@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
+    },
+    {
+      "userEmail": "axel.benoit@monlycee.net",
+      "classId": "MATH_1ere_03",
+      "role": "student",
+      "status": "active",
+      "isActive": true
     }
   ],
   "tasks": [
@@ -71,7 +503,10 @@
       "dueDate": "2025-04-18T23:59:59.000Z",
       "points": 20,
       "utterance": "{\"utterance\":\"Les parties A et B sont indépendantes.\\n\\nOn rappelle que si $z$ est un nombre complexe, $\\\\overline{z}$ est le conjugué de $z$ et $|z|$ est le module de $z$.\",\"elements\":[{\"id\":\"section-a\",\"title\":\"Partie A\",\"type\":\"section\",\"utterance\":\"Pour chaque proposition, indiquer si elle est vraie ou fausse, et proposer une démonstration pour la réponse indiquée. Une réponse sans démonstration ne rapportera aucun point.\",\"children\":[{\"id\":\"qa-1\",\"title\":\"Question 1\",\"type\":\"question\",\"maxScore\":1,\"score\":null,\"utterance\":\"Si $z = -\\\\frac{1}{2} + \\\\frac{1}{2}i$, alors $z^4$ est un nombre réel.\",\"scoringGuide\":\"Vérifier le développement de $z^4$.\"},{\"id\":\"qa-2\",\"title\":\"Question 2\",\"type\":\"question\",\"maxScore\":1,\"score\":null,\"utterance\":\"Si $z + \\\\overline{z} = 0$, alors $z = 0$.\",\"scoringGuide\":\"Contre-exemple : $z = i$. La condition signifie que $z$ est un imaginaire pur.\"},{\"id\":\"qa-3\",\"title\":\"Question 3\",\"type\":\"question\",\"maxScore\":1,\"score\":null,\"utterance\":\"Si $z + \\\\frac{1}{z} = 0$, alors $z = i$ ou $z = -i$.\",\"scoringGuide\":\"Multiplier par z (si z non nul). $z^2 = -1$.\"},{\"id\":\"qa-4\",\"title\":\"Question 4\",\"type\":\"question\",\"maxScore\":1,\"score\":null,\"utterance\":\"Si $|z| = 1$ et $|z + z'| = 1$, alors $z' = 0$.\",\"scoringGuide\":\"Nombreux contre-exemples. Par exemple $z=1, z'=-1$ (non, $|1-1|=0 \\\\neq 1$). Si $z=1, z' = e^{i2\\\\pi/3}$ alors $|1+e^{i2\\\\pi/3}| = |1 -1/2 + i\\\\sqrt{3}/2| = |1/2+i\\\\sqrt{3}/2|=1$. Donc $z' \\\\neq 0$.\"}]},{\"id\":\"qb\",\"title\":\"Partie B\",\"type\":\"question\",\"maxScore\":2,\"score\":null,\"utterance\":\"**Restitution Organisée de Connaissances**\\n\\nSoit $z$ un nombre complexe.\\n\\nOn rappelle l'égalité suivante : $|z|^2 = z\\\\overline{z}$, qu'on pourra utiliser sans la redémontrer.\\n\\nDémontrer que, si $z_1$ et $z_2$ sont deux nombres complexes, alors $|z_1z_2| = |z_1|\\\\cdot|z_2|$.\",\"scoringGuide\":\"Démonstration attendue : $|z_1z_2|^2 = (z_1z_2)(\\\\overline{z_1z_2}) = z_1z_2\\\\overline{z_1}\\\\overline{z_2} = (z_1\\\\overline{z_1})(z_2\\\\overline{z_2}) = |z_1|^2|z_2|^2$. Puis prendre la racine carrée (modules sont positifs).\"}]}",
-      "tags": ["complex", "calculus"],
+      "tags": [
+        "complex",
+        "calculus"
+      ],
       "metadata": {
         "difficulty": "medium",
         "estimatedTime": "2 hours"
@@ -91,7 +526,10 @@
       "dueDate": "2025-05-15T12:59:59.000Z",
       "points": 20,
       "utterance": "",
-      "tags": ["probability", "calculus"],
+      "tags": [
+        "probability",
+        "calculus"
+      ],
       "metadata": {
         "difficulty": "medium",
         "estimatedTime": "2 hours"
@@ -161,7 +599,12 @@
           }
         }
       ],
-      "pageOrder": ["p1", "p2", "p3", "p4"],
+      "pageOrder": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ],
       "status": "submitted",
       "submittedAt": "2025-04-12T22:50:23.000Z"
     },
@@ -249,7 +692,14 @@
           }
         }
       ],
-      "pageOrder": ["p1", "p2", "p3", "p4", "p5", "p6"],
+      "pageOrder": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6"
+      ],
       "status": "submitted",
       "submittedAt": "2025-05-15T12:57:35.000Z"
     }
@@ -277,190 +727,190 @@
     }
   ],
   "comments": [
-{ 
-  "id": "c1",
-  "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
-  "pageId": "p1",
-  "type": "ok",
-  "color": "green",
-  "markdown": "Excellent travail sur cette démonstration !",
-  "text": "Excellent travail sur cette démonstration !",
-  "annotations": [
-    "annot_1"
+    {
+      "id": "c1",
+      "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
+      "pageId": "p1",
+      "type": "ok",
+      "color": "green",
+      "markdown": "Excellent travail sur cette démonstration !",
+      "text": "Excellent travail sur cette démonstration !",
+      "annotations": [
+        "annot_1"
+      ],
+      "pageY": 0.04325259515570934,
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "770214bf-269d-4292-91ca-c7405d2544ff",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p2",
+      "type": "warning",
+      "color": "#FF0000",
+      "markdown": "❌ pas nécessairement ! x pourrait être négatif ...",
+      "text": "❌ pas nécessairement ! x pourrait être négatif ...",
+      "annotations": [
+        "94883fbc-fde6-4db9-bda1-6443480a1ad7"
+      ],
+      "pageY": 0.8493615655886572,
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "e2ed71c0-ef7f-4556-9c76-f3f9e75752f9",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p3",
+      "type": "warning",
+      "color": "#1E3A8A",
+      "markdown": "ℹ️  $\\Leftrightarrow y = \\frac{1}{y} \\Leftrightarrow y^2 = 1 \\Leftrightarrow y = 1 \\text{ ou } y = -1$\nIl faut ensuite reprendre ces valeurs dans l'autre équation",
+      "text": "ℹ️  \\Leftrightarrow y = \\frac{1}{y} \\Leftrightarrow y^2 = 1 \\Leftrightarrow y = 1 \\text{ ou } y = -1\nIl faut ensuite reprendre ces valeurs dans l'autre équation",
+      "annotations": [
+        "cf7c4b8c-2b2b-4a45-8445-faa2ed59de01"
+      ],
+      "pageY": 0.3417258217777898,
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "571a48a8-fe73-4a3c-a718-f534f7e97a56",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "type": "warning",
+      "color": "#ffa500",
+      "markdown": "⚠️ car ces nombres sont positifs",
+      "text": "⚠️ car ces nombres sont positifs",
+      "annotations": [
+        "7e4e3884-09e5-4a8b-b1b0-7116658e1b35"
+      ],
+      "pageY": 0.3597210142668534,
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "978e0df6-edfd-49ec-b019-4d29b67f0c3b",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "type": "warning",
+      "color": "#ffa500",
+      "markdown": "⚠️ car ces nombres sont positifs",
+      "text": "⚠️ car ces nombres sont positifs",
+      "annotations": [
+        "8bd77ba5-7fef-4a65-977e-d2086ab3427f"
+      ],
+      "pageY": 0.5456066699868944,
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "86ed1d57-ead6-4fc4-ac08-6ca02591a99b",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p3",
+      "type": "warning",
+      "color": "#008000",
+      "markdown": "Bon travail !",
+      "text": "Bon travail !",
+      "annotations": [
+        "9891c71d-ce3a-4d25-9206-74cc6e6f1c50"
+      ],
+      "pageY": 0.7822878228782288,
+      "createdByEmail": "jean.dupont@monlycee.net"
+    }
   ],
-  "pageY": 0.04325259515570934,
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{ 
-  "id": "770214bf-269d-4292-91ca-c7405d2544ff",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p2",
-  "type": "warning",
-  "color": "#FF0000",
-  "markdown": "❌ pas nécessairement ! x pourrait être négatif ...",
-  "text": "❌ pas nécessairement ! x pourrait être négatif ...",
   "annotations": [
-    "94883fbc-fde6-4db9-bda1-6443480a1ad7"
-  ],
-  "pageY": 0.8493615655886572,
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{ 
-  "id": "e2ed71c0-ef7f-4556-9c76-f3f9e75752f9",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p3",
-  "type": "warning",
-  "color": "#1E3A8A",
-  "markdown": "ℹ️  $\\Leftrightarrow y = \\frac{1}{y} \\Leftrightarrow y^2 = 1 \\Leftrightarrow y = 1 \\text{ ou } y = -1$\nIl faut ensuite reprendre ces valeurs dans l'autre équation",
-  "text": "ℹ️  \\Leftrightarrow y = \\frac{1}{y} \\Leftrightarrow y^2 = 1 \\Leftrightarrow y = 1 \\text{ ou } y = -1\nIl faut ensuite reprendre ces valeurs dans l'autre équation",
-  "annotations": [
-    "cf7c4b8c-2b2b-4a45-8445-faa2ed59de01"
-  ],
-  "pageY": 0.3417258217777898,
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{ 
-  "id": "571a48a8-fe73-4a3c-a718-f534f7e97a56",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p4",
-  "type": "warning",
-  "color": "#ffa500",
-  "markdown": "⚠️ car ces nombres sont positifs",
-  "text": "⚠️ car ces nombres sont positifs",
-  "annotations": [
-    "7e4e3884-09e5-4a8b-b1b0-7116658e1b35"
-  ],
-  "pageY": 0.3597210142668534,
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{ 
-  "id": "978e0df6-edfd-49ec-b019-4d29b67f0c3b",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p4",
-  "type": "warning",
-  "color": "#ffa500",
-  "markdown": "⚠️ car ces nombres sont positifs",
-  "text": "⚠️ car ces nombres sont positifs",
-  "annotations": [
-    "8bd77ba5-7fef-4a65-977e-d2086ab3427f"
-  ],
-  "pageY": 0.5456066699868944,
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{ 
-  "id": "86ed1d57-ead6-4fc4-ac08-6ca02591a99b",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p3",
-  "type": "warning",
-  "color": "#008000",
-  "markdown": "Bon travail !",
-  "text": "Bon travail !",
-  "annotations": [
-    "9891c71d-ce3a-4d25-9206-74cc6e6f1c50"
-  ],
-  "pageY": 0.7822878228782288,
-  "createdByEmail": "jean.dupont@monlycee.net"
-}
-  ],
-  "annotations": [
-{
-  "id": "annot_1",
-  "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
-  "pageId": "p1",
-  "value": "{\"type\":\"zone\",\"color\":\"#008000\",\"position\":{\"x\":0.02883795848040658,\"y\":0.10812283952205666},\"width\":0.02883795848040658,\"height\":0.02162629757569853,\"status\":\"pending\"}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "94883fbc-fde6-4db9-bda1-6443480a1ad7",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p2",
-  "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.44719462262256054,\"y\":0.8493615655886572},\"color\":\"#FF0000\",\"width\":0.4726735294117647,\"height\":0.0805461169786713}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "cf7c4b8c-2b2b-4a45-8445-faa2ed59de01",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p3",
-  "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.47154268455305937,\"y\":0.3417258217777898},\"color\":\"#1E3A8A\",\"width\":0.1984863897059757,\"height\":0.05155990527703287}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "7e4e3884-09e5-4a8b-b1b0-7116658e1b35",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p4",
-  "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.20112745098039217,\"y\":0.3597210142668534},\"color\":\"#ffa500\",\"width\":0.557088235294119,\"height\":0.11031142084559903}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "8bd77ba5-7fef-4a65-977e-d2086ab3427f",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p4",
-  "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.47313719144464245,\"y\":0.5456066699868944},\"color\":\"#ffa500\",\"width\":0.35519689242111346,\"height\":0.0707433836271851}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "0cc291ca-36f6-4605-9f0b-c5e40e151a7b",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p1",
-  "value": "{\"id\":\"0cc291ca-36f6-4605-9f0b-c5e40e151a7b\",\"pageId\":\"p1\",\"type\":\"stamp\",\"position\":{\"x\":0.4703649742524486,\"y\":0.7146371463714638},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "fa4a8c16-3a3f-404c-9430-ee3c79024827",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p1",
-  "value": "{\"id\":\"fa4a8c16-3a3f-404c-9430-ee3c79024827\",\"pageId\":\"p1\",\"type\":\"stamp\",\"position\":{\"x\":0.5966980129005882,\"y\":0.8277982779827798},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "b8723d89-9670-4507-bbda-63b699a9a653",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p2",
-  "value": "{\"id\":\"b8723d89-9670-4507-bbda-63b699a9a653\",\"pageId\":\"p2\",\"type\":\"stamp\",\"position\":{\"x\":0.7935806705340527,\"y\":0.24723247232472328},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "49bf526d-c3f1-4157-b824-3ce7d12b382c",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p2",
-  "value": "{\"id\":\"49bf526d-c3f1-4157-b824-3ce7d12b382c\",\"pageId\":\"p2\",\"type\":\"stamp\",\"position\":{\"x\":0.9527274854544363,\"y\":0.5854858548585486},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "3e448a56-21fb-4959-94bf-a36d2495c96d",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p2",
-  "value": "{\"id\":\"3e448a56-21fb-4959-94bf-a36d2495c96d\",\"pageId\":\"p2\",\"type\":\"stamp\",\"position\":{\"x\":0.4096594881487971,\"y\":0.8634686346863469},\"iconName\":\"X\",\"color\":\"#FF0000\",\"scale\":50}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "11bf3102-4329-4cd8-8d6d-371e7a98c9f8",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p3",
-  "value": "{\"id\":\"11bf3102-4329-4cd8-8d6d-371e7a98c9f8\",\"pageId\":\"p3\",\"type\":\"stamp\",\"position\":{\"x\":0.6049014569686493,\"y\":0.6998769987699878},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "9891c71d-ce3a-4d25-9206-74cc6e6f1c50",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p3",
-  "value": "{\"id\":\"9891c71d-ce3a-4d25-9206-74cc6e6f1c50\",\"pageId\":\"p3\",\"type\":\"stamp\",\"position\":{\"x\":0.490053240015795,\"y\":0.7822878228782288},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "41193392-2331-4cfb-9dc4-9741ae3763d3",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p4",
-  "value": "{\"id\":\"41193392-2331-4cfb-9dc4-9741ae3763d3\",\"pageId\":\"p4\",\"type\":\"stamp\",\"position\":{\"x\":0.6688883206995252,\"y\":0.6974169741697418},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-},
-{
-  "id": "1136e8f1-0d93-4c8f-ba98-9a5befe35e6b",
-  "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-  "pageId": "p4",
-  "value": "{\"id\":\"1136e8f1-0d93-4c8f-ba98-9a5befe35e6b\",\"pageId\":\"p4\",\"type\":\"stamp\",\"position\":{\"x\":0.5179449498472025,\"y\":0.4489544895448955},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
-  "createdByEmail": "jean.dupont@monlycee.net"
-}
+    {
+      "id": "annot_1",
+      "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
+      "pageId": "p1",
+      "value": "{\"type\":\"zone\",\"color\":\"#008000\",\"position\":{\"x\":0.02883795848040658,\"y\":0.10812283952205666},\"width\":0.02883795848040658,\"height\":0.02162629757569853,\"status\":\"pending\"}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "94883fbc-fde6-4db9-bda1-6443480a1ad7",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p2",
+      "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.44719462262256054,\"y\":0.8493615655886572},\"color\":\"#FF0000\",\"width\":0.4726735294117647,\"height\":0.0805461169786713}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "cf7c4b8c-2b2b-4a45-8445-faa2ed59de01",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p3",
+      "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.47154268455305937,\"y\":0.3417258217777898},\"color\":\"#1E3A8A\",\"width\":0.1984863897059757,\"height\":0.05155990527703287}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "7e4e3884-09e5-4a8b-b1b0-7116658e1b35",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.20112745098039217,\"y\":0.3597210142668534},\"color\":\"#ffa500\",\"width\":0.557088235294119,\"height\":0.11031142084559903}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "8bd77ba5-7fef-4a65-977e-d2086ab3427f",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "value": "{\"status\":\"pending\",\"type\":\"zone\",\"position\":{\"x\":0.47313719144464245,\"y\":0.5456066699868944},\"color\":\"#ffa500\",\"width\":0.35519689242111346,\"height\":0.0707433836271851}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "0cc291ca-36f6-4605-9f0b-c5e40e151a7b",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p1",
+      "value": "{\"id\":\"0cc291ca-36f6-4605-9f0b-c5e40e151a7b\",\"pageId\":\"p1\",\"type\":\"stamp\",\"position\":{\"x\":0.4703649742524486,\"y\":0.7146371463714638},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "fa4a8c16-3a3f-404c-9430-ee3c79024827",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p1",
+      "value": "{\"id\":\"fa4a8c16-3a3f-404c-9430-ee3c79024827\",\"pageId\":\"p1\",\"type\":\"stamp\",\"position\":{\"x\":0.5966980129005882,\"y\":0.8277982779827798},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "b8723d89-9670-4507-bbda-63b699a9a653",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p2",
+      "value": "{\"id\":\"b8723d89-9670-4507-bbda-63b699a9a653\",\"pageId\":\"p2\",\"type\":\"stamp\",\"position\":{\"x\":0.7935806705340527,\"y\":0.24723247232472328},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "49bf526d-c3f1-4157-b824-3ce7d12b382c",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p2",
+      "value": "{\"id\":\"49bf526d-c3f1-4157-b824-3ce7d12b382c\",\"pageId\":\"p2\",\"type\":\"stamp\",\"position\":{\"x\":0.9527274854544363,\"y\":0.5854858548585486},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "3e448a56-21fb-4959-94bf-a36d2495c96d",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p2",
+      "value": "{\"id\":\"3e448a56-21fb-4959-94bf-a36d2495c96d\",\"pageId\":\"p2\",\"type\":\"stamp\",\"position\":{\"x\":0.4096594881487971,\"y\":0.8634686346863469},\"iconName\":\"X\",\"color\":\"#FF0000\",\"scale\":50}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "11bf3102-4329-4cd8-8d6d-371e7a98c9f8",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p3",
+      "value": "{\"id\":\"11bf3102-4329-4cd8-8d6d-371e7a98c9f8\",\"pageId\":\"p3\",\"type\":\"stamp\",\"position\":{\"x\":0.6049014569686493,\"y\":0.6998769987699878},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "9891c71d-ce3a-4d25-9206-74cc6e6f1c50",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p3",
+      "value": "{\"id\":\"9891c71d-ce3a-4d25-9206-74cc6e6f1c50\",\"pageId\":\"p3\",\"type\":\"stamp\",\"position\":{\"x\":0.490053240015795,\"y\":0.7822878228782288},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "41193392-2331-4cfb-9dc4-9741ae3763d3",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "value": "{\"id\":\"41193392-2331-4cfb-9dc4-9741ae3763d3\",\"pageId\":\"p4\",\"type\":\"stamp\",\"position\":{\"x\":0.6688883206995252,\"y\":0.6974169741697418},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    },
+    {
+      "id": "1136e8f1-0d93-4c8f-ba98-9a5befe35e6b",
+      "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
+      "pageId": "p4",
+      "value": "{\"id\":\"1136e8f1-0d93-4c8f-ba98-9a5befe35e6b\",\"pageId\":\"p4\",\"type\":\"stamp\",\"position\":{\"x\":0.5179449498472025,\"y\":0.4489544895448955},\"iconName\":\"Check\",\"color\":\"#008000\",\"scale\":50}",
+      "createdByEmail": "jean.dupont@monlycee.net"
+    }
   ],
   "ai-comments": [
     {
@@ -471,8 +921,10 @@
       "color": "red",
       "text": "Votre calcul de dérivée est incorrect. La dérivée de f(x) = x^2 est f'(x) = 2x et non 2x^2. Revoyez les règles de dérivation.",
       "markdown": "Votre calcul de dérivée est incorrect. La dérivée de $f(x) = x^2$ est $f'(x) = 2x$ et non $2x^2$. Revoyez les règles de dérivation.",
-      "pageY": 0.021625298011029844,
-      "annotations": ["annot_ai_1"],
+      "pageY": 0.021625298011029845,
+      "annotations": [
+        "annot_ai_1"
+      ],
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -485,7 +937,9 @@
       "text": "Attention à l'application de la relation de Chasles pour le calcul des produits scalaires. Rappelez-vous que pour trois vecteurs, on a - La linéarité du produit scalaire permet cette distribution - Assurez-vous de ne pas confondre avec le produit vectoriel qui ne suit pas cette règle de la même façon",
       "markdown": "Attention à l'application de la relation de Chasles pour le calcul des produits scalaires.\n\n- Rappelez-vous que pour trois vecteurs, on a - La linéarité du produit scalaire permet cette distribution\n- Assurez-vous de ne pas confondre avec le produit vectoriel qui ne suit pas cette règle de la même façon",
       "pageY": 0.6487888191175606,
-      "annotations": ["annot_ai_2"],
+      "annotations": [
+        "annot_ai_2"
+      ],
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -546,7 +1000,7 @@
       "annotations": [
         "ea0188d8-ab21-4af4-8cbc-2cebfcabceab"
       ],
-      "pageY": 0.35611170399179196,
+      "pageY": 0.356111703991792,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -561,7 +1015,7 @@
       "annotations": [
         "6ab0f1b9-9e30-4838-bf27-f3cf22c56cbb"
       ],
-      "pageY": 0.46882138253952533,
+      "pageY": 0.4688213825395253,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -576,7 +1030,7 @@
       "annotations": [
         "a523bc3b-b374-4816-94eb-9465fa819f65"
       ],
-      "pageY": 0.5479903812147538,
+      "pageY": 0.5479903812147539,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     }
@@ -588,7 +1042,10 @@
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
       "color": "#FF0000",
-      "position": { "x": 0.02883795848040658, "y": 0.02162629757569853 },
+      "position": {
+        "x": 0.02883795848040658,
+        "y": 0.02162629757569853
+      },
       "width": 0.02883795848040658,
       "height": 0.02162629757569853,
       "createdByEmail": "jean.dupont@monlycee.net",
@@ -600,7 +1057,10 @@
       "correctionId": "cor_alice_gribouille_ds_8_2025_05_12_by_jean_dupont",
       "type": "zone",
       "color": "#FFA500",
-      "position": { "x": 0.08650518165513264, "y": 0.06487888191175606 },
+      "position": {
+        "x": 0.08650518165513264,
+        "y": 0.06487888191175606
+      },
       "width": 0.02883795848040658,
       "height": 0.02162629757569853,
       "createdByEmail": "jean.dupont@monlycee.net",
@@ -610,11 +1070,14 @@
       "id": "b9a1e5f9-71d5-4947-b19d-610f86a9d92b",
       "pageId": "p2",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-      "type":"zone",
-      "position":{"x":0.5515945150166892,"y":0.8417968316654382},
-      "color":"#ffa500",
-      "width":0.3871421401822794,
-      "height":0.09952681748186864,
+      "type": "zone",
+      "position": {
+        "x": 0.5515945150166892,
+        "y": 0.8417968316654382
+      },
+      "color": "#ffa500",
+      "width": 0.3871421401822794,
+      "height": 0.09952681748186865,
       "createdByEmail": "jean.dupont@monlycee.net",
       "status": "pending"
     },
@@ -622,8 +1085,11 @@
       "id": "6ab0f1b9-9e30-4838-bf27-f3cf22c56cbb",
       "pageId": "p4",
       "correctionId": "cor_alice_gribouille_dm_7_2025_04_15_by_jean_dupont",
-      "type":"zone",
-      "position":{"x":0.18993450955354772,"y":0.46882138253952533},
+      "type": "zone",
+      "position": {
+        "x": 0.1899345095535477,
+        "y": 0.4688213825395253
+      },
       "color": "#FF0000",
       "width": 0.3984287245837917,
       "height": 0.05035510994528724,
@@ -643,7 +1109,7 @@
       },
       "color": "#ffa500",
       "width": 0.2053394976645635,
-      "height": 0.10326061533326076
+      "height": 0.10326061533326077
     },
     {
       "id": "f83d4da5-8768-425d-96a2-003967058527",
@@ -653,7 +1119,7 @@
       "status": "pending",
       "type": "zone",
       "position": {
-        "x": 0.40486982015621145,
+        "x": 0.4048698201562114,
         "y": 0.3953446929931996
       },
       "color": "#ffa500",
@@ -669,11 +1135,11 @@
       "type": "zone",
       "position": {
         "x": 0.19153584948673635,
-        "y": 0.35611170399179196
+        "y": 0.356111703991792
       },
       "color": "#ffa500",
       "width": 0.574398290815656,
-      "height": 0.06833214465354886
+      "height": 0.06833214465354887
     },
     {
       "id": "a523bc3b-b374-4816-94eb-9465fa819f65",
@@ -684,11 +1150,11 @@
       "type": "zone",
       "position": {
         "x": 0.4651815970354722,
-        "y": 0.5479903812147538
+        "y": 0.5479903812147539
       },
       "color": "#ffa500",
       "width": 0.3343996134347234,
-      "height": 0.06833214465354886
+      "height": 0.06833214465354887
     }
   ]
 }

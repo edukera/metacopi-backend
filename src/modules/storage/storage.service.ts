@@ -14,6 +14,7 @@ export enum StorageFolderType {
   SUBMISSIONS = 'submissions',
   SUBMISSIONS_RAW = 'submissions/raw',
   SUBMISSIONS_PROCESSED = 'submissions/processed',
+  AVATARS = 'avatars',
 }
 
 @Injectable()
