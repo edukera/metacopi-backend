@@ -273,10 +273,10 @@
   ],
   "classes": [
     {
-      "id": "MATH_1ere_03",
-      "name": "Première 3 Spé Maths",
-      "description": "Cours de mathématiques sur les probabilités",
-      "code": "MATH103",
+      "id": "MATH_Tle_03",
+      "name": "Terminale 3 Maths expertes",
+      "description": "Maths expertes 2025 - 2026",
+      "code": "MATH103",  
       "settings": {
         "allowLateSubmissions": true,
         "notifyOnNewSubmissions": true
@@ -290,196 +290,196 @@
   "memberships": [
     {
       "userEmail": "jean.dupont@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "teacher",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "maxime.durand@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "elodie.morel@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "sofia.martinez@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "lea.benali@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "nathan.tran@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "camille.ito@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "yuna.chen@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "thomas.marchand@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "julien.perrin@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "mina.tanaka@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "sabrina.lemoine@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "chloe.dumont@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "lucas.charrier@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "kevin.sow@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "yanis.diabate@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "claire.barbier@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "maelle.pham@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "arthur.delcourt@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "mathis.bouchard@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "oceane.lemoigne@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "antoine.rousseau@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "lina.nguyen@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "bastien.lefevre@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "anais.garnier@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "mathieu.renard@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "emilie.delmas@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
     },
     {
       "userEmail": "axel.benoit@monlycee.net",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "role": "student",
       "status": "active",
       "isActive": true
@@ -490,7 +490,7 @@
       "id": "DM_7",
       "title": "DM 7 Nombres Complexes",
       "description": "Résoudre l'exercice sur les nombres complexes",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "createdBy": "jean.dupont@monlycee.net",
       "status": "published",
       "dueDate": "2025-04-18T23:59:59.000Z",
@@ -513,7 +513,7 @@
       "id": "DS_8",
       "title": "DS 8 Arbre de Probabilités",
       "description": "Résoudre l'exercice sur les probabilités",
-      "classId": "MATH_1ere_03",
+      "classId": "MATH_Tle_03",
       "createdBy": "jean.dupont@monlycee.net",
       "status": "published",
       "dueDate": "2025-05-15T12:59:59.000Z",
