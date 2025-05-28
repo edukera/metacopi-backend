@@ -25,6 +25,7 @@ export class CorrectionService {
     correctionDto.status = correction.status;
     correctionDto.grade = correction.grade;
     correctionDto.appreciation = correction.appreciation;
+    correctionDto.scores = correction.scores;
     correctionDto.finalizedAt = correction.finalizedAt;
     correctionDto.createdAt = (correction as any).createdAt;
     correctionDto.updatedAt = (correction as any).updatedAt;

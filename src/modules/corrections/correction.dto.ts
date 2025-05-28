@@ -38,6 +38,14 @@ export class CreateCorrectionDto {
   appreciation?: string;
 
   @ApiPropertyOptional({ 
+    description: 'Scores for individual questions in JSON format',
+    example: '{"qa-1": 2, "qa-2": 1.5, "qb": 0}'
+  })
+  @IsOptional()
+  @IsString()
+  scores?: string;
+
+  @ApiPropertyOptional({ 
     description: 'Status of the correction',
     enum: CorrectionStatus,
     example: CorrectionStatus.IN_PROGRESS
@@ -59,6 +67,14 @@ export class UpdateCorrectionDto {
   @IsOptional()
   @IsString()
   appreciation?: string;
+
+  @ApiPropertyOptional({ 
+    description: 'Updated scores for individual questions in JSON format',
+    example: '{"qa-1": 2, "qa-2": 1.5, "qb": 0}'
+  })
+  @IsOptional()
+  @IsString()
+  scores?: string;
 
   @ApiPropertyOptional({ 
     description: 'Updated status of the correction',
@@ -108,6 +124,12 @@ export class CorrectionResponseDto {
 
   @ApiPropertyOptional({ description: 'General appreciation of the submission', example: 'Excellent work overall.' })
   appreciation?: string;
+
+  @ApiPropertyOptional({ 
+    description: 'Scores for individual questions in JSON format',
+    example: '{"qa-1": 2, "qa-2": 1.5, "qb": 0}'
+  })
+  scores?: string;
 
   @ApiPropertyOptional({ 
     description: 'Date when the correction was finalized',

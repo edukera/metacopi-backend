@@ -33,6 +33,9 @@ export class Correction {
   @Prop({ type: String, default: '' })
   appreciation: string;
 
+  @Prop({ type: String, default: '{}' })
+  scores: string;
+
   @Prop({ type: Date })
   finalizedAt: Date;
 }

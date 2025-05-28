@@ -494,7 +494,7 @@
       "createdBy": "jean.dupont@monlycee.net",
       "status": "published",
       "dueDate": "2025-04-18T23:59:59.000Z",
-      "points": 20,
+      "points": 6,
       "utterance": "{\"utterance\":\"Les parties A et B sont indépendantes.\\n\\nOn rappelle que si $z$ est un nombre complexe, $\\\\overline{z}$ est le conjugué de $z$ et $|z|$ est le module de $z$.\",\"elements\":[{\"id\":\"section-a\",\"title\":\"Partie A\",\"type\":\"section\",\"utterance\":\"Pour chaque proposition, indiquer si elle est vraie ou fausse, et proposer une démonstration pour la réponse indiquée. Une réponse sans démonstration ne rapportera aucun point.\",\"children\":[{\"id\":\"qa-1\",\"title\":\"Question 1\",\"type\":\"question\",\"maxScore\":1,\"score\":null,\"utterance\":\"Si $z = -\\\\frac{1}{2} + \\\\frac{1}{2}i$, alors $z^4$ est un nombre réel.\",\"scoringGuide\":\"Vérifier le développement de $z^4$.\"},{\"id\":\"qa-2\",\"title\":\"Question 2\",\"type\":\"question\",\"maxScore\":1,\"score\":null,\"utterance\":\"Si $z + \\\\overline{z} = 0$, alors $z = 0$.\",\"scoringGuide\":\"Contre-exemple : $z = i$. La condition signifie que $z$ est un imaginaire pur.\"},{\"id\":\"qa-3\",\"title\":\"Question 3\",\"type\":\"question\",\"maxScore\":1,\"score\":null,\"utterance\":\"Si $z + \\\\frac{1}{z} = 0$, alors $z = i$ ou $z = -i$.\",\"scoringGuide\":\"Multiplier par z (si z non nul). $z^2 = -1$.\"},{\"id\":\"qa-4\",\"title\":\"Question 4\",\"type\":\"question\",\"maxScore\":1,\"score\":null,\"utterance\":\"Si $|z| = 1$ et $|z + z'| = 1$, alors $z' = 0$.\",\"scoringGuide\":\"Nombreux contre-exemples. Par exemple $z=1, z'=-1$ (non, $|1-1|=0 \\\\neq 1$). Si $z=1, z' = e^{i2\\\\pi/3}$ alors $|1+e^{i2\\\\pi/3}| = |1 -1/2 + i\\\\sqrt{3}/2| = |1/2+i\\\\sqrt{3}/2|=1$. Donc $z' \\\\neq 0$.\"}]},{\"id\":\"qb\",\"title\":\"Partie B\",\"type\":\"question\",\"maxScore\":2,\"score\":null,\"utterance\":\"**Restitution Organisée de Connaissances**\\n\\nSoit $z$ un nombre complexe.\\n\\nOn rappelle l'égalité suivante : $|z|^2 = z\\\\overline{z}$, qu'on pourra utiliser sans la redémontrer.\\n\\nDémontrer que, si $z_1$ et $z_2$ sont deux nombres complexes, alors $|z_1z_2| = |z_1|\\\\cdot|z_2|$.\",\"scoringGuide\":\"Démonstration attendue : $|z_1z_2|^2 = (z_1z_2)(\\\\overline{z_1z_2}) = z_1z_2\\\\overline{z_1}\\\\overline{z_2} = (z_1\\\\overline{z_1})(z_2\\\\overline{z_2}) = |z_1|^2|z_2|^2$. Puis prendre la racine carrée (modules sont positifs).\"}]}",
       "tags": [
         "complex",
@@ -703,7 +703,7 @@
       "submissionId": "sub_maxime_durand_dm_7_2025_04_15",
       "studentEmail": "maxime.durand@monlycee.net",
       "correctorEmail": "jean.dupont@monlycee.net",
-      "grade": 18,
+      "grade": 0,
       "appreciation": "Excellent !",
       "status": "completed",
       "correctedAt": "2025-04-22T02:36:12.000Z"
